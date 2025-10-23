@@ -1,14 +1,17 @@
+### Maven ###
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
 ### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
+.idea/
+*.iml
 *.iws
+*.ipr
+
+# Sometimes IntelliJ creates these inside submodules
+out/
 *.iml
 *.ipr
 
@@ -17,7 +20,7 @@ target/
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
 .sts4-cache
 
@@ -31,8 +34,18 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
+### Visual Studio Code ###
 .vscode/
 
 ### Mac OS ###
 .DS_Store
+
+### Logs and temp files ###
+*.log
+*.tmp
+*.swp
+*.swo
+
+### Environment files ###
+.env
+.env.*
