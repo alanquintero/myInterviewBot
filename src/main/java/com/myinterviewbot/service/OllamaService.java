@@ -87,9 +87,25 @@ public class OllamaService {
         LOGGER.info("Running Ollama with model: {}", defaultModel);
         LOGGER.info("Calling Ollama with the prompt: {}", prompt);
         try {
-            final String command = "echo \"" + prompt.replace("\"", "\\\"") + "\" | OLLAMA_NO_COLOR=1 OLLAMA_SILENT=1 ollama run " + defaultModel;
-            LOGGER.info("Executing command: {}", command);
-            final ProcessBuilder pb = new ProcessBuilder("bash", "-c", command);
+            final ProcessBuilder pb;
+            if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                LOGGER.info("Creating Windows command");
+                // Windows execution using cmd.exe
+                final String windowsCommand = "echo " + prompt.replace("\"", "\\\"") + " | ollama run " + defaultModel;
+                final String[] cmdArgs = {"cmd.exe", "/c", windowsCommand};
+                pb = new ProcessBuilder(cmdArgs);
+                pb.environment().put("OLLAMA_NO_COLOR", "1");
+                pb.environment().put("OLLAMA_SILENT", "1");
+                LOGGER.info("Executing Windows command: {}", windowsCommand);
+            } else {
+                LOGGER.info("Creating Unix/Linux/Mac command");
+                // Unix/Linux/Mac execution using bash
+                final String command = "echo \"" + prompt.replace("\"", "\\\"") + "\" | OLLAMA_NO_COLOR=1 OLLAMA_SILENT=1 ollama run " + defaultModel;
+                final String[] bashArgs = {"bash", "-c", command};
+                pb = new ProcessBuilder(bashArgs);
+                pb.redirectErrorStream(true);
+                LOGGER.info("Executing command: {}", command);
+            }
             pb.redirectErrorStream(true);
 
             final Process process = pb.start();
