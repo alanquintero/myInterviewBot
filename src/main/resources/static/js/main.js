@@ -35,8 +35,10 @@ const transcriptSection = document.getElementById("transcriptSection");
 const transcriptEl = document.getElementById("transcript");
 
 // Reset
-const resetSection = document.getElementById("resetSection");
-const resetButton = document.getElementById("resetBtn");
+const resetSectionUp = document.getElementById("resetSectionUp");
+const resetButtonUp = document.getElementById("resetBtnUp");
+const resetSectionDown = document.getElementById("resetSectionDown");
+const resetButtonDown = document.getElementById("resetBtnDown");
 
 const MAX_RECORDING_TIME = 150; // in seconds (2 minutes 30 seconds)
 let timerInterval;
@@ -85,6 +87,7 @@ async function generateQuestion(profession) {
         } else {
             professionCard.classList.remove("hidden");
             professionCardEl.textContent = profession;
+            resetSectionUp.classList.remove("hidden");
             showRecordingSection();
         }
     } catch (err) {
@@ -95,13 +98,22 @@ async function generateQuestion(profession) {
     }
 }
 
-resetButton.addEventListener("click", async () => {
-    console.log("Click on reset button");
+resetButtonDown.addEventListener("click", async () => {
+    console.log("Click on reset button down");
+    reset();
+});
+
+resetButtonUp.addEventListener("click", async () => {
+    console.log("Click on reset button up");
+    reset();
+});
+
+function reset() {
     hideElements();
     stopCamera();
     // Reset other UI states
     recordedChunks = [];
-});
+}
 
 sendResponseBtn.addEventListener("click", async () => {
     if (recordedChunks.length === 0) {
@@ -232,7 +244,7 @@ async function sendVideo(blob) {
         transcriptSection.classList.remove("hidden");
         feedbackContainer.classList.remove("hidden");
         feedbackSection.classList.remove("hidden");
-        resetSection.classList.remove("hidden");
+        resetSectionDown.classList.remove("hidden");
 
         if (!data.feedback || data.feedback.trim() === '') {
             alert('No feedback was generated. Please try again.');
@@ -298,8 +310,9 @@ function hideElements() {
     recordingContainer.classList.add("hidden");
     playbackSection.classList.add("hidden");
     generateFeedbackSection.classList.add("hidden");
-    resetSection.classList.add("hidden");
+    resetSectionDown.classList.add("hidden");
     transcriptSection.classList.add("hidden");
     feedbackContainer.classList.add("hidden");
     feedbackSection.classList.add("hidden");
+    resetSectionUp.classList.add("hidden");
 }

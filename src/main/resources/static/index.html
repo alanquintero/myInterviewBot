@@ -51,7 +51,8 @@
             </div>
 
             <div class="mb-3">
-                <button type="button" class="btn btn-link p-0 border-0" data-bs-toggle="modal" data-bs-target="#infoModal">
+                <button type="button" class="btn btn-link p-0 border-0" data-bs-toggle="modal"
+                        data-bs-target="#infoModal">
                     <img src="img/button/info.png" alt="Info" style="width: 24px; height: 24px;">
                 </button>
                 <label for="profession" class="form-label">Profession:</label>
@@ -61,6 +62,12 @@
                 Generate Question&nbsp;
                 <img src="img/ai-stars.png" alt="AI Icon" style="width: 20px; height: 20px; margin-right: 8px;">
             </button>
+            <!-- Reset button -->
+            <div id="resetSectionUp" class="mb-4 hidden">
+                <button id="resetBtnUp" class="btn btn-warning mb-3 d-flex align-items-center justify-content-center">
+                    Reset
+                </button>
+            </div>
 
             <!-- Profession Card -->
             <div id="professionCard" class="card mb-4 hidden">
@@ -111,7 +118,8 @@
                     </div>
                     <label id="recordLabel"></label>
                     <button id="recordBtn" class="btn btn-light">
-                        <img id="recordBtnImg" src="img/button/record.png" alt="Record" style="width: 40px; height: 40px;">
+                        <img id="recordBtnImg" src="img/button/record.png" alt="Record"
+                             style="width: 40px; height: 40px;">
                     </button>
                 </div>
 
@@ -121,7 +129,8 @@
                     <video id="playback" controls class="border rounded w-100" style="max-height: 300px;"></video>
                 </div>
                 <div id="generateFeedbackSection" class="mb-4 hidden">
-                    <button id="sendResponseBtn" class="btn btn-primary mb-3 d-flex align-items-center justify-content-center">
+                    <button id="sendResponseBtn"
+                            class="btn btn-primary mb-3 d-flex align-items-center justify-content-center">
                         Generate Feedback&nbsp;
                         <img src="img/ai-stars.png" alt="AI Icon" style="width: 20px; height: 20px; margin-right: 8px;">
                     </button>
@@ -140,7 +149,8 @@
                 <!-- Transcript Section -->
                 <div id="transcriptSection" class="mb-4">
                     <h5>Transcript</h5>
-                    <div id="transcript" class="form-control bg-light p-2" readonly style="white-space: pre-wrap;"></div>
+                    <div id="transcript" class="form-control bg-light p-2" readonly
+                         style="white-space: pre-wrap;"></div>
                 </div>
 
                 <!-- Feedback Section -->
@@ -157,8 +167,8 @@
             </fieldset>
 
             <!-- Reset button -->
-            <div id="resetSection" class="mb-4 hidden">
-                <button id="resetBtn" class="btn btn-warning mb-3 d-flex align-items-center justify-content-center">
+            <div id="resetSectionDown" class="mb-4 hidden">
+                <button id="resetBtnDown" class="btn btn-warning mb-3 d-flex align-items-center justify-content-center">
                     Reset
                 </button>
             </div>
