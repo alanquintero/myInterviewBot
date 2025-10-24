@@ -49,3 +49,6 @@ build/
 ### Environment files ###
 .env
 .env.*
+
+### Upload files
+uploads/

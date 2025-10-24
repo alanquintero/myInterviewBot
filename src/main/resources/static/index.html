@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MyInterviewBot</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="img/myInterviewBot.ico">
+
+    <!-- Bootstrap CSS -->
+    <link href="vendor/bootstrap-5.3.8-dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-light">
+
+<fieldset class="container mt-4 text-center">
+    <div class="d-flex justify-content-center align-items-center mb-4">
+        <img src="img/myInterviewBot.jpeg" alt="MyInterviewBot Logo" class="rounded-circle me-3 logo">
+        <h1 class="mb-0">MyInterviewBot</h1>
+    </div>
+
+    <div class="mb-3">
+        <button type="button" class="btn btn-link p-0 border-0" data-bs-toggle="modal" data-bs-target="#infoModal">
+            <img src="img/button/info.png" alt="Info" style="width: 24px; height: 24px;">
+        </button>
+        <label for="profession" class="form-label">Profession:</label>
+        <input type="text" class="form-control" id="profession" placeholder="e.g. Software Engineer">
+    </div>
+    <button id="getQuestionBtn" class="btn btn-primary mb-3 d-flex align-items-center justify-content-center">
+        Generate Question&nbsp;
+        <img src="img/ai-stars.png" alt="AI Icon" style="width: 20px; height: 20px; margin-right: 8px;">
+    </button>
+
+    <!-- Profession Card -->
+    <div id="professionCard" class="card mb-4 hidden">
+        <div class="card-body">
+            <h5 class="card-title">Profession</h5>
+            <p id="selectedProfession" class="card-text"></p>
+        </div>
+    </div>
+
+    <!-- Question Card -->
+    <div id="questionCard" class="card mb-4 hidden">
+        <div class="card-body">
+            <h5 class="card-title">Question</h5>
+            <p id="question" class="card-text"></p>
+        </div>
+    </div>
+    <div id="anotherQuestionCard" class="hidden">
+        <button id="getAnotherQuestionBtn"
+                class="btn btn-primary mb-3 d-flex align-items-center justify-content-center">
+            Generate Another Question&nbsp;
+            <img src="img/ai-stars.png" alt="AI Icon" style="width: 20px; height: 20px; margin-right: 8px;">
+        </button>
+    </div>
+
+    <!-- Loading GIF -->
+    <div id="questionLoading" class="mb-4 text-center hidden">
+        <img src="img/loading.gif" alt="Loading..." style="width: 50px; height: 50px;">
+    </div>
+
+    <!-- Recording Section -->
+    <fieldset id="recordingContainer" class="border rounded p-3 mb-4 position-relative hidden">
+        <legend class="float-none w-auto px-3 text-primary fw-semibold">Recording section</legend>
+        <div id="recordingSection" class="mb-4">
+            <div id="videoContainer" class="position-relative mb-2" style="max-height: 300px;">
+                <!-- Placeholder image -->
+                <img id="videoPlaceholder" src="img/camera-loading.gif" class="w-100 border rounded"
+                     style="max-height: 300px; max-width: 400px; object-fit: cover;">
+
+                <video id="video" autoplay muted class="border rounded w-100 video-layer"></video>
+
+                <!-- Recording overlay -->
+                <div id="recordingOverlay"
+                     class="position-absolute top-0 end-0 m-2 px-2 py-1 rounded d-flex align-items-center gap-2 bg-dark bg-opacity-75 text-white overlay-layer">
+                    <span id="recordingTimer" class="hidden fw-bold small">02:30</span>
+                    <span id="recordingIndicator" class="recording-indicator hidden"></span>
+                </div>
+            </div>
+            <label id="recordLabel"></label>
+            <button id="recordBtn" class="btn btn-light">
+                <img id="recordBtnImg" src="img/button/record.png" alt="Record" style="width: 40px; height: 40px;">
+            </button>
+        </div>
+        <br/>
+
+        <!-- Playback Section -->
+        <div id="playbackSection" class="mb-4 border hidden">
+            <h5>Recorded Video</h5>
+            <video id="playback" controls class="border rounded w-100" style="max-height: 300px;"></video>
+        </div>
+        <div id="generateFeedbackSection" class="mb-4 hidden">
+            <button id="sendResponseBtn" class="btn btn-primary mb-3 d-flex align-items-center justify-content-center">
+                Generate Feedback&nbsp;
+                <img src="img/ai-stars.png" alt="AI Icon" style="width: 20px; height: 20px; margin-right: 8px;">
+            </button>
+        </div>
+    </fieldset>
+    <br/>
+
+    <!-- Loading GIF -->
+    <div id="feedbackLoading" class="mb-4 text-center hidden">
+        <img src="img/loading.gif" alt="Loading..." style="width: 50px; height: 50px;">
+    </div>
+
+    <!-- Transcript Section -->
+    <fieldset id="feedbackContainer" class="border rounded p-3 mb-4 position-relative hidden">
+        <legend class="float-none w-auto px-3 text-primary fw-semibold">Feedback section</legend>
+
+        <!-- Transcript Section -->
+        <div id="transcriptSection" class="mb-4">
+            <h5>Transcript</h5>
+            <div id="transcript" class="form-control bg-light p-2" readonly style="white-space: pre-wrap;"></div>
+        </div>
+
+        <!-- Feedback Section -->
+        <div id="feedbackSection" class="mb-4 position-relative">
+            <h5>Feedback</h5>
+            <div id="feedback" class="form-control bg-light p-2" readonly style="white-space: pre-wrap;"></div>
+
+            <div id="feedbackSpinner"
+                 class="spinner-border text-primary position-absolute top-50 start-50 translate-middle"
+                 style="display: none;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </fieldset>
+
+    <!-- Reset button -->
+    <div id="resetSection" class="mb-4 hidden">
+        <button id="resetBtn" class="btn btn-warning mb-3 d-flex align-items-center justify-content-center">
+            Reset
+        </button>
+    </div>
+
+</fieldset>
+
+<!-- Modal -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="infoModalLabel">Profession</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Enter a profession to get a question related to that field. If you leave it blank, the default will be
+                Software Engineer.
+                <br><br>
+                Click <strong>“Generate Question”</strong> to receive a question based on your profession.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Got it!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JS modules -->
+<script type="module" src="js/main.js"></script>
+<script src="vendor/bootstrap-5.3.8-dist/js/bootstrap.min.js"></script>
+</body>
+</html>
