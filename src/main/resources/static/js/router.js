@@ -46,8 +46,11 @@ async function loadInterviews() {
         interviews.forEach(interview => {
             const card = document.createElement('div');
             card.className = 'card mb-4 p-3';
+            const date = new Date(interview.timestamp);
+            const formattedTime = date.toLocaleString();
 
             card.innerHTML = `
+                <p><strong>Date:</strong> ${formattedTime}</p>
                 <p><strong>Profession:</strong> ${interview.profession}</p>
                 <p><strong>Question:</strong> ${interview.question}</p>
                 <p><strong>Answer:</strong> ${interview.answer}</p>
