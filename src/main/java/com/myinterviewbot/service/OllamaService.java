@@ -7,6 +7,7 @@ package com.myinterviewbot.service;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -31,7 +32,17 @@ public class OllamaService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OllamaService.class);
 
-    private static final String MODEL = "phi3";
+
+    @Value("${interviewbot.default-model}")
+    private String defaultModel;
+
+    public String getDefaultModel() {
+        return defaultModel;
+    }
+
+    public void setDefaultModel(final String model) {
+        this.defaultModel = model;
+    }
 
     public String generateQuestion(final String profession, final HttpSession session) {
         LOGGER.info("Generating question for profession: {}", profession);
@@ -47,25 +58,22 @@ public class OllamaService {
         }
 
         String prompt;
-
         if (firstQuestion == null || firstQuestion) {
-            prompt = "I want to practice a behavioral interview. I will ask you several questions. "
-                    + "Give me the first behavioral interview question for a " + profession
-                    + ". Keep it short and realistic, and just give me the question.";
-            session.setAttribute("firstQuestion", false); // mark as no longer first
+            prompt = "You are a concise behavioral interview coach. Generate a single, realistic behavioral interview question for a " + profession + ". The question must be less than 15 words. Only output the question.";
+            session.setAttribute("firstQuestion", false);
         } else {
-            // Subsequent questions: don't include profession
-            prompt = "Give me another behavioral interview question. Keep it short and realistic, just the question.";
+            prompt = "Give me another behavioral interview question for a " + profession + ".";
         }
 
         return runOllama(prompt);
     }
 
     public String generateFeedback(final String transcript, final String profession, final String question) {
-        final String prompt = "You are a technical hiring manager. Evaluate the following interview answer. Focus on clarity, structure, relevance, and communication style. Be concise, 3–4 sentences max. "
-                + "The profession of the candidate is : " + profession + ". "
-                + "The question was: " + question + ". "
-                + "The candidate answer was: " + transcript;
+        final String prompt = "You are a technical hiring manager. Evaluate the following interview answer, focusing on clarity, structure, relevance, and communication style. "
+                + "Provide actionable feedback in 3–4 concise sentences, output only the feedback, no extra commentary. "
+                + "Candidate profession: " + profession + ". "
+                + "Question: " + question + ". "
+                + "Candidate answer: " + transcript;
         return runOllama(prompt);
     }
 
@@ -76,9 +84,10 @@ public class OllamaService {
      * @return the AI-generated response
      */
     private String runOllama(final String prompt) {
+        LOGGER.info("Running Ollama with model: {}", defaultModel);
         LOGGER.info("Calling Ollama with the prompt: {}", prompt);
         try {
-            final String command = "echo \"" + prompt.replace("\"", "\\\"") + "\" | OLLAMA_NO_COLOR=1 OLLAMA_SILENT=1 ollama run " + MODEL;
+            final String command = "echo \"" + prompt.replace("\"", "\\\"") + "\" | OLLAMA_NO_COLOR=1 OLLAMA_SILENT=1 ollama run " + defaultModel;
             LOGGER.info("Executing command: {}", command);
             final ProcessBuilder pb = new ProcessBuilder("bash", "-c", command);
             pb.redirectErrorStream(true);
