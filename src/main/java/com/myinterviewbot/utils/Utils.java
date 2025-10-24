@@ -4,7 +4,6 @@
  */
 package com.myinterviewbot.utils;
 
-import com.myinterviewbot.controller.SettingsController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
@@ -105,5 +104,26 @@ public class Utils {
             }
         }
         return allDeleted;
+    }
+
+    /**
+     * Gets the timestamp from the given filename.
+     *
+     * @param filename the filename that has a timestamp in the name.
+     * @return the timestamp
+     */
+    public static Long getTimestamp(final String filename) {
+        // Remove extension
+        final int dotIndex = filename.indexOf('.');
+        final String nameWithoutExt = (dotIndex != -1) ? filename.substring(0, dotIndex) : filename;
+
+        // Keep only digits (timestamp)
+        final String timestampStr = nameWithoutExt.replaceAll("\\D+", ""); // removes non-digit chars
+
+        try {
+            return Long.parseLong(timestampStr);
+        } catch (NumberFormatException e) {
+            return 0L;
+        }
     }
 }

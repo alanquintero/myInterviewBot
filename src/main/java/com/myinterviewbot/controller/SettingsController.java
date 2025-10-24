@@ -4,8 +4,8 @@
  */
 package com.myinterviewbot.controller;
 
+import com.myinterviewbot.service.InterviewDataService;
 import com.myinterviewbot.utils.Utils;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,10 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/settings/v1")
-@RequiredArgsConstructor
 public class SettingsController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SettingsController.class);
+
+    private final InterviewDataService interviewDataService;
+
+    public SettingsController() {
+        this.interviewDataService = InterviewDataService.getInstance();
+    }
 
     /**
      * Deletes all interviews.
@@ -34,6 +39,7 @@ public class SettingsController {
     @DeleteMapping("/interviews/clear")
     public String clearAllInterviews() {
         LOGGER.info("Received request to clear all interviews...");
+        interviewDataService.clearInterviews();
         return Utils.clearAllInterviews();
     }
 }

@@ -5,8 +5,10 @@
 package com.myinterviewbot.controller;
 
 import com.myinterviewbot.model.FeedbackResponse;
+import com.myinterviewbot.model.InterviewEntry;
 import com.myinterviewbot.model.QuestionResponse;
 import com.myinterviewbot.service.FfmpegService;
+import com.myinterviewbot.service.InterviewDataService;
 import com.myinterviewbot.service.OllamaService;
 import com.myinterviewbot.service.WhisperService;
 import com.myinterviewbot.utils.Utils;
@@ -31,7 +33,6 @@ import java.io.File;
  */
 @RestController
 @RequestMapping("/api/v1")
-@RequiredArgsConstructor
 public class InterviewController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InterviewController.class);
@@ -39,6 +40,14 @@ public class InterviewController {
     private final OllamaService ollamaService;
     private final WhisperService whisperService;
     private final FfmpegService ffmpegService;
+    private final InterviewDataService interviewDataService;
+
+    public InterviewController(final OllamaService ollamaService, final WhisperService whisperService, final FfmpegService ffmpegService) {
+        this.ollamaService = ollamaService;
+        this.whisperService = whisperService;
+        this.ffmpegService = ffmpegService;
+        this.interviewDataService = InterviewDataService.getInstance();
+    }
 
     /**
      * Generates an interview question for a specific profession.
@@ -90,6 +99,10 @@ public class InterviewController {
 
         // Get AI feedback
         final String feedback = ollamaService.generateFeedback(transcript, profession, question);
+
+        // Saves the interview entry
+        final long timestamp = Utils.getTimestamp(videoFile.getName());
+        interviewDataService.addInterview(timestamp, new InterviewEntry(timestamp, profession, question, transcript, feedback, videoFile.getAbsolutePath()));
 
         return new FeedbackResponse(feedback, transcript);
     }

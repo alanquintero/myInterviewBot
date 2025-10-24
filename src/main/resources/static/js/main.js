@@ -60,7 +60,7 @@ getQuestionBtn.addEventListener("click", async () => {
 
 getAnotherQuestionBtn.addEventListener("click", async () => {
     console.log("Generating Another Question");
-    const profession = professionCardEl.value || "Software Engineer";
+    const profession = professionCardEl.textContent || "Software Engineer";
     console.log("Profession: ", profession);
 
     // Hide elements and show loading GIF
@@ -210,7 +210,7 @@ async function sendVideo(blob) {
     console.log("Sending video...");
     const formData = new FormData();
     formData.append("file", blob, "answer.webm");
-    formData.append("profession", professionEl.value)
+    formData.append("profession", professionCardEl.textContent)
     formData.append("question", questionEl.textContent)
 
     feedbackSpinner.style.display = "inline-block";
