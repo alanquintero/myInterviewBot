@@ -4,6 +4,9 @@
  */
 package com.myinterviewbot.utils;
 
+import com.myinterviewbot.controller.SettingsController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -17,7 +20,9 @@ import java.io.IOException;
  */
 public class Utils {
 
-    private final static String BASE_DIR = "uploads/interviews/";
+    private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
+
+    private final static String INTERVIEWS_DIR = "uploads/interviews/";
 
     /**
      * Saves an uploaded video file to a timestamped directory under "uploads/interviews/".
@@ -41,7 +46,7 @@ public class Utils {
         final String filename = System.currentTimeMillis() + "-" + file.getOriginalFilename();
 
         final String baseName = filename.replaceFirst("\\.webm$", "");
-        final File recordDir = new File(BASE_DIR + baseName);
+        final File recordDir = new File(INTERVIEWS_DIR + baseName);
         if (!recordDir.exists() && !recordDir.mkdirs()) {
             return null;
         }
@@ -52,5 +57,53 @@ public class Utils {
         }
 
         return videoFile;
+    }
+
+
+    /**
+     * Deletes all interview folders inside the uploads/interviews directory.
+     */
+    public static String clearAllInterviews() {
+        File baseDir = new File(INTERVIEWS_DIR);
+
+        if (!baseDir.exists()) {
+            LOGGER.warn("Base directory does not exist: {}", INTERVIEWS_DIR);
+            return "No interviews found to delete.";
+        }
+
+        boolean success = deleteDirectoryContents(baseDir);
+        if (success) {
+            LOGGER.info("All interviews cleared successfully.");
+            return "All interviews have been deleted successfully.";
+        } else {
+            LOGGER.error("Failed to delete some or all interview files.");
+            return "Failed to delete all interviews. Some files may remain.";
+        }
+    }
+
+    /**
+     * Recursively deletes all files and subdirectories inside a directory,
+     * but keeps the base directory itself.
+     *
+     * @param directory the parent directory to clear
+     * @return true if everything was deleted successfully, false otherwise
+     */
+    private static boolean deleteDirectoryContents(File directory) {
+        final File[] files = directory.listFiles();
+        if (files == null) {
+            return false;
+        }
+
+        boolean allDeleted = true;
+        for (final File file : files) {
+            if (file.isDirectory()) {
+                allDeleted &= deleteDirectoryContents(file);
+            }
+            if (!file.delete()) {
+                LOGGER.warn("Could not delete: {}", file.getAbsolutePath());
+                allDeleted = false;
+            }
+        }
+        return allDeleted;
     }
 }
