@@ -21,7 +21,7 @@ public class Utils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 
-    private final static String INTERVIEWS_DIR = "uploads/interviews/";
+    public final static String INTERVIEWS_DIR = "uploads/interviews/";
 
     /**
      * Saves an uploaded video file to a timestamped directory under "uploads/interviews/".
@@ -125,5 +125,19 @@ public class Utils {
         } catch (NumberFormatException e) {
             return 0L;
         }
+    }
+
+    /**
+     * Constructs and return the video url of the given filename
+     *
+     * @param filename the filename
+     * @return the video url
+     */
+    public static String getVideoUrl(final String filename) {
+        // Remove extension
+        final int dotIndex = filename.indexOf('.');
+        final String nameWithoutExt = (dotIndex != -1) ? filename.substring(0, dotIndex) : filename;
+
+        return INTERVIEWS_DIR + nameWithoutExt + "/" + filename;
     }
 }

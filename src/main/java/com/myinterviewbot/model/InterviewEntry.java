@@ -16,18 +16,18 @@ public class InterviewEntry {
     private String question;
     private String answer;
     private String feedback;
-    private String videoPath;
+    private String videoUrl;
 
     public InterviewEntry() {
     }
 
-    public InterviewEntry(final long timestamp, final String profession, final String question, final String answer, final String feedback, final String videoPath) {
+    public InterviewEntry(final long timestamp, final String profession, final String question, final String answer, final String feedback, final String videoUrl) {
         this.timestamp = timestamp;
         this.profession = profession;
         this.question = question;
         this.answer = answer;
         this.feedback = feedback;
-        this.videoPath = videoPath;
+        this.videoUrl = videoUrl;
     }
 
     // Getters and Setters
@@ -71,11 +71,11 @@ public class InterviewEntry {
         this.feedback = feedback;
     }
 
-    public String getVideoPath() {
-        return videoPath;
+    public String getVideoUrl() {
+        return videoUrl;
     }
 
-    public void setVideoPath(final String videoPath) {
-        this.videoPath = videoPath;
+    public void setVideoUrl(final String videoUrl) {
+        this.videoUrl = videoUrl;
     }
 }

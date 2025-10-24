@@ -28,7 +28,7 @@
                     <a class="nav-link active" href="#" data-page="home">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" data-page="interviews">My Interviews</a>
+                    <a class="nav-link" href="#" data-page="myInterviews">My Interviews</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-page="settings">Settings</a>
@@ -166,9 +166,14 @@
     </div>
 
     <!-- My Interviews Page -->
-    <div id="interviewsPage" class="page hidden">
-        <h2>My Interviews</h2>
-        <p>Here you will see all your recorded interviews.</p>
+    <div id="myInterviewsPage" class="page hidden">
+        <h2 class="mb-4">My Interviews</h2>
+        <div id="interviewsList"></div>
+
+        <!-- Loading GIF -->
+        <div id="historyLoading" class="mb-4 text-center hidden">
+            <img src="img/loading.gif" alt="Loading..." style="width: 50px; height: 50px;">
+        </div>
     </div>
 
     <!-- Settings Page -->

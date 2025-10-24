@@ -13,7 +13,6 @@ import com.myinterviewbot.service.OllamaService;
 import com.myinterviewbot.service.WhisperService;
 import com.myinterviewbot.utils.Utils;
 import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -102,7 +101,8 @@ public class InterviewController {
 
         // Saves the interview entry
         final long timestamp = Utils.getTimestamp(videoFile.getName());
-        interviewDataService.addInterview(timestamp, new InterviewEntry(timestamp, profession, question, transcript, feedback, videoFile.getAbsolutePath()));
+        final String videoUrl = Utils.getVideoUrl(videoFile.getName());
+        interviewDataService.addInterview(timestamp, new InterviewEntry(timestamp, profession, question, transcript, feedback, videoUrl));
 
         return new FeedbackResponse(feedback, transcript);
     }

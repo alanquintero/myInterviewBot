@@ -8,11 +8,13 @@ import com.myinterviewbot.model.InterviewEntry;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.myinterviewbot.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -59,7 +61,7 @@ public class InterviewDataService {
     public void initData() {
         LOGGER.info("initData");
         // Writable location inside uploads/interviews
-        final File uploadDir = new File("uploads/interviews");
+        final File uploadDir = new File(Utils.INTERVIEWS_DIR);
         if (!uploadDir.exists()) {
             if (uploadDir.mkdirs()) {
                 LOGGER.warn("Unable to create uploads/interviews directory");
@@ -86,9 +88,14 @@ public class InterviewDataService {
         saveToFile();
     }
 
-    public void removeInterview(final Long id) {
-        interviews.remove(id);
+    public Collection<InterviewEntry> getAllInterviews() {
+        return interviews.values();
+    }
+
+    public boolean removeInterview(final Long id) {
+        final InterviewEntry entry = interviews.remove(id);
         saveToFile();
+        return entry != null;
     }
 
     public void clearInterviews() {
