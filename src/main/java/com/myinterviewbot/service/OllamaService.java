@@ -156,8 +156,8 @@ public class OllamaService {
             final String result = output.toString().trim();
             LOGGER.debug("Full Ollama output:\n{}", result);
 
-            if (result.isEmpty()) {
-                return "No response received from Ollama.";
+            if (result.isEmpty() || process.exitValue() != 0) {
+                return "";
             }
 
             /*
@@ -178,7 +178,7 @@ public class OllamaService {
 
         } catch (Exception e) {
             LOGGER.error("Error running Ollama", e);
-            return "Error running Ollama: " + e.getMessage();
+            return "";
         }
     }
 }

@@ -79,7 +79,10 @@ async function generateQuestion(profession) {
         // show question card
         questionCard.classList.remove("hidden");
         anotherQuestionCard.classList.remove("hidden");
-        if (data.question) {
+
+        if (!data.question || data.question.trim() === '') {
+            alert('No question was generated. Please try again.');
+        } else {
             professionCard.classList.remove("hidden");
             professionCardEl.textContent = profession;
             showRecordingSection();
@@ -230,6 +233,10 @@ async function sendVideo(blob) {
         feedbackContainer.classList.remove("hidden");
         feedbackSection.classList.remove("hidden");
         resetSection.classList.remove("hidden");
+
+        if (!data.feedback || data.feedback.trim() === '') {
+            alert('No feedback was generated. Please try again.');
+        }
 
         transcriptEl.innerText = data.transcript || "";
         feedbackEl.innerText = data.feedback || "No feedback returned";

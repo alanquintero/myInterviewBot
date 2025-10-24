@@ -77,20 +77,24 @@ public class InterviewController {
     @PostMapping(value = "/feedback", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public FeedbackResponse getFeedback(@RequestParam("file") final MultipartFile file, @RequestParam("profession") final String profession, @RequestParam("question") final String question) throws Exception {
         LOGGER.info("/feedback file: {}; profession: {}; question: {}", file, profession, question);
+        final FeedbackResponse emptyResult = new FeedbackResponse("", "");
 
         // Save file locally
         final File videoFile = Utils.saveVideo(file);
+        if (videoFile == null) {
+            return emptyResult;
+        }
 
         // Extract audio
         final File audioFile = ffmpegService.extractAudio(videoFile);
         if (audioFile == null) {
-            return new FeedbackResponse("", "");
+            return emptyResult;
         }
 
         // Transcribe audio
         final String transcript = whisperService.transcribe(audioFile);
         if (transcript == null || transcript.isEmpty()) {
-            return new FeedbackResponse("", "");
+            return emptyResult;
         }
 
         // Get AI feedback

@@ -38,31 +38,34 @@ public class Utils {
      *
      * @param file the uploaded video file
      * @return the {@link File} object pointing to the saved video, or {@code null} if
-     * the directory could not be created
-     * @throws IOException if an error occurs while writing the file
+     * the directory could not be created.
      */
-    public static File saveVideo(final MultipartFile file) throws IOException {
-        // Ensure base upload directory exists
-        final File uploadsDir = new File(INTERVIEWS_DIR);
-        if (!uploadsDir.exists() && !uploadsDir.mkdirs()) {
-            throw new IOException("Failed to create uploads/interviews directory");
-        }
+    public static File saveVideo(final MultipartFile file) {
+        try {
+            // Ensure base upload directory exists
+            final File uploadsDir = new File(INTERVIEWS_DIR);
+            if (!uploadsDir.exists() && !uploadsDir.mkdirs()) {
+                throw new IOException("Failed to create uploads/interviews directory");
+            }
 
-        // Generate timestamped filename and directory
-        final String filename = System.currentTimeMillis() + "-" + file.getOriginalFilename();
-        final String baseName = filename.replaceFirst("\\.webm$", "");
-        final File recordDir = new File(INTERVIEWS_DIR + baseName);
-        if (!recordDir.exists() && !recordDir.mkdirs()) {
-            throw new IOException("Failed to create record directory: " + recordDir.getAbsolutePath());
-        }
+            // Generate timestamped filename and directory
+            final String filename = System.currentTimeMillis() + "-" + file.getOriginalFilename();
+            final String baseName = filename.replaceFirst("\\.webm$", "");
+            final File recordDir = new File(INTERVIEWS_DIR + baseName);
+            if (!recordDir.exists() && !recordDir.mkdirs()) {
+                throw new IOException("Failed to create record directory: " + recordDir.getAbsolutePath());
+            }
 
-        // Save video file
-        final File videoFile = new File(recordDir, filename);
-        try (FileOutputStream fos = new FileOutputStream(videoFile)) {
-            fos.write(file.getBytes());
+            // Save video file
+            final File videoFile = new File(recordDir, filename);
+            try (FileOutputStream fos = new FileOutputStream(videoFile)) {
+                fos.write(file.getBytes());
+            }
+            return videoFile;
+        } catch (Exception e) {
+            LOGGER.error("Failed while saving file.", e);
         }
-
-        return videoFile;
+        return null;
     }
 
 
