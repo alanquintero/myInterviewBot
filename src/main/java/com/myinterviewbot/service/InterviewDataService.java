@@ -58,25 +58,22 @@ public class InterviewDataService {
         return instance;
     }
 
-    public void initData() {
+    public void initData() throws IOException {
         LOGGER.info("initData");
-        // Writable location inside uploads/interviews
-        final File uploadDir = new File(Utils.INTERVIEWS_DIR);
-        if (!uploadDir.exists()) {
-            if (uploadDir.mkdirs()) {
-                LOGGER.warn("Unable to create uploads/interviews directory");
-                return;
-            }
+        // Ensure base upload directory exists
+        final File uploadsDir = new File(Utils.INTERVIEWS_DIR);
+        if (!uploadsDir.exists() && !uploadsDir.mkdirs()) {
+            throw new IOException("Failed to create uploads/interviews directory");
         }
 
-        storageFile = new File(uploadDir, "interviews.json");
+        storageFile = new File(uploadsDir, "interviews.json");
 
         // Create empty JSON file if it doesn't exist
         if (!storageFile.exists()) {
             try {
                 objectMapper.writerWithDefaultPrettyPrinter().writeValue(storageFile, new LinkedHashMap<>());
             } catch (IOException e) {
-                LOGGER.error("Failed to create interviews.json: {}", e.getMessage());
+                throw new IOException("Failed to create interviews.json");
             }
         }
 

@@ -80,9 +80,6 @@ public class InterviewController {
 
         // Save file locally
         final File videoFile = Utils.saveVideo(file);
-        if (videoFile == null) {
-            return new FeedbackResponse("", "");
-        }
 
         // Extract audio
         final File audioFile = ffmpegService.extractAudio(videoFile);

@@ -42,14 +42,21 @@ public class Utils {
      * @throws IOException if an error occurs while writing the file
      */
     public static File saveVideo(final MultipartFile file) throws IOException {
-        final String filename = System.currentTimeMillis() + "-" + file.getOriginalFilename();
+        // Ensure base upload directory exists
+        final File uploadsDir = new File(INTERVIEWS_DIR);
+        if (!uploadsDir.exists() && !uploadsDir.mkdirs()) {
+            throw new IOException("Failed to create uploads/interviews directory");
+        }
 
+        // Generate timestamped filename and directory
+        final String filename = System.currentTimeMillis() + "-" + file.getOriginalFilename();
         final String baseName = filename.replaceFirst("\\.webm$", "");
         final File recordDir = new File(INTERVIEWS_DIR + baseName);
         if (!recordDir.exists() && !recordDir.mkdirs()) {
-            return null;
+            throw new IOException("Failed to create record directory: " + recordDir.getAbsolutePath());
         }
 
+        // Save video file
         final File videoFile = new File(recordDir, filename);
         try (FileOutputStream fos = new FileOutputStream(videoFile)) {
             fos.write(file.getBytes());

@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 /**
  * Service responsible for initializing data when app starts.
  *
@@ -27,7 +29,7 @@ public class InitDataService {
     }
 
     @PostConstruct
-    public void init() {
+    public void init() throws IOException {
         LOGGER.info("Initializing data...");
         interviewDataService.initData();
     }
