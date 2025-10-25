@@ -73,14 +73,14 @@ public class Utils {
      * Deletes all interview folders inside the uploads/interviews directory.
      */
     public static String clearAllInterviews() {
-        File baseDir = new File(INTERVIEWS_DIR);
+        final File baseDir = new File(INTERVIEWS_DIR);
 
         if (!baseDir.exists()) {
             LOGGER.warn("Base directory does not exist: {}", INTERVIEWS_DIR);
             return "No interviews found to delete.";
         }
 
-        boolean success = deleteDirectoryContents(baseDir);
+        final boolean success = deleteDirectoryContents(baseDir);
         if (success) {
             LOGGER.info("All interviews cleared successfully.");
             return "All interviews have been deleted successfully.";
@@ -97,7 +97,7 @@ public class Utils {
      * @param directory the parent directory to clear
      * @return true if everything was deleted successfully, false otherwise
      */
-    private static boolean deleteDirectoryContents(File directory) {
+    private static boolean deleteDirectoryContents(final File directory) {
         final File[] files = directory.listFiles();
         if (files == null) {
             return false;
