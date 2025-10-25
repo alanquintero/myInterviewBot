@@ -1,17 +1,18 @@
-// Profession
-const professionEl = document.getElementById("profession");
-const professionCard = document.getElementById("professionCard");
-const professionCardEl = document.getElementById("selectedProfession");
+/* Input section */
+const inputProfession = document.getElementById("inputProfession");
+const inputQuestion = document.getElementById("inputQuestion");
 
-// Question
-const getQuestionBtn = document.getElementById("getQuestionBtn");
-const questionEl = document.getElementById("question");
-const questionCard = document.getElementById("questionCard");
-const anotherQuestionCard = document.getElementById("anotherQuestionCard");
-const getAnotherQuestionBtn = document.getElementById("getAnotherQuestionBtn");
+/* Button section */
+const generateQuestionBtn = document.getElementById("generateQuestionBtn");
+const resetBtnTop = document.getElementById("resetBtnTop");
+const readyBtn = document.getElementById("readyBtn");
 
-// Recording
-const recordingContainer = document.getElementById("recordingContainer");
+/* Loading Question GIF */
+const loadingQuestion = document.getElementById("loadingQuestion");
+
+/* Recording & Playback section */
+const recordingPlaybackContainer = document.getElementById("recordingPlaybackContainer");
+// Recording section
 const recordingSection = document.getElementById("recordingSection");
 const videoEl = document.getElementById("video");
 const videoPlaceholder = document.getElementById("videoPlaceholder");
@@ -21,119 +22,157 @@ const recordLabel = document.getElementById("recordLabel");
 const recordingOverlay = document.getElementById("recordingOverlay");
 const recordingIndicator = document.getElementById("recordingIndicator");
 const recordingTimer = document.getElementById("recordingTimer");
+// Playback section
 const playbackSection = document.getElementById("playbackSection");
 const playbackEl = document.getElementById("playback");
-const sendResponseBtn = document.getElementById("sendResponseBtn");
-
-// Feedback
-const feedbackContainer = document.getElementById("feedbackContainer");
+// Generate Feedback button
 const generateFeedbackSection = document.getElementById("generateFeedbackSection");
-const feedbackEl = document.getElementById("feedback");
-const feedbackSection = document.getElementById("feedbackSection");
-const feedbackSpinner = document.getElementById("feedbackLoading");
+const generateFeedbackBtn = document.getElementById("generateFeedbackBtn");
+
+/* Loading Feedback GIF */
+const loadingFeedback = document.getElementById("loadingFeedback");
+
+/* Transcript & Feedback section */
+const transcriptFeedbackContainer = document.getElementById("transcriptFeedbackContainer");
+// Transcript section
 const transcriptSection = document.getElementById("transcriptSection");
 const transcriptEl = document.getElementById("transcript");
+// Feedback section
+const feedbackSection = document.getElementById("feedbackSection");
+const feedbackEl = document.getElementById("feedback");
 
-// Reset
-const resetSectionUp = document.getElementById("resetSectionUp");
-const resetButtonUp = document.getElementById("resetBtnUp");
-const resetSectionDown = document.getElementById("resetSectionDown");
-const resetButtonDown = document.getElementById("resetBtnDown");
+/* Reset section */
+const resetSection = document.getElementById("resetSection");
+const resetBtnDown = document.getElementById("resetBtnDown");
 
 const MAX_RECORDING_TIME = 150; // in seconds (2 minutes 30 seconds)
+const RECORD_VIDEO_AGAIN_TXT = "Click to record again →";
+const RECORD_BTN_IMG_URL = "img/button/record.png";
+const STOP_RECORD_BTN_IMG_URL = "img/button/stop.gif";
 let timerInterval;
 let mediaRecorder;
 let currentStream = null;
 let recordedChunks = [];
 let isRecording = false;
 
-// Request a question
-getQuestionBtn.addEventListener("click", async () => {
+// Request a generated question
+generateQuestionBtn.addEventListener("click", async () => {
     console.log("Generating Question");
-    const profession = professionEl.value || "Software Engineer";
+    // Disable elements while loading
+    setElementsDisabled(true);
+
+    setProfessionIfBlank();
+    const profession = inputProfession.value;
     console.log("Profession: ", profession);
 
-    // Hide elements and show loading GIF
+    // Hide elements if case they are present
     hideElements();
-    document.getElementById("questionLoading").classList.remove("hidden");
 
     await generateQuestion(profession);
+    // Enable elements
+    setElementsDisabled(false);
 });
 
-getAnotherQuestionBtn.addEventListener("click", async () => {
-    console.log("Generating Another Question");
-    const profession = professionCardEl.textContent || "Software Engineer";
-    console.log("Profession: ", profession);
+// Set the Profession to default value "Software Engineer", if Profession left in blank.
+function setProfessionIfBlank() {
+    if (!inputProfession.value || inputProfession.value.trim() === '') {
+        console.log("Set Profession to default value");
+        inputProfession.value = "Software Engineer";
+    }
+}
 
-    // Hide elements and show loading GIF
-    questionEl.textContent = "...";
-    playbackEl.src = "";
-    playbackSection.classList.add("hidden");
-    recordingContainer.classList.add("hidden");
-    generateFeedbackSection.classList.add("hidden");
-    document.getElementById("questionLoading").classList.remove("hidden");
-
-    await generateQuestion(profession);
-});
-
+// Call API to generate a question
 async function generateQuestion(profession) {
+    loadingQuestion.classList.remove("hidden"); // show loading GIF
     try {
         const res = await fetch(`/api/v1/question?profession=${encodeURIComponent(profession)}`);
         const data = await res.json();
-        questionEl.textContent = data.question || "No question returned";
-        // show question card
-        questionCard.classList.remove("hidden");
-        anotherQuestionCard.classList.remove("hidden");
 
         if (!data.question || data.question.trim() === '') {
             alert('No question was generated. Please try again.');
         } else {
-            professionCard.classList.remove("hidden");
-            professionCardEl.textContent = profession;
-            resetSectionUp.classList.remove("hidden");
-            showRecordingSection();
+            inputQuestion.value = data.question;
         }
     } catch (err) {
         console.error(err);
-        questionEl.textContent = "Error fetching question";
     } finally {
-        document.getElementById("questionLoading").classList.add("hidden"); // hide loading GIF
+        loadingQuestion.classList.add("hidden"); // hide loading GIF
     }
 }
 
-resetButtonDown.addEventListener("click", async () => {
+// Click on Ready button
+readyBtn.addEventListener("click", async () => {
+    console.log("Click on ready button");
+    // Disable elements while loading
+    setElementsDisabled(true);
+
+    setProfessionIfBlank();
+    const profession = inputProfession.value;
+    console.log("Profession: ", profession);
+
+    if (!inputQuestion.value || inputQuestion.value.trim() === '') {
+        // Getting a generated question if question left in blank
+        await generateQuestion(profession);
+
+        if (!inputQuestion.value || inputQuestion.value.trim() === '') {
+            alert('Something went wrong. Please try again.');
+        } else {
+            showRecordingSection();
+        }
+    } else {
+        showRecordingSection();
+    }
+    // Enable Reset button
+    resetBtnTop.disabled = false;
+});
+
+// Click on Reset button top
+resetBtnTop.addEventListener("click", async () => {
+    console.log("Click on reset button top");
+    reset();
+});
+
+// Click on Ready button down
+resetBtnDown.addEventListener("click", async () => {
     console.log("Click on reset button down");
     reset();
 });
 
-resetButtonUp.addEventListener("click", async () => {
-    console.log("Click on reset button up");
-    reset();
-});
-
+// Reset to initial config
 function reset() {
     hideElements();
     stopCamera();
+    setElementsDisabled(false);
     // Reset other UI states
+    inputQuestion.value = "";
     recordedChunks = [];
+    timerInterval = null;
+    mediaRecorder = null;
+    currentStream = null;
+    isRecording = false;
 }
 
-sendResponseBtn.addEventListener("click", async () => {
+// Click on Generate Feedback button
+generateFeedbackBtn.addEventListener("click", async () => {
     if (recordedChunks.length === 0) {
         console.log("No recording found.");
         return;
     }
     console.log("Generating feedback...");
+    setResetButtonsDisabled(true);
     const blob = new Blob(recordedChunks, {type: "video/webm"});
     await sendVideo(blob);
+    setResetButtonsDisabled(false);
 });
 
+// Click on Record button
 recordBtn.addEventListener("click", async () => {
     if (!isRecording) {
-        console.log("Click on Start recording...");
+        console.log("Clicked on Start recording...");
         // Hide Playback and Generate Feedback sections
         playbackSection.classList.add("hidden");
         generateFeedbackSection.classList.add("hidden");
+        playbackEl.src = '';
 
         // Start Recording
         try {
@@ -160,7 +199,7 @@ recordBtn.addEventListener("click", async () => {
 
             mediaRecorder.start();
             isRecording = true;
-            recordBtnImg.src = "img/button/stop.gif";
+            recordBtnImg.src = STOP_RECORD_BTN_IMG_URL;
             recordLabel.textContent = "";
             startRecordingUI(); // countdown and gif handled here
 
@@ -169,34 +208,38 @@ recordBtn.addEventListener("click", async () => {
             alert("Failed to start recording. Make sure microphone and camera are allowed.");
         }
     } else {
-        console.log("Click on Stop recording...");
+        console.log("Clicked on Stop recording...");
         // Stop Recording manually
         if (mediaRecorder && mediaRecorder.state === "recording") {
             mediaRecorder.stop();
         }
         isRecording = false;
-        recordBtnImg.src = "img/button/record.png";
-        recordLabel.textContent = "Record again";
+        recordBtnImg.src = RECORD_BTN_IMG_URL;
+        recordLabel.textContent = RECORD_VIDEO_AGAIN_TXT;
         stopRecordingUI();
     }
 });
 
+// Shows the Recoding section
 function showRecordingSection() {
     console.log("Showing recording section...");
     recordingSection.classList.remove("hidden");
-    recordingContainer.classList.remove("hidden");
+    // Playback should not be visible until there is a recorded video
+    playbackSection.classList.add("hidden");
+    recordingPlaybackContainer.classList.remove("hidden");
     recordBtn.disabled = false;
     videoPlaceholder.classList.remove("hidden");
 
     // Add fade-in effect
-    recordingContainer.classList.add("fade-in");
+    recordingPlaybackContainer.classList.add("fade-in");
     setTimeout(() => {
-        recordingContainer.classList.add("show");
+        recordingPlaybackContainer.classList.add("show");
     }, 500); // small delay to trigger CSS transition
 
     initCamera(); // start camera preview immediately
 }
 
+// Inits the webcam
 async function initCamera() {
     console.log("Init camera...");
     try {
@@ -211,6 +254,7 @@ async function initCamera() {
     }
 }
 
+// Stops the webcam
 function stopCamera() {
     console.log("Stop camera...");
     videoEl.pause();
@@ -228,11 +272,11 @@ async function sendVideo(blob) {
     console.log("Sending video...");
     const formData = new FormData();
     formData.append("file", blob, "answer.webm");
-    formData.append("profession", professionCardEl.textContent)
-    formData.append("question", questionEl.textContent)
+    formData.append("profession", inputProfession.textContent)
+    formData.append("question", inputQuestion.value)
 
-    feedbackSpinner.style.display = "inline-block";
-    sendResponseBtn.disabled = true;
+    loadingFeedback.classList.remove("hidden");
+    generateFeedbackBtn.disabled = true;
     recordBtn.disabled = true;
     recordLabel.textContent = "";
     stopCamera();
@@ -244,25 +288,28 @@ async function sendVideo(blob) {
         });
         const data = await res.json();
 
-        transcriptSection.classList.remove("hidden");
-        feedbackContainer.classList.remove("hidden");
-        feedbackSection.classList.remove("hidden");
-        resetSectionDown.classList.remove("hidden");
-
         if (!data.feedback || data.feedback.trim() === '') {
             alert('No feedback was generated. Please try again.');
-        }
+            generateFeedbackBtn.disabled = false;
+        } else {
+            transcriptFeedbackContainer.classList.remove("hidden");
+            transcriptSection.classList.remove("hidden");
+            feedbackSection.classList.remove("hidden");
+            resetSection.classList.remove("hidden");
 
-        transcriptEl.innerText = data.transcript || "";
-        feedbackEl.innerText = data.feedback || "No feedback returned";
+            transcriptEl.innerText = data.transcript || "";
+            feedbackEl.innerText = data.feedback || "No feedback returned";
+        }
     } catch (err) {
         console.error(err);
-        feedbackEl.innerText = "Error sending video for feedback";
+        alert('No feedback was generated. Please try again.');
+        generateFeedbackBtn.disabled = false;
     } finally {
-        feedbackSpinner.style.display = "none";
+        loadingFeedback.classList.add("hidden");
     }
 }
 
+// Show UI elements for when Recording is active
 function startRecordingUI() {
     console.log("start Recording UI...");
     recordingIndicator.classList.remove("hidden");
@@ -282,40 +329,58 @@ function startRecordingUI() {
                 mediaRecorder.stop();
             }
             isRecording = false;
-            recordBtnImg.src = "img/button/record.png";
-            recordLabel.textContent = "Record again";
+            recordBtnImg.src = RECORD_BTN_IMG_URL;
+            recordLabel.textContent = RECORD_VIDEO_AGAIN_TXT;
             stopRecordingUI();
             clearInterval(timerInterval);
         }
     }, 1000);
 }
 
+// Hide UI elements for when Recording is stopped
 function stopRecordingUI() {
     console.log("stop Recording UI...");
     recordingIndicator.classList.add("hidden");
     recordingTimer.classList.add("hidden");
     recordingOverlay.classList.remove("active");
-    sendResponseBtn.disabled = false;
+    generateFeedbackBtn.disabled = false;
     clearInterval(timerInterval);
 }
 
+// Updates the recording timer
 function updateTimerDisplay(seconds) {
     const minutes = Math.floor(seconds / 60).toString().padStart(2, "0");
     const secs = (seconds % 60).toString().padStart(2, "0");
     recordingTimer.textContent = `${minutes}:${secs}`;
 }
 
+// Hide UI elements
 function hideElements() {
     console.log("hide elements...");
-    questionCard.classList.add("hidden");
-    anotherQuestionCard.classList.add("hidden");
     recordingSection.classList.add("hidden");
-    recordingContainer.classList.add("hidden");
+    recordingPlaybackContainer.classList.add("hidden");
     playbackSection.classList.add("hidden");
     generateFeedbackSection.classList.add("hidden");
-    resetSectionDown.classList.add("hidden");
+    resetSection.classList.add("hidden");
     transcriptSection.classList.add("hidden");
-    feedbackContainer.classList.add("hidden");
+    transcriptFeedbackContainer.classList.add("hidden");
     feedbackSection.classList.add("hidden");
-    resetSectionUp.classList.add("hidden");
+}
+
+// Enables/disables UI elements
+function setElementsDisabled(disabled) {
+    console.log("disable elements; disabled: ", disabled);
+    inputProfession.disabled = disabled;
+    inputQuestion.disabled = disabled;
+    generateQuestionBtn.disabled = disabled;
+    readyBtn.disabled = disabled;
+    resetBtnTop.disabled = disabled;
+    resetBtnDown.disabled = disabled;
+}
+
+// Enables/disables reset buttons
+function setResetButtonsDisabled(disabled) {
+    console.log("enable disable reset buttons; disabled: ", disabled);
+    resetBtnTop.disabled = disabled;
+    resetBtnDown.disabled = disabled;
 }
