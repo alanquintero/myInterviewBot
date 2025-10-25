@@ -174,7 +174,8 @@
 
             <!-- Reset section -->
             <div id="resetSection" class="mb-4 hidden">
-                <button id="resetBtnDown" class="btn btn-warning mb-3 d-flex align-items-center justify-content-center">
+                <button id="resetBtnBottom"
+                        class="btn btn-warning mb-3 d-flex align-items-center justify-content-center">
                     Reset
                 </button>
             </div>
@@ -184,7 +185,19 @@
     <!-- My Interviews Page -->
     <div id="myInterviewsPage" class="page hidden">
         <h2 class="mb-4">My Interviews</h2>
+
+        <!-- Pagination Controls -->
+        <nav>
+            <ul id="paginationTop" class="pagination justify-content-center mt-3"></ul>
+        </nav>
+
+        <!-- My Interviews -->
         <div id="interviewsList"></div>
+
+        <!-- Pagination Controls -->
+        <nav>
+            <ul id="paginationBottom" class="pagination justify-content-center mt-3"></ul>
+        </nav>
 
         <!-- Loading GIF -->
         <div id="historyLoading" class="mb-4 text-center hidden">

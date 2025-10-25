@@ -43,7 +43,7 @@ const feedbackEl = document.getElementById("feedback");
 
 /* Reset section */
 const resetSection = document.getElementById("resetSection");
-const resetBtnDown = document.getElementById("resetBtnDown");
+const resetBtnBottom = document.getElementById("resetBtnBottom");
 
 const MAX_RECORDING_TIME = 150; // in seconds (2 minutes 30 seconds)
 const RECORD_VIDEO_AGAIN_TXT = "Click to record again →";
@@ -133,7 +133,7 @@ resetBtnTop.addEventListener("click", async () => {
 });
 
 // Click on Ready button down
-resetBtnDown.addEventListener("click", async () => {
+resetBtnBottom.addEventListener("click", async () => {
     console.log("Click on reset button down");
     reset();
 });
@@ -272,7 +272,7 @@ async function sendVideo(blob) {
     console.log("Sending video...");
     const formData = new FormData();
     formData.append("file", blob, "answer.webm");
-    formData.append("profession", inputProfession.textContent)
+    formData.append("profession", inputProfession.value)
     formData.append("question", inputQuestion.value)
 
     loadingFeedback.classList.remove("hidden");
@@ -375,14 +375,14 @@ function setElementsDisabled(disabled) {
     generateQuestionBtn.disabled = disabled;
     readyBtn.disabled = disabled;
     resetBtnTop.disabled = disabled;
-    resetBtnDown.disabled = disabled;
+    resetBtnBottom.disabled = disabled;
 }
 
 // Enables/disables reset buttons
 function setResetButtonsDisabled(disabled) {
     console.log("enable disable reset buttons; disabled: ", disabled);
     resetBtnTop.disabled = disabled;
-    resetBtnDown.disabled = disabled;
+    resetBtnBottom.disabled = disabled;
 }
 
 // Inserts the clicked question into the inputQuestion field
