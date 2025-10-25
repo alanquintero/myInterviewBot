@@ -150,4 +150,17 @@ public class Utils {
 
         return INTERVIEWS_DIR + nameWithoutExt + "/" + filename;
     }
+
+    public static int countWords(final String text) {
+        if (text == null || text.isEmpty()) {
+            return 0;
+        }
+        int wordCount = 1;
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) == ' ') {
+                wordCount++;
+            }
+        }
+        return wordCount;
+    }
 }

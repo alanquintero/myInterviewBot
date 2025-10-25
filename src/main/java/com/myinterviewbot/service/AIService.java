@@ -4,6 +4,7 @@
  */
 package com.myinterviewbot.service;
 
+import com.myinterviewbot.utils.Utils;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +29,13 @@ import java.util.concurrent.TimeUnit;
  * @author Alan Quintero
  */
 @Service
-public class OllamaService {
+public class AIService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OllamaService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AIService.class);
 
+    private static final int QUESTION_MAX_NUMBER_OF_WORDS = 20;
+    private static final int FEEDBACK_MAX_NUMBER_OF_WORDS = 200;
+    private static final int MAX_NUMBER_OF_ATTEMPTS = 3;
 
     @Value("${interviewbot.default-model}")
     private String defaultModel;
@@ -65,16 +69,74 @@ public class OllamaService {
             prompt = "Give me another behavioral interview question for a " + profession + ". Remember that the question must be less than 15 words. Only output the question.";
         }
 
-        return runOllama(prompt);
+        /*
+            Sometimes the model response with a very long question, the next code will try to avoid returning a long question by asking the model to generate another question.
+            This process will be repeated a maximum of three time, hope the model can generate a good question.
+        */
+        String question = runOllama(prompt);
+        int words = Utils.countWords(question);
+        if (words > QUESTION_MAX_NUMBER_OF_WORDS) {
+            LOGGER.warn("⚠︎⚠︎⚠︎ Question has more than " + QUESTION_MAX_NUMBER_OF_WORDS + " words, asking model to generate another question...");
+            int requestNewAnswer = 0;
+            while (requestNewAnswer < MAX_NUMBER_OF_ATTEMPTS) {
+                requestNewAnswer++;
+                prompt = "Please provide the next behavioral interview question in " + QUESTION_MAX_NUMBER_OF_WORDS + " words or less: " + question;
+                question = runOllama(prompt);
+                words = Utils.countWords(question);
+                if (words <= QUESTION_MAX_NUMBER_OF_WORDS) {
+                    break;
+                } else {
+                    LOGGER.warn("⚠︎⚠︎⚠︎ New generated question has more than " + QUESTION_MAX_NUMBER_OF_WORDS + " words, asking model to generate another question...");
+                }
+            }
+        }
+        words = Utils.countWords(question);
+        if (words > QUESTION_MAX_NUMBER_OF_WORDS) {
+            LOGGER.warn("⚠︎⚠︎⚠︎ The question has more than " + QUESTION_MAX_NUMBER_OF_WORDS + " words!");
+        } else {
+            LOGGER.info("Number of words in the question: {}", words);
+        }
+
+        return question;
     }
 
     public String generateFeedback(final String transcript, final String profession, final String question) {
-        final String prompt = "You are a technical hiring manager. Evaluate the following interview answer, focusing on clarity, structure, relevance, and communication style. "
+        String prompt = "You are a technical hiring manager. Evaluate the following interview answer, focusing on clarity, structure, relevance, and communication style. "
                 + "Provide actionable feedback in 3–4 concise sentences, output only the feedback, no extra commentary. "
                 + "Candidate profession: " + profession + ". "
                 + "Question: " + question + ". "
                 + "Candidate answer: " + transcript;
-        return runOllama(prompt);
+
+        String feedback = runOllama(prompt);
+
+        /*
+            Sometimes the model response with a very long feedback, the next code will try to avoid returning a long feedback by asking the model to generate another feedback.
+            This process will be repeated a maximum of three time, hope the model can generate a good and short feedback.
+        */
+        int words = Utils.countWords(feedback);
+        if (words > FEEDBACK_MAX_NUMBER_OF_WORDS) {
+            LOGGER.warn("⚠︎⚠︎⚠︎ Feedback has more than " + FEEDBACK_MAX_NUMBER_OF_WORDS + " words, asking model to generate another feedback...");
+            int requestNewFeedback = 0;
+            while (requestNewFeedback < MAX_NUMBER_OF_ATTEMPTS) {
+                requestNewFeedback++;
+                prompt = "Please provide the next feedback in " + FEEDBACK_MAX_NUMBER_OF_WORDS + " words or less: " + feedback;
+
+                feedback = runOllama(prompt);
+                words = Utils.countWords(feedback);
+                if (words <= FEEDBACK_MAX_NUMBER_OF_WORDS) {
+                    break;
+                } else {
+                    LOGGER.warn("⚠︎⚠︎⚠︎ New generated feedback has more than " + FEEDBACK_MAX_NUMBER_OF_WORDS + "  words, asking model to generate another feedback...");
+                }
+            }
+        }
+        words = Utils.countWords(feedback);
+        if (words > FEEDBACK_MAX_NUMBER_OF_WORDS) {
+            LOGGER.warn("⚠︎⚠︎⚠︎ The feedback has more than " + FEEDBACK_MAX_NUMBER_OF_WORDS + " words!");
+        } else {
+            LOGGER.info("Number of words in the feedback: {}", words);
+        }
+        return feedback;
     }
 
     /**

@@ -59,4 +59,25 @@ public class UtilsTest {
         final String expectedUrl = Utils.INTERVIEWS_DIR + "1761356955742-answer/" + filename;
         assertEquals(expectedUrl, videoUrl);
     }
+
+    @Test
+    void countWords() {
+        // Given
+        final String text = "hello this is a test";
+
+        // When
+        final int words = Utils.countWords(text);
+
+        // Then
+        assertEquals(5, words);
+    }
+
+    @Test
+    void countWords_inputIsEmpty() {
+        // When
+        final int words = Utils.countWords("");
+
+        // Then
+        assertEquals(0, words);
+    }
 }
