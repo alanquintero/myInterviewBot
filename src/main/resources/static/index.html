@@ -9,6 +9,8 @@
 
     <!-- Bootstrap CSS -->
     <link href="vendor/bootstrap-5.3.8-dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons CSS -->
+    <link rel="stylesheet" href="vendor/bootstrap-icons-1.13.1/bootstrap-icons.css">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/styles.css">
@@ -43,7 +45,7 @@
 
     <!-- Home Page -->
     <div id="homePage" class="page">
-        <!-- Your full existing Home content -->
+        <!-- Home content -->
         <fieldset class="container mt-4 text-center">
             <div class="d-flex justify-content-center align-items-center mb-4">
                 <img src="img/myInterviewBot.jpeg" alt="MyInterviewBot Logo" class="rounded-circle me-3 logo">
@@ -52,16 +54,23 @@
 
             <!-- Input section -->
             <div id="inputSection">
-                <div class="mb-3">
-                    <label for="inputProfession" class="form-label">Profession:</label>
-                    <input type="text" class="form-control" id="inputProfession" placeholder="e.g. Software Engineer">
+                <!-- Profession -->
+                <div class="mb-3 d-flex justify-content-between align-items-center">
+                    <label for="inputProfession" class="form-label mb-0">Profession:</label>
                 </div>
+                <input type="text" class="form-control" id="inputProfession" placeholder="e.g. Software Engineer">
+                <br>
 
-                <div class="mb-3">
-                    <label for="inputQuestion" class="form-label">Question:</label>
-                    <textarea class="form-control" id="inputQuestion" rows="3"
-                              placeholder="e.g. Tell me about a time you faced a challenge at work."></textarea>
+                <!-- Question -->
+                <div class="mb-3 d-flex justify-content-between align-items-center">
+                    <label for="inputQuestion" class="form-label mb-0">Question:</label>
+                    <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#commonQuestionsModal">
+                        <i class="bi bi-info-circle"></i> Common Questions
+                    </button>
                 </div>
+                <textarea class="form-control" id="inputQuestion" rows="3"
+                          placeholder="e.g. Tell me about a time you faced a challenge at work."></textarea>
             </div>
 
             <!-- Button section -->
@@ -208,7 +217,8 @@
 
 </main>
 
-<!-- Modal -->
+<!-- Modals -->
+<!-- Info -->
 <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -230,6 +240,37 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Got it!</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Questions -->
+<div class="modal fade" id="commonQuestionsModal" tabindex="-1" aria-labelledby="commonQuestionsLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commonQuestionsLabel">Common Behavioral Interview Questions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted small mb-0">Select a question to add it</p>
+                <ul class="list-group">
+                    <li class="list-group-item">1. Tell me about a time you faced a challenge at work.</li>
+                    <li class="list-group-item">2. Describe a situation where you had to work under pressure.</li>
+                    <li class="list-group-item">3. Give an example of a time you showed leadership.</li>
+                    <li class="list-group-item">4. Tell me about a mistake you made and what you learned from it.</li>
+                    <li class="list-group-item">5. Describe a time you had a conflict with a coworker and how you
+                        resolved it.
+                    </li>
+                    <li class="list-group-item">6. Give an example of when you went above and beyond your
+                        responsibilities.
+                    </li>
+                    <li class="list-group-item">7. Tell me about a time you had to learn something quickly.</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

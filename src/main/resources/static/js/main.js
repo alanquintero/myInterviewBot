@@ -384,3 +384,16 @@ function setResetButtonsDisabled(disabled) {
     resetBtnTop.disabled = disabled;
     resetBtnDown.disabled = disabled;
 }
+
+// Inserts the clicked question into the inputQuestion field
+document.querySelectorAll('#commonQuestionsModal .list-group-item').forEach(item => {
+    item.addEventListener('click', () => {
+        document.getElementById('inputQuestion').value = item.textContent
+            .replace(/^\d+\.\s*/, '') // remove leading number and dot
+            .replace(/\r?\n|\r/g, ' ') // replace any line breaks with space
+            .trim(); // remove extra spaces at start/end
+
+        const modal = bootstrap.Modal.getInstance(document.getElementById('commonQuestionsModal'));
+        modal.hide();
+    });
+});
