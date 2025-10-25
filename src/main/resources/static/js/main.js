@@ -67,7 +67,10 @@ getAnotherQuestionBtn.addEventListener("click", async () => {
 
     // Hide elements and show loading GIF
     questionEl.textContent = "...";
+    playbackEl.src = "";
+    playbackSection.classList.add("hidden");
     recordingContainer.classList.add("hidden");
+    generateFeedbackSection.classList.add("hidden");
     document.getElementById("questionLoading").classList.remove("hidden");
 
     await generateQuestion(profession);

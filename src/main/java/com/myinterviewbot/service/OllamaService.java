@@ -62,7 +62,7 @@ public class OllamaService {
             prompt = "You are a concise behavioral interview coach. Generate a single, realistic behavioral interview question for a " + profession + ". The question must be less than 15 words. Only output the question.";
             session.setAttribute("firstQuestion", false);
         } else {
-            prompt = "Give me another behavioral interview question for a " + profession + ".";
+            prompt = "Give me another behavioral interview question for a " + profession + ". Remember that the question must be less than 15 words. Only output the question.";
         }
 
         return runOllama(prompt);
