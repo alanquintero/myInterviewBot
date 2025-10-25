@@ -270,6 +270,13 @@ function stopCamera() {
 // Send recorded video to the backend
 async function sendVideo(blob) {
     console.log("Sending video...");
+
+    if ((!inputProfession.value || inputProfession.value.trim() === '')
+        || (!inputQuestion.value || inputQuestion.value.trim() === '')) {
+        alert('No feedback was generated. Please try again.');
+        return;
+    }
+
     const formData = new FormData();
     formData.append("file", blob, "answer.webm");
     formData.append("profession", inputProfession.value)
