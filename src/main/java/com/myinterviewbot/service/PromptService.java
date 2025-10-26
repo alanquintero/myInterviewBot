@@ -27,8 +27,8 @@ public class PromptService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PromptService.class);
 
-    private static final int QUESTION_MAX_NUMBER_OF_WORDS = 20;
-    private static final int FEEDBACK_MAX_NUMBER_OF_WORDS = 200;
+    private static final int QUESTION_MAX_NUMBER_OF_WORDS = 35;
+    private static final int FEEDBACK_MAX_NUMBER_OF_WORDS = 250;
     private static final int MAX_NUMBER_OF_ATTEMPTS = 3;
 
     @Autowired
@@ -66,8 +66,19 @@ public class PromptService {
             int requestNewAnswer = 0;
             while (requestNewAnswer < MAX_NUMBER_OF_ATTEMPTS) {
                 requestNewAnswer++;
-                prompt = "Please provide the next behavioral interview question in " + QUESTION_MAX_NUMBER_OF_WORDS + " words or less: " + question;
-                question = aiService.executePrompt(prompt);
+                prompt = switch (requestNewAnswer) {
+                    case 1 ->
+                            "Please provide the next behavioral interview question in " + QUESTION_MAX_NUMBER_OF_WORDS + " words or less: " + question;
+                    case 2 ->
+                            "Give me a totally different behavioral interview question for a " + profession + ". Remember that the question must be less than 15 words. Only output the question.";
+                    case 3 ->
+                            "Give me a the most common behavioral interview question for a " + profession + ". Remember that the question must be less than 15 words. Only output the question.";
+                    default ->
+                            "Give me a generic behavioral interview question for a " + profession + ". Remember that the question must be less than 15 words. Only output the question.";
+                };
+
+                // Extracting the question because AI sometimes gives an explanation of what it did to shorten the question.
+                question = Utils.extractQuestion(aiService.executePrompt(prompt));
                 words = Utils.countWords(question);
                 if (words <= QUESTION_MAX_NUMBER_OF_WORDS) {
                     break;

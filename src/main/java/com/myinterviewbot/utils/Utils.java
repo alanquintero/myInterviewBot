@@ -208,6 +208,7 @@ public class Utils {
 
     /**
      * Extracts the JSON from the given String (if valid).
+     *
      * @param input string with JSON
      * @return JSON
      */
@@ -218,5 +219,31 @@ public class Utils {
             return input.substring(start, end + 1).trim();
         }
         return null;
+    }
+
+    public static String extractQuestion(final String text) {
+        if (text == null || text.isBlank()) {
+            return "";
+        }
+
+        int dotIndex = text.indexOf(".");
+        int questionIndex = text.indexOf("?");
+
+        // Take the first occurring punctuation
+        int endIndex = -1;
+        if (dotIndex >= 0 && questionIndex >= 0) {
+            endIndex = Math.min(dotIndex, questionIndex);
+        } else if (dotIndex >= 0) {
+            endIndex = dotIndex;
+        } else if (questionIndex >= 0) {
+            endIndex = questionIndex;
+        }
+
+        if (endIndex >= 0) {
+            return text.substring(0, endIndex + 1).trim();
+        }
+
+        // fallback: return full text
+        return text.trim();
     }
 }

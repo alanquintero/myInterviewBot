@@ -236,4 +236,40 @@ public class UtilsTest {
         // Then
         assertNull(json);
     }
+
+    @Test
+    void extractQuestion_questionEndsWithDot() {
+        // Given
+        final String text = "Describe a time when you had to learn something new quickly. This shortened version of \"Can you describe an experience where your learning speed helped solve a technical challenge?\" fits within the word limit and targets relevant skills for a Software Engineer, such as adaptability and self-motivated learning.";
+
+        // When
+        final String question = Utils.extractQuestion(text);
+
+        // Then
+        assertEquals("Describe a time when you had to learn something new quickly.", question);
+    }
+
+    @Test
+    void extractQuestion_questionEndsWithQuestionMark() {
+        // Given
+        final String text = "Describe a time when you had to learn something new quickly? This shortened version of \"Can you describe an experience where your learning speed helped solve a technical challenge?\" fits within the word limit and targets relevant skills for a Software Engineer, such as adaptability and self-motivated learning.";
+
+        // When
+        final String question = Utils.extractQuestion(text);
+
+        // Then
+        assertEquals("Describe a time when you had to learn something new quickly?", question);
+    }
+
+    @Test
+    void extractQuestion_noQuestionFound() {
+        // Given
+        final String text = "F fits within the word limit and targets relevant skills for a Software Engineer, such as adaptability and self-motivated learning";
+
+        // When
+        final String question = Utils.extractQuestion(text);
+
+        // Then
+        assertEquals(text, question);
+    }
 }
