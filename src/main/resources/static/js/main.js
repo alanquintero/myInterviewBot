@@ -1,6 +1,7 @@
 /* Input section */
 const inputProfession = document.getElementById("inputProfession");
 const inputQuestion = document.getElementById("inputQuestion");
+const commonQuestionsBtn = document.getElementById("commonQuestionsBtn");
 
 /* Button section */
 const generateQuestionBtn = document.getElementById("generateQuestionBtn");
@@ -383,6 +384,7 @@ function setElementsDisabled(disabled) {
     readyBtn.disabled = disabled;
     resetBtnTop.disabled = disabled;
     resetBtnBottom.disabled = disabled;
+    commonQuestionsBtn.disabled = disabled;
 }
 
 // Enables/disables reset buttons
