@@ -100,8 +100,8 @@ You can replace `phi3` with another Ollama model, such as `mistral`, `llama3`, o
 5. Click **Generate Feedback** to analyze your response.
    ![Generate feedback](docs/generate-feedback.gif)
 
-6. Instantly get a **Transcript** and AI-powered **Feedback** on your performance.
-   ![feedback](docs/feedback.png)
+6. Instantly get a **Transcript** and AI-powered **Feedback** and **Evaluation** on your performance.
+   ![feedback](docs/feedback.png)![evaluation](docs/evaluation.png)
 
 7. Visit the **My Interviews** page anytime to view all your past practice sessions.
    ![My Interviews](docs/my-interviews.gif)
@@ -112,13 +112,14 @@ You can replace `phi3` with another Ollama model, such as `mistral`, `llama3`, o
 
 ### 🚀 Core Features
 
+- [x] 🧭 Conversation history — track progress over time
 - [x] 💻 Custom Questions — enter the question you want to practice
+- [x] 🎯 Scoring system — rate clarity, confidence, and relevance
 - [ ] 📄 Resume Interview Mode — tailor questions based on uploaded resume
 - [ ] 💻 Technical Interview Mode — technical questions
+- [ ] 📊 Progress Analytics — visualize your evaluation scores over time
 - [ ] 🤖 Add more AI models (e.g., OpenAI GPT-4, Claude, Gemini)
 - [ ] 🗣️ Text-to-Speech for AI questions and feedback
-- [ ] 🎯 Scoring system — rate clarity, confidence, and relevance
-- [ ] 🧭 Conversation history — track progress over time
 - [ ] 🧠 Feedback memory — personalized tips based on past sessions
 - [ ] 🎨 Improved UI/UX — modern dashboard, light/dark mode, analytics
 
