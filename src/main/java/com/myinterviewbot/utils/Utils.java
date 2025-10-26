@@ -205,4 +205,18 @@ public class Utils {
 
         return cleaned;
     }
+
+    /**
+     * Extracts the JSON from the given String (if valid).
+     * @param input string with JSON
+     * @return JSON
+     */
+    public static String extractJson(final String input) {
+        int start = input.indexOf('{');
+        int end = input.lastIndexOf('}');
+        if (start != -1 && end != -1 && end > start) {
+            return input.substring(start, end + 1).trim();
+        }
+        return null;
+    }
 }

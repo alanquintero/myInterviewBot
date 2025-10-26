@@ -4,6 +4,8 @@
  */
 package com.myinterviewbot.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.myinterviewbot.model.Evaluation;
 import com.myinterviewbot.service.ai.model.AIService;
 import com.myinterviewbot.utils.Utils;
 import jakarta.servlet.http.HttpSession;
@@ -121,5 +123,40 @@ public class PromptService {
             LOGGER.info("Number of words in the feedback: {}", words);
         }
         return Utils.removeQuotesAndFormatList(feedback);
+    }
+
+    public Evaluation generateEvaluation(final String transcript) {
+        final String evaluationJsonFormat = "{ \"clarityScore\": 0,\"clarityFeedback\": \"\",\"structureScore\": 0,\"structureFeedback\": \"\",\"relevanceScore\": 0,\"relevanceFeedback\": \"\",\"communicationScore\": 0,\"communicationFeedback\": \"\",\"depthScore\": 0,\"depthFeedback\": \"\"}";
+
+        final String prompt = "You are a technical hiring manager. Evaluate the following candidate's response to a behavioral interview question. "
+                + "Parameters to evaluate (score each from 1 to 10, 10 = excellent): "
+                + "1. Clarity — Is the answer easy to understand? "
+                + "2. Structure — Logical flow, e.g., STAR method. "
+                + "3. Relevance — Directly addresses the question. "
+                + "4. Communication — Tone, grammar, vocabulary. "
+                + "5. Depth — Specific examples, measurable outcomes, problem-solving. "
+                + "Instructions: "
+                + "- Provide numeric scores for each parameter. "
+                + "- Add a one-sentence comment per parameter if needed. "
+                + "- Output only in JSON format: " + evaluationJsonFormat
+                + " Candidate Response: " + transcript;
+
+        final String evaluation = aiService.executePrompt(prompt);
+        final String evaluationJson = Utils.extractJson(evaluation);
+
+        LOGGER.info("Evaluation JSON: {}", evaluationJson);
+        if (evaluationJson == null) {
+            LOGGER.warn("Evaluation JSON not found in evaluation output: {}", evaluation);
+            return null;
+        }
+
+        try {
+            final ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(evaluationJson, Evaluation.class);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+        LOGGER.warn("Evaluation failed. Please try again later.");
+        return null;
     }
 }

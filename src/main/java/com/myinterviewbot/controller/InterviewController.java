@@ -4,6 +4,7 @@
  */
 package com.myinterviewbot.controller;
 
+import com.myinterviewbot.model.Evaluation;
 import com.myinterviewbot.model.FeedbackResponse;
 import com.myinterviewbot.model.InterviewEntry;
 import com.myinterviewbot.model.QuestionResponse;
@@ -36,13 +37,13 @@ public class InterviewController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InterviewController.class);
 
-    private final PromptService PromptService;
+    private final PromptService promptService;
     private final WhisperService whisperService;
     private final FfmpegService ffmpegService;
     private final InterviewDataService interviewDataService;
 
-    public InterviewController(final PromptService PromptService, final WhisperService whisperService, final FfmpegService ffmpegService) {
-        this.PromptService = PromptService;
+    public InterviewController(final PromptService promptService, final WhisperService whisperService, final FfmpegService ffmpegService) {
+        this.promptService = promptService;
         this.whisperService = whisperService;
         this.ffmpegService = ffmpegService;
         this.interviewDataService = InterviewDataService.getInstance();
@@ -59,7 +60,7 @@ public class InterviewController {
     @GetMapping("/question")
     public QuestionResponse getQuestion(@RequestParam("profession") final String profession, final HttpSession session) {
         LOGGER.info("/question profession: {}", profession);
-        final String question = PromptService.generateQuestion(profession, session);
+        final String question = promptService.generateQuestion(profession, session);
         return new QuestionResponse(question);
     }
 
@@ -77,7 +78,7 @@ public class InterviewController {
     @PostMapping(value = "/feedback", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public FeedbackResponse getFeedback(@RequestParam("file") final MultipartFile file, @RequestParam("profession") final String profession, @RequestParam("question") final String question) throws Exception {
         LOGGER.info("/feedback file: {}; profession: {}; question: {}", file, profession, question);
-        final FeedbackResponse emptyResult = new FeedbackResponse("", "");
+        final FeedbackResponse emptyResult = new FeedbackResponse("", "", null);
 
         // Save file locally
         final File videoFile = Utils.saveVideo(file);
@@ -97,14 +98,17 @@ public class InterviewController {
             return emptyResult;
         }
 
-        // Get AI feedback
-        final String feedback = PromptService.generateFeedback(transcript, profession, question);
+        // Generating AI feedback
+        final String feedback = promptService.generateFeedback(transcript, profession, question);
+
+        // Generating AI evaluation
+        final Evaluation evaluation = promptService.generateEvaluation(transcript);
 
         // Saves the interview entry
         final long timestamp = Utils.getTimestamp(videoFile.getName());
         final String videoUrl = Utils.getVideoUrl(videoFile.getName());
-        interviewDataService.addInterview(timestamp, new InterviewEntry(timestamp, profession, question, transcript, feedback, videoUrl));
+        interviewDataService.addInterview(timestamp, new InterviewEntry(timestamp, profession, question, transcript, feedback, videoUrl, evaluation));
 
-        return new FeedbackResponse(feedback, transcript);
+        return new FeedbackResponse(feedback, transcript, evaluation);
     }
 }

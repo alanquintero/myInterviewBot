@@ -188,4 +188,52 @@ public class UtilsTest {
         // Then
         assertEquals(inputText, text);
     }
+
+    @Test
+    void extractJson() {
+        // Given
+        final String inputText = "{\"text\": \"hello this is a test\"}";
+
+        // When
+        final String json = Utils.extractJson(inputText);
+
+        // Then
+        assertEquals(inputText, json);
+    }
+
+    @Test
+    void extractJson_textContainsMoreThings() {
+        // Given
+        final String inputText = "here: {\"text\": \"hello this is a test\"}";
+
+        // When
+        final String json = Utils.extractJson(inputText);
+
+        // Then
+        assertEquals("{\"text\": \"hello this is a test\"}", json);
+    }
+
+    @Test
+    void extractJson_notValidJson() {
+        // Given
+        final String inputText = "{\"text\": \"hello this is a test\"";
+
+        // When
+        final String json = Utils.extractJson(inputText);
+
+        // Then
+        assertNull(json);
+    }
+
+    @Test
+    void extractJson_notContainsJson() {
+        // Given
+        final String inputText = "hello this is a test";
+
+        // When
+        final String json = Utils.extractJson(inputText);
+
+        // Then
+        assertNull(json);
+    }
 }

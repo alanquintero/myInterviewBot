@@ -17,4 +17,5 @@ import lombok.Data;
 public class FeedbackResponse {
     private String feedback;
     private String transcript;
+    private Evaluation evaluation;
 }
