@@ -85,19 +85,25 @@ You can replace `phi3` with another Ollama model, such as `mistral`, `llama3`, o
 1. Enter a **Profession** and click **Generate Question** to receive a tailored interview prompt.
    ![Generate question](docs/generate-question.gif)
 
-2. Record your answer directly in the app.
-   ![Recording](docs/recording.png)
+   1.a Enter your own question or choose one from the most common interview questions.
+   ![Common question](docs/common-questions.gif)
 
-3. Review your video after recording.
+2. Click **Ready** when you are ready to answer the question.
+   ![Ready](docs/ready.gif)
+
+3. Record your answer directly in the app.
+   ![Recording](docs/recording.jpeg)
+
+4. Review your video after recording.
    ![Recording](docs/recorded-video.png)
 
-4. Click **Generate Feedback** to analyze your response.
+5. Click **Generate Feedback** to analyze your response.
    ![Generate feedback](docs/generate-feedback.gif)
 
-5. Instantly get a **Transcript** and AI-powered **Feedback** on your performance.
+6. Instantly get a **Transcript** and AI-powered **Feedback** on your performance.
    ![feedback](docs/feedback.png)
 
-6. Visit the **My Interviews** page anytime to view all your past practice sessions.
+7. Visit the **My Interviews** page anytime to view all your past practice sessions.
    ![My Interviews](docs/my-interviews.gif)
 
 ---
@@ -106,15 +112,15 @@ You can replace `phi3` with another Ollama model, such as `mistral`, `llama3`, o
 
 ### 🚀 Core Features
 
-* 💻 **Custom Questions** — enter the question you want to practice
-* 🤖 **Add more AI models** (e.g., OpenAI GPT-4, Claude, Gemini)
-* 🗣️ **Text-to-Speech for AI questions and feedback**
-* 📄 **Resume Interview Mode** — tailor questions based on uploaded resume
-* 💻 **Technical Interview Mode** — technical questions
-* 🎯 **Scoring system** — rate clarity, confidence, and relevance
-* 🧭 **Conversation history** — track progress over time
-* 🧠 **Feedback memory** — personalized tips based on past sessions
-* 🎨 **Improved UI/UX** — modern dashboard, light/dark mode, analytics
+- [x] 💻 Custom Questions — enter the question you want to practice
+- [ ] 📄 Resume Interview Mode — tailor questions based on uploaded resume
+- [ ] 💻 Technical Interview Mode — technical questions
+- [ ] 🤖 Add more AI models (e.g., OpenAI GPT-4, Claude, Gemini)
+- [ ] 🗣️ Text-to-Speech for AI questions and feedback
+- [ ] 🎯 Scoring system — rate clarity, confidence, and relevance
+- [ ] 🧭 Conversation history — track progress over time
+- [ ] 🧠 Feedback memory — personalized tips based on past sessions
+- [ ] 🎨 Improved UI/UX — modern dashboard, light/dark mode, analytics
 
 ### 🧪 Experimental Ideas
 
