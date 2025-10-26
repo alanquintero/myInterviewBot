@@ -41,6 +41,8 @@ const transcriptEl = document.getElementById("transcript");
 // Feedback section
 const feedbackSection = document.getElementById("feedbackSection");
 const feedbackEl = document.getElementById("feedback");
+// Evaluation
+const evaluationContainer = document.getElementById("evaluation-result");
 
 /* Reset section */
 const resetSection = document.getElementById("resetSection");
@@ -146,6 +148,9 @@ function reset() {
     setElementsDisabled(false);
     // Reset other UI states
     inputQuestion.value = "";
+    transcriptEl.innerText = "";
+    feedbackEl.innerText = "";
+    evaluationContainer.innerHTML = "";
     recordedChunks = [];
     timerInterval = null;
     mediaRecorder = null;
@@ -308,9 +313,45 @@ async function sendVideo(blob) {
             transcriptEl.innerText = data.transcript || "";
             feedbackEl.innerText = data.feedback || "No feedback returned";
         }
+
+        // Evaluation
+        if (data?.evaluation) {
+            const clarityScore = data.evaluation.clarityScore ?? "N/A";
+            const clarityFeedback = data.evaluation.clarityFeedback ?? "No feedback provided";
+
+            const structureScore = data.evaluation.structureScore ?? "N/A";
+            const structureFeedback = data.evaluation.structureFeedback ?? "No feedback provided";
+
+            const relevanceScore = data.evaluation.relevanceScore ?? "N/A";
+            const relevanceFeedback = data.evaluation.relevanceFeedback ?? "No feedback provided";
+
+            const communicationScore = data.evaluation.communicationScore ?? "N/A";
+            const communicationFeedback = data.evaluation.communicationFeedback ?? "No feedback provided";
+
+            const depthScore = data.evaluation.depthScore ?? "N/A";
+            const depthFeedback = data.evaluation.depthFeedback ?? "No feedback provided";
+
+
+            evaluationContainer.innerHTML = `
+                <div class="card p-3 mt-3 shadow-sm">
+                    <h5 class="mb-3 text-start">🧠 Evaluation Summary</h5>
+                    <ul class="list-group list-group-flush text-start">
+                        <li class="list-group-item"><strong>Clarity (</strong> ${clarityScore}/10): ${clarityFeedback}</li>
+                        <li class="list-group-item"><strong>Structure (</strong> ${structureScore}/10): ${structureFeedback}</li>
+                        <li class="list-group-item"><strong>Relevance (</strong> ${relevanceScore}/10): ${relevanceFeedback}</li>
+                        <li class="list-group-item"><strong>Communication (</strong> ${communicationScore}/10): ${communicationFeedback}</li>
+                        <li class="list-group-item"><strong>Depth (</strong> ${depthScore}/10): ${depthFeedback}</li>
+                    </ul>
+                </div>
+            `;
+        } else {
+            console.warn("Evaluation is not present");
+            evaluationContainer.innerHTML =
+                "<p style='color: gray;'>No evaluation available yet.</p>";
+        }
+
     } catch (err) {
         console.error(err);
-        alert('No feedback was generated. Please try again.');
         generateFeedbackBtn.disabled = false;
     } finally {
         loadingFeedback.classList.add("hidden");

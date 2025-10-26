@@ -121,3 +121,7 @@ textarea {
 .fade-in.show {
     opacity: 1;
 }
+
+#evaluation-result {
+    text-align: left;
+}
