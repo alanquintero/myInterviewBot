@@ -39,9 +39,24 @@ export async function loadInterviews(page = 1) {
                 <p><strong>Question:</strong> ${interview.question}</p>
                 <p><strong>Answer:</strong> ${interview.answer}</p>
                 <p><strong>Feedback:</strong> ${interview.feedback}</p>
+            
+                ${interview.evaluation ? `
+                <div class="evaluation mt-2">
+                    <p><strong>Evaluation:</strong></p>
+                    <ul class="list-unstyled ms-3">
+                        <li><strong>Clarity (${interview.evaluation.clarityScore}/10):</strong> ${interview.evaluation.clarityFeedback}</li>
+                        <li><strong>Structure (${interview.evaluation.structureScore}/10):</strong> ${interview.evaluation.structureFeedback}</li>
+                        <li><strong>Relevance (${interview.evaluation.relevanceScore}/10):</strong> ${interview.evaluation.relevanceFeedback}</li>
+                        <li><strong>Communication (${interview.evaluation.communicationScore}/10):</strong> ${interview.evaluation.communicationFeedback}</li>
+                        <li><strong>Depth (${interview.evaluation.depthScore}/10):</strong> ${interview.evaluation.depthFeedback}</li>
+                    </ul>
+                </div>
+                ` : ''}
+            
                 <video controls src="${interview.videoUrl}" width="320" height="240"></video>
                 <button class="btn btn-danger btn-sm delete-btn" data-id="${interview.timestamp}">Delete</button>
             `;
+
             listContainer.appendChild(card);
         });
 
