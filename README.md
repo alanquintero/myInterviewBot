@@ -13,8 +13,8 @@ your answers** and get instant feedback from an AI **hiring manager**.
 - 💬 **AI feedback** focused on clarity, structure, and communication style
 - 💾 **Local storage of interviews** — all interview data (video files, transcripts, and feedback) are stored locally in
   the `uploads/interviews/` directory.  
-  Each interview is organized in its own subfolder, and you can manage (view or delete) them directly from the *
-  *MyInterviews** page in the app.
+  Each interview is organized in its own subfolder, and you can manage (view or delete) them directly from the
+  **MyInterviews** page in the app.
 - ⚙️ **Customizable model selection** (default: `phi3`)
 - 🔒 Runs fully **locally** (no cloud or API key required)
 
@@ -69,10 +69,10 @@ Make sure you have the following installed before running the app:
 
 ## ⚙️ Configuration
 
-Developers can configure the default model in `application.properties`:
+Developers can configure the AI model in `application.properties`:
 
 ```properties
-interviewbot.default-model=phi3
+interviewbot.ai-model=phi3
 ```
 
 You can replace `phi3` with another Ollama model, such as `mistral`, `llama3`, or any other model available locally.
