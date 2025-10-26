@@ -163,4 +163,46 @@ public class Utils {
         }
         return wordCount;
     }
+
+    /**
+     * Removes all double quotes from the given response string.
+     *
+     * @param response The input string possibly containing double quotes.
+     * @return A new string with all double quotes removed.
+     */
+    public static String removeQuotes(String response) {
+        if (response == null) {
+            return null;
+        }
+        return response.replace("\"", "");
+    }
+
+    /**
+     * Removes all double quotes and adds a newline before numbered items (e.g., "1.", "2.", etc.).
+     * <p>
+     * Example:
+     * Input:  "Here is a list: 1. Do this 2. Do that"
+     * Output: "Here is a list:\n1. Do this\n2. Do that"
+     *
+     * @param response The input string possibly containing double quotes and numbered items.
+     * @return A formatted string without quotes and with newlines before numbers.
+     */
+    public static String removeQuotesAndFormatList(String response) {
+        if (response == null) {
+            return null;
+        }
+        ;
+
+        // Remove quotes
+        String cleaned = removeQuotes(response);
+
+        // Add newline before a number with dot (e.g., "1.") or a special character preceded by space
+        cleaned = cleaned.replaceAll("(?<=\\s)((\\d+\\.)|[-*•])", "\n$1");
+
+        // Add newline between a dot possibly inside quotes and a following special character
+        // Matches: .-   or .'-
+        cleaned = cleaned.replaceAll("(\\.'?|\\.)\\s*([\\-*•])", "$1\n$2");
+
+        return cleaned;
+    }
 }

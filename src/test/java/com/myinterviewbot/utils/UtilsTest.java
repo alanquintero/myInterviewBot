@@ -80,4 +80,112 @@ public class UtilsTest {
         // Then
         assertEquals(0, words);
     }
+
+    @Test
+    void removeQuotes() {
+        // Given
+        final String inputText = "\"hello this is a test\"";
+
+        // When
+        final String text = Utils.removeQuotes(inputText);
+
+        // Then
+        assertEquals("hello this is a test", text);
+    }
+
+    @Test
+    void removeQuotes_textHasNoQuotes() {
+        // Given
+        final String inputText = "hello this is a test";
+
+        // When
+        final String text = Utils.removeQuotes(inputText);
+
+        // Then
+        assertEquals(inputText, text);
+    }
+
+    @Test
+    void removeQuotesAndFormatList() {
+        // Given
+        final String inputText = "hello this is a test. 1. One. 2. Two three. 3. Tamarindo.";
+
+        // When
+        final String text = Utils.removeQuotesAndFormatList(inputText);
+
+        // Then
+        assertEquals("hello this is a test. \n1. One. \n2. Two three. \n3. Tamarindo.", text);
+    }
+
+    @Test
+    void removeQuotesAndFormatList_textHasAsteriskForList() {
+        // Given
+        final String inputText = "hello this is a test. * One. * Two three. * Tamarindo.";
+
+        // When
+        final String text = Utils.removeQuotesAndFormatList(inputText);
+
+        // Then
+        assertEquals("hello this is a test.\n* One.\n* Two three.\n* Tamarindo.", text);
+    }
+
+    @Test
+    void removeQuotesAndFormatList_dotFollowBySpecialCharacters() {
+        // Given
+        final String inputText = "hello this is a test in a 'stand-up meeting.'-First step";
+
+        // When
+        final String text = Utils.removeQuotesAndFormatList(inputText);
+
+        // Then
+        assertEquals("hello this is a test in a 'stand-up meeting.'\n-First step", text);
+    }
+
+    @Test
+    void removeQuotesAndFormatList_dotFollowBySpecialCharacter() {
+        // Given
+        final String inputText = "hello this is a test in a stand-up meeting.-First step";
+
+        // When
+        final String text = Utils.removeQuotesAndFormatList(inputText);
+
+        // Then
+        assertEquals("hello this is a test in a stand-up meeting.\n-First step", text);
+    }
+
+    @Test
+    void removeQuotesAndFormatList_dotFollowBySpecialCharacterAndSpace() {
+        // Given
+        final String inputText = "hello this is a test in a stand-up meeting.- First step";
+
+        // When
+        final String text = Utils.removeQuotesAndFormatList(inputText);
+
+        // Then
+        assertEquals("hello this is a test in a stand-up meeting.\n- First step", text);
+    }
+
+    @Test
+    void removeQuotesAndFormatList_shouldNotBreakLine() {
+        // Given
+        final String inputText = "hello this is a test in a stand-up meeting.";
+
+        // When
+        final String text = Utils.removeQuotesAndFormatList(inputText);
+
+        // Then
+        assertEquals(inputText, text);
+    }
+
+    @Test
+    void removeQuotesAndFormatList_textHasNoLists() {
+        // Given
+        final String inputText = "hello this is a test";
+
+        // When
+        final String text = Utils.removeQuotes(inputText);
+
+        // Then
+        assertEquals(inputText, text);
+    }
 }

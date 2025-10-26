@@ -9,7 +9,7 @@ import com.myinterviewbot.model.InterviewEntry;
 import com.myinterviewbot.model.QuestionResponse;
 import com.myinterviewbot.service.FfmpegService;
 import com.myinterviewbot.service.InterviewDataService;
-import com.myinterviewbot.service.AIService;
+import com.myinterviewbot.service.PromptService;
 import com.myinterviewbot.service.WhisperService;
 import com.myinterviewbot.utils.Utils;
 import jakarta.servlet.http.HttpSession;
@@ -36,13 +36,13 @@ public class InterviewController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InterviewController.class);
 
-    private final AIService AIService;
+    private final PromptService PromptService;
     private final WhisperService whisperService;
     private final FfmpegService ffmpegService;
     private final InterviewDataService interviewDataService;
 
-    public InterviewController(final AIService AIService, final WhisperService whisperService, final FfmpegService ffmpegService) {
-        this.AIService = AIService;
+    public InterviewController(final PromptService PromptService, final WhisperService whisperService, final FfmpegService ffmpegService) {
+        this.PromptService = PromptService;
         this.whisperService = whisperService;
         this.ffmpegService = ffmpegService;
         this.interviewDataService = InterviewDataService.getInstance();
@@ -51,7 +51,7 @@ public class InterviewController {
     /**
      * Generates an interview question for a specific profession.
      *
-     * <p>The question is generated dynamically using the {@link AIService}.</p>
+     * <p>The question is generated dynamically using the {@link PromptService}.</p>
      *
      * @param profession the profession for which to generate a question
      * @return a {@link QuestionResponse} containing the generated question
@@ -59,7 +59,7 @@ public class InterviewController {
     @GetMapping("/question")
     public QuestionResponse getQuestion(@RequestParam("profession") final String profession, final HttpSession session) {
         LOGGER.info("/question profession: {}", profession);
-        final String question = AIService.generateQuestion(profession, session);
+        final String question = PromptService.generateQuestion(profession, session);
         return new QuestionResponse(question);
     }
 
@@ -98,7 +98,7 @@ public class InterviewController {
         }
 
         // Get AI feedback
-        final String feedback = AIService.generateFeedback(transcript, profession, question);
+        final String feedback = PromptService.generateFeedback(transcript, profession, question);
 
         // Saves the interview entry
         final long timestamp = Utils.getTimestamp(videoFile.getName());
