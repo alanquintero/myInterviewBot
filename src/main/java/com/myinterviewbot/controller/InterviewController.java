@@ -102,7 +102,7 @@ public class InterviewController {
         final String feedback = promptService.generateFeedback(transcript, profession, question);
 
         // Generating AI evaluation
-        final Evaluation evaluation = promptService.generateEvaluation(transcript);
+        final Evaluation evaluation = promptService.generateEvaluation(transcript, profession, question);
 
         // Saves the interview entry
         final long timestamp = Utils.getTimestamp(videoFile.getName());

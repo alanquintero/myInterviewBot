@@ -143,7 +143,7 @@ public class PromptServiceTest {
         when(aiService.executePrompt(anyString())).thenReturn(evaluationResponse);
 
         // When
-        final Evaluation evaluation = promptService.generateEvaluation("transcript");
+        final Evaluation evaluation = promptService.generateEvaluation("transcript", "profession", "question");
 
         // Then
         assertNotNull(evaluation);
@@ -166,7 +166,7 @@ public class PromptServiceTest {
         when(aiService.executePrompt(anyString())).thenReturn(evaluationResponse);
 
         // When
-        final Evaluation evaluation = promptService.generateEvaluation("transcript");
+        final Evaluation evaluation = promptService.generateEvaluation("transcript", "profession", "question");
 
         // Then
         assertNull(evaluation);

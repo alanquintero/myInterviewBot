@@ -125,19 +125,21 @@ public class PromptService {
         return Utils.removeQuotesAndFormatList(feedback);
     }
 
-    public Evaluation generateEvaluation(final String transcript) {
+    public Evaluation generateEvaluation(final String transcript, final String profession, final String question) {
         final String evaluationJsonFormat = "{ \"clarityScore\": 0,\"clarityFeedback\": \"\",\"structureScore\": 0,\"structureFeedback\": \"\",\"relevanceScore\": 0,\"relevanceFeedback\": \"\",\"communicationScore\": 0,\"communicationFeedback\": \"\",\"depthScore\": 0,\"depthFeedback\": \"\"}";
 
-        final String prompt = "You are a technical hiring manager. Evaluate the following candidate's response to a behavioral interview question. "
-                + "Parameters to evaluate (score each from 1 to 10, 10 = excellent): "
-                + "1. Clarity — Is the answer easy to understand? "
-                + "2. Structure — Logical flow, e.g., STAR method. "
-                + "3. Relevance — Directly addresses the question. "
-                + "4. Communication — Tone, grammar, vocabulary. "
-                + "5. Depth — Specific examples, measurable outcomes, problem-solving. "
+        final String prompt = "You are a technical hiring manager. Evaluate the following " + profession + " candidate's response to a behavioral interview question: " + question
+                + " Parameters to evaluate (score each from 1 to 10, 10 = excellent): "
+                + " 1. Clarity: How understandable the answer is, considering content and depth. Minimal answers get low scores. "
+                + " 2. Structure: Logical flow of the answer; use of STAR or other coherent structure. Single sentences or unorganized responses score low. "
+                + " 3. Relevance: How well the answer addresses the question. Off-topic answers score 1–2. "
+                + " 4. Communication: How effectively the candidate conveys ideas, including grammar, vocabulary, and conciseness. Minimal answers with no examples are scored low even if grammar is correct. "
+                + " 5. Depth: Specificity, examples, measurable outcomes, and demonstration of skills. Minimal or vague answers score low. "
                 + "Instructions: "
                 + "- Provide numeric scores for each parameter. "
                 + "- Add a one-sentence comment per parameter if needed. "
+                + "- If the candidate provides a minimal answer, irrelevant answer, or does not directly address the question, give low scores (1–2). "
+                + "- Be strict: if the answer is minimal, off-topic, or does not contain examples or meaningful detail, give low scores even if grammar is correct. "
                 + "- Output only in JSON format: " + evaluationJsonFormat
                 + " Candidate Response: " + transcript;
 
