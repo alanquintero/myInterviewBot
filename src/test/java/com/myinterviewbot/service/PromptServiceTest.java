@@ -87,7 +87,7 @@ public class PromptServiceTest {
     void generateQuestion_questionHasMoreWordsThanWanted() {
         // Given
         final String profession = "software engineer";
-        final String expectedQuestion = "Tell me about a time you faced a challenge. Tell me about a time you faced a challenge. Tell me about a time you faced a challenge.";
+        final String expectedQuestion = "Tell me about a time you faced a challenge Tell me about a time you faced a challenge Tell me about a time you faced a challenge Tell me about a time you faced a challenge.";
         when(aiService.executePrompt(anyString())).thenReturn(expectedQuestion);
         final HttpSession session = mock(HttpSession.class);
         when(session.getAttribute("currentProfession")).thenReturn(null);

@@ -15,7 +15,7 @@ your answers** and get instant feedback from an AI **hiring manager**.
   the `uploads/interviews/` directory.  
   Each interview is organized in its own subfolder, and you can manage (view or delete) them directly from the
   **MyInterviews** page in the app.
-- ⚙️ **Customizable model selection** (default: `phi3`)
+- ⚙️ **Customizable model selection**
 - 🔒 Runs fully **locally** (no cloud or API key required)
 
 ---
@@ -24,33 +24,36 @@ your answers** and get instant feedback from an AI **hiring manager**.
 
 Make sure you have the following installed before running the app:
 
-| Tool                        | Description                              | Install Command / Notes                                             | Approx. Space |
-|-----------------------------|------------------------------------------|---------------------------------------------------------------------|---------------|
-| **Java 17+**                | Required to run the Spring Boot app      | [Download Java](https://adoptium.net/)                              | ~300 MB       |
-| **Ollama**                  | Local LLM runtime                        | [Install Ollama](https://ollama.ai/download)                        | ~1.5 GB       |
-| **Phi-3 model** *(default)* | Fast, efficient local model              | `ollama pull phi3`                                                  | ~2 GB         |
-| **Python 3 + pip**          | Required for Whisper                     | [Install Python](https://www.python.org/downloads/)                 | ~500 MB       |
-| **FFmpeg**                  | Required by Whisper for audio processing | macOS: `brew install ffmpeg` <br> Ubuntu: `sudo apt install ffmpeg` | ~200 MB       |
-| **Whisper**                 | Speech-to-text transcription             | `pip install -U openai-whisper`                                     | ~1.5 GB       |
+| Tool               | Description                                                                    | Install Command / Notes                                             | Approx. Space        |
+|--------------------|--------------------------------------------------------------------------------|---------------------------------------------------------------------|----------------------|
+| **Java 17+**       | Required to run the Spring Boot app                                            | [Download Java](https://adoptium.net/)                              | ~300 MB              |
+| **Ollama**         | Local LLM runtime                                                              | [Install Ollama](https://ollama.ai/download)                        | ~1.5 GB              |
+| **Ollama model**   | Check out the available models at [Ollama library](https://ollama.com/library) | Example: `ollama pull phi3`                                         | Depends on the model |
+| **Python 3 + pip** | Required for Whisper                                                           | [Install Python](https://www.python.org/downloads/)                 | ~500 MB              |
+| **FFmpeg**         | Required by Whisper for audio processing                                       | macOS: `brew install ffmpeg` <br> Ubuntu: `sudo apt install ffmpeg` | ~200 MB              |
+| **Whisper**        | Speech-to-text transcription                                                   | `pip install -U openai-whisper`                                     | ~1.5 GB              |
 
 ---
 
 ## ⚙️ Installation & Setup
 
 1. **Clone this repository:**
-
    ```bash
    git clone https://github.com/alanquintero/myInterviewBot
    cd myInterviewBot
    ```
+2. Configure the AI model in `application.properties` (`llama3.1:8b` is the default model):
 
-2. **Run the app with Spring Boot:**
+```properties
+ai-model=llama3.1:8b
+```
 
+3. **Run the app with Spring Boot:**
    ```bash
     mvn spring-boot:run
    ```
 
-3. **Open the app:**
+4. **Open the app:**
    Visit [http://localhost:8080](http://localhost:8080) in your browser.
 
 ---
@@ -72,11 +75,41 @@ Make sure you have the following installed before running the app:
 Developers can configure the AI model in `application.properties`:
 
 ```properties
-interviewbot.ai-model=phi3
+ai-model=llama3.1:8b
 ```
 
-You can replace `phi3` with another Ollama model, such as `mistral`, `llama3`, or any other model available locally.
+You can replace `llama3.1:8b` with another Ollama model, such as `mistral`, `phi3`, or any other model available
+locally.
 
+When running your Spring Boot app, you can override any property like this:
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.arguments="--ai.model=phi3"
+```
+
+Example of running a JAR overring properties:
+
+```bash
+java -jar myinterviewbot.jar \ --ai.provider=ollama \ --ai.model=phi3:latest
+```
+
+---
+
+## 🧩 Choosing the Right Ollama Model
+
+Picking the right model depends on what you care about most — **speed**, **accuracy**, or **resource usage**.
+Here’s a quick guide:
+
+| 💻 Laptop Type               | 🧠 Recommended Model  | ✅ Benefits                                                                                                             | ⚠️ Limitations                                                             |
+|------------------------------|-----------------------|------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
+| **8–12 GB RAM**              | **Phi-3 Mini (3.8B)** | 🟢 Extremely fast<br>🟢 Small download (~2 GB)<br>🟢 Great for quick Q&A and light tasks                               | 🔴 Limited reasoning depth<br>🔴 Not ideal for long conversations          |
+| **8–12 GB RAM**              | **Mistral 7B**        | 🟢 Smart and efficient<br>🟢 Handles follow-ups better than Phi-3<br>🟢 Good general-purpose model                     | 🔴 Slightly robotic tone<br>🔴 Less consistent on complex logic            |
+| **16–18 GB RAM**             | **Llama 3.1 (8B)**    | 🟢 Excellent reasoning<br>🟢 Natural, human-like answers<br>🟢 Great for behavioral interview simulation               | 🔴 Slightly slower startup<br>🔴 Requires quantized version for best speed |
+| **16–18 GB RAM**             | **Gemma 2 (9B)**      | 🟢 Balanced quality and speed<br>🟢 Friendly conversational tone<br>🟢 Efficient on Apple Silicon                      | 🔴 Can occasionally repeat or overexplain                                  |
+| **24+ GB RAM / M3 Pro–Max**  | **Llama 3.1 (13B)**   | 🟢 High-quality, detailed reasoning<br>🟢 Handles multi-turn interviews beautifully<br>🟢 Very consistent and coherent | 🔴 Slower on smaller laptops<br>🔴 Heavy model (~8–9 GB)                   |
+| **Server / Multi-GPU Setup** | **Llama 3.1 (70B)**   | 🟢 Near GPT-4 quality<br>🟢 Exceptional reasoning and memory<br>🟢 Ideal for research or production AI agents          | 🔴 Requires 64GB+ RAM or GPU cluster<br>🔴 Slow download and load times    |
+
+All models are available at [Ollama library](https://ollama.com/library).
 
 ---
 

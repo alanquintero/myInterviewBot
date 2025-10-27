@@ -23,12 +23,12 @@ public class AIConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AIConfig.class);
 
-    @Value("${interviewbot.ai.provider}")
+    @Value("${ai.provider}")
     private String aiProvider;
 
     /**
      * Creates and returns the appropriate AI service implementation based on the
-     * {@code interviewbot.ai.provider} property.
+     * {@code ai.provider} property.
      *
      * @return an instance of the corresponding AI service
      */

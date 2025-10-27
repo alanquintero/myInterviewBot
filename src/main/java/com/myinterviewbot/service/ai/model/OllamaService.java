@@ -28,16 +28,8 @@ public class OllamaService implements AIService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OllamaService.class);
 
-    @Value("${interviewbot.ai-model}")
-    private String defaultModel;
-
-    public String getDefaultModel() {
-        return defaultModel;
-    }
-
-    public void setDefaultModel(final String model) {
-        this.defaultModel = model;
-    }
+    @Value("${ai.model}")
+    private String aiModel;
 
     /**
      * Calls the Ollama AI model with a given prompt and returns the response.
@@ -47,14 +39,14 @@ public class OllamaService implements AIService {
      */
     @Override
     public String executePrompt(final String prompt) {
-        LOGGER.info("Running Ollama with model: {}", defaultModel);
+        LOGGER.info("Running Ollama with model: {}", aiModel);
         LOGGER.info("Calling Ollama with the prompt: {}", prompt);
         try {
             final ProcessBuilder pb;
             if (System.getProperty("os.name").toLowerCase().contains("win")) {
                 LOGGER.info("Creating Windows command");
                 // Windows execution using cmd.exe
-                final String windowsCommand = "echo " + prompt.replace("\"", "\\\"") + " | ollama run " + defaultModel;
+                final String windowsCommand = "echo " + prompt.replace("\"", "\\\"") + " | ollama run " + aiModel;
                 final String[] cmdArgs = {"cmd.exe", "/c", windowsCommand};
                 pb = new ProcessBuilder(cmdArgs);
                 pb.environment().put("OLLAMA_NO_COLOR", "1");
@@ -63,7 +55,7 @@ public class OllamaService implements AIService {
             } else {
                 LOGGER.info("Creating Unix/Linux/Mac command");
                 // Unix/Linux/Mac execution using bash
-                final String command = "echo \"" + prompt.replace("\"", "\\\"") + "\" | OLLAMA_NO_COLOR=1 OLLAMA_SILENT=1 ollama run " + defaultModel;
+                final String command = "echo \"" + prompt.replace("\"", "\\\"") + "\" | OLLAMA_NO_COLOR=1 OLLAMA_SILENT=1 ollama run " + aiModel;
                 final String[] bashArgs = {"bash", "-c", command};
                 pb = new ProcessBuilder(bashArgs);
                 pb.redirectErrorStream(true);

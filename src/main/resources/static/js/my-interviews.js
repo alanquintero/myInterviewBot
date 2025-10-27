@@ -33,6 +33,28 @@ export async function loadInterviews(page = 1) {
             const date = new Date(interview.timestamp);
             const formattedTime = date.toLocaleString();
 
+            /* Evaluation start */
+            // Clarity
+            const clarityScore = interview.evaluation.clarityScore ?? "N/A";
+            const clarityFeedback = interview.evaluation.clarityFeedback && interview.evaluation.clarityFeedback.trim() !== '' ? interview.evaluation.clarityFeedback : "No feedback provided";
+
+            // Structure
+            const structureScore = interview.evaluation.structureScore ?? "N/A";
+            const structureFeedback = interview.evaluation.structureFeedback && interview.evaluation.structureFeedback.trim() !== '' ? interview.evaluation.structureFeedback : "No feedback provided";
+
+            // Relevance
+            const relevanceScore = interview.evaluation.relevanceScore ?? "N/A";
+            const relevanceFeedback = interview.evaluation.relevanceFeedback && interview.evaluation.relevanceFeedback.trim() !== '' ? interview.evaluation.relevanceFeedback : "No feedback provided";
+
+            // Communication
+            const communicationScore = interview.evaluation.communicationScore ?? "N/A";
+            const communicationFeedback = interview.evaluation.communicationFeedback && interview.evaluation.communicationFeedback.trim() !== '' ? interview.evaluation.communicationFeedback : "No feedback provided";
+
+            // Depth
+            const depthScore = interview.evaluation.depthScore ?? "N/A";
+            const depthFeedback = interview.evaluation.depthFeedback && interview.evaluation.depthFeedback.trim() !== '' ? interview.evaluation.depthFeedback : "No feedback provided";
+            /* Evaluation ends */
+
             card.innerHTML = `
                 <p><strong>Date:</strong> ${formattedTime}</p>
                 <p><strong>Profession:</strong> ${interview.profession}</p>
@@ -44,11 +66,11 @@ export async function loadInterviews(page = 1) {
                 <div class="evaluation mt-2">
                     <p><strong>Evaluation:</strong></p>
                     <ul class="list-unstyled ms-3">
-                        <li><strong>Clarity (${interview.evaluation.clarityScore}/10):</strong> ${interview.evaluation.clarityFeedback}</li>
-                        <li><strong>Structure (${interview.evaluation.structureScore}/10):</strong> ${interview.evaluation.structureFeedback}</li>
-                        <li><strong>Relevance (${interview.evaluation.relevanceScore}/10):</strong> ${interview.evaluation.relevanceFeedback}</li>
-                        <li><strong>Communication (${interview.evaluation.communicationScore}/10):</strong> ${interview.evaluation.communicationFeedback}</li>
-                        <li><strong>Depth (${interview.evaluation.depthScore}/10):</strong> ${interview.evaluation.depthFeedback}</li>
+                        <li><strong>Clarity</strong> (${clarityScore}/10): ${clarityFeedback}</li>
+                        <li><strong>Structure</strong> (${structureScore}/10): ${structureFeedback}</li>
+                        <li><strong>Relevance</strong> (${relevanceScore}/10): ${relevanceFeedback}</li>
+                        <li><strong>Communication</strong> (${communicationScore}/10): ${communicationFeedback}</li>
+                        <li><strong>Depth</strong> (${depthScore}/10): ${depthFeedback}</li>
                     </ul>
                 </div>
                 ` : ''}

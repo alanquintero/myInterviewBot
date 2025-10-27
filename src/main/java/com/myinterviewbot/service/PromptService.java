@@ -47,12 +47,13 @@ public class PromptService {
             firstQuestion = true;
         }
 
+        final String restriction = "The question must be less than " + QUESTION_MAX_NUMBER_OF_WORDS + " words. Generate ONLY the behavioral interview question — do not include any explanations or introductions.";
         String prompt;
         if (firstQuestion == null || firstQuestion) {
-            prompt = "You are a concise behavioral interview coach. Generate a single, realistic behavioral interview question for a " + profession + ". The question must be less than 15 words. Only output the question.";
+            prompt = "You are a concise behavioral interview coach. Generate a single, realistic behavioral interview question for a " + profession + ". " + restriction;
             session.setAttribute("firstQuestion", false);
         } else {
-            prompt = "Give me another behavioral interview question for a " + profession + ". Remember that the question must be less than 15 words. Only output the question.";
+            prompt = "Give me another behavioral interview question for a " + profession + ". " + restriction;
         }
 
         /*
@@ -72,9 +73,9 @@ public class PromptService {
                     case 2 ->
                             "Give me a totally different behavioral interview question for a " + profession + ". Remember that the question must be less than 15 words. Only output the question.";
                     case 3 ->
-                            "Give me a the most common behavioral interview question for a " + profession + ". Remember that the question must be less than 15 words. Only output the question.";
+                            "Give me a the most common behavioral interview question for a " + profession + ". " + restriction;
                     default ->
-                            "Give me a generic behavioral interview question for a " + profession + ". Remember that the question must be less than 15 words. Only output the question.";
+                            "Give me a generic behavioral interview question for a " + profession + ". " + restriction;
                 };
 
                 // Extracting the question because AI sometimes gives an explanation of what it did to shorten the question.
@@ -149,27 +150,55 @@ public class PromptService {
                 + "Instructions: "
                 + "- Provide numeric scores for each parameter. "
                 + "- Add a one-sentence comment per parameter if needed. "
-                + "- If the candidate provides a minimal answer, irrelevant answer, or does not directly address the question, give low scores (1–2). "
-                + "- Be strict: if the answer is minimal, off-topic, or does not contain examples or meaningful detail, give low scores even if grammar is correct. "
+                + "- Be very strict: If the candidate provides a minimal answer, off-topic, irrelevant answer, does not directly address the question, does not contain examples or meaningful details, lacks detail and examples, or even if grammar and vocabulary are correct, give low scores (1-2). "
                 + "- Output only in JSON format: " + evaluationJsonFormat
+                + " - Include all JSON parameters, even if one of them is missing or not applicable. "
                 + " Candidate Response: " + transcript;
 
-        final String evaluation = aiService.executePrompt(prompt);
-        final String evaluationJson = Utils.extractJson(evaluation);
+        final String evaluationTxt = aiService.executePrompt(prompt);
+        final String evaluationJson = Utils.extractJson(evaluationTxt);
 
         LOGGER.info("Evaluation JSON: {}", evaluationJson);
         if (evaluationJson == null) {
-            LOGGER.warn("Evaluation JSON not found in evaluation output: {}", evaluation);
+            LOGGER.warn("Evaluation JSON not found in evaluation output: {}", evaluationTxt);
             return null;
         }
 
         try {
             final ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(evaluationJson, Evaluation.class);
+            final Evaluation evaluation = mapper.readValue(evaluationJson, Evaluation.class);
+            validateFeedback(evaluation);
+            return evaluation;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }
         LOGGER.warn("Evaluation failed. Please try again later.");
         return null;
+    }
+
+    private void validateFeedback(final Evaluation evaluation) {
+        if (evaluation == null) {
+            return;
+        }
+        // Clarity
+        if (evaluation.getClarityFeedback() == null || evaluation.getClarityFeedback().isEmpty()) {
+            evaluation.setClarityScore(0);
+        }
+        // Structure
+        if (evaluation.getStructureFeedback() == null || evaluation.getStructureFeedback().isEmpty()) {
+            evaluation.setStructureScore(0);
+        }
+        // Relevance
+        if (evaluation.getRelevanceFeedback() == null || evaluation.getRelevanceFeedback().isEmpty()) {
+            evaluation.setRelevanceScore(0);
+        }
+        // Communication
+        if (evaluation.getCommunicationFeedback() == null || evaluation.getCommunicationFeedback().isEmpty()) {
+            evaluation.setCommunicationScore(0);
+        }
+        // Depth
+        if (evaluation.getDepthFeedback() == null || evaluation.getDepthFeedback().isEmpty()) {
+            evaluation.setDepthScore(0);
+        }
     }
 }

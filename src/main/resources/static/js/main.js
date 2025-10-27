@@ -316,31 +316,37 @@ async function sendVideo(blob) {
 
         // Evaluation
         if (data?.evaluation) {
+            /* Evaluation start */
+            // Clarity
             const clarityScore = data.evaluation.clarityScore ?? "N/A";
-            const clarityFeedback = data.evaluation.clarityFeedback ?? "No feedback provided";
+            const clarityFeedback = data.evaluation.clarityFeedback && data.evaluation.clarityFeedback.trim() !== '' ? data.evaluation.clarityFeedback : "No feedback provided";
 
+            // Structure
             const structureScore = data.evaluation.structureScore ?? "N/A";
-            const structureFeedback = data.evaluation.structureFeedback ?? "No feedback provided";
+            const structureFeedback = data.evaluation.structureFeedback && data.evaluation.structureFeedback.trim() !== '' ? data.evaluation.structureFeedback : "No feedback provided";
 
+            // Relevance
             const relevanceScore = data.evaluation.relevanceScore ?? "N/A";
-            const relevanceFeedback = data.evaluation.relevanceFeedback ?? "No feedback provided";
+            const relevanceFeedback = data.evaluation.relevanceFeedback && data.evaluation.relevanceFeedback.trim() !== '' ? data.evaluation.relevanceFeedback : "No feedback provided";
 
+            // Communication
             const communicationScore = data.evaluation.communicationScore ?? "N/A";
-            const communicationFeedback = data.evaluation.communicationFeedback ?? "No feedback provided";
+            const communicationFeedback = data.evaluation.communicationFeedback && data.evaluation.communicationFeedback.trim() !== '' ? data.evaluation.communicationFeedback : "No feedback provided";
 
+            // Depth
             const depthScore = data.evaluation.depthScore ?? "N/A";
-            const depthFeedback = data.evaluation.depthFeedback ?? "No feedback provided";
-
+            const depthFeedback = data.evaluation.depthFeedback && data.evaluation.depthFeedback.trim() !== '' ? data.evaluation.depthFeedback : "No feedback provided";
+            /* Evaluation ends */
 
             evaluationContainer.innerHTML = `
                 <div class="card p-3 mt-3 shadow-sm">
                     <h5 class="mb-3 text-start">🧠 Evaluation Summary</h5>
                     <ul class="list-group list-group-flush text-start">
-                        <li class="list-group-item"><strong>Clarity (</strong> ${clarityScore}/10): ${clarityFeedback}</li>
-                        <li class="list-group-item"><strong>Structure (</strong> ${structureScore}/10): ${structureFeedback}</li>
-                        <li class="list-group-item"><strong>Relevance (</strong> ${relevanceScore}/10): ${relevanceFeedback}</li>
-                        <li class="list-group-item"><strong>Communication (</strong> ${communicationScore}/10): ${communicationFeedback}</li>
-                        <li class="list-group-item"><strong>Depth (</strong> ${depthScore}/10): ${depthFeedback}</li>
+                        <li class="list-group-item"><strong>Clarity</strong> (${clarityScore}/10): ${clarityFeedback}</li>
+                        <li class="list-group-item"><strong>Structure</strong> (${structureScore}/10): ${structureFeedback}</li>
+                        <li class="list-group-item"><strong>Relevance</strong> (${relevanceScore}/10): ${relevanceFeedback}</li>
+                        <li class="list-group-item"><strong>Communication</strong> (${communicationScore}/10): ${communicationFeedback}</li>
+                        <li class="list-group-item"><strong>Depth</strong> (${depthScore}/10): ${depthFeedback}</li>
                     </ul>
                 </div>
             `;
