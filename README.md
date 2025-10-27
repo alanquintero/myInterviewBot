@@ -61,13 +61,13 @@ ai-model=llama3.1:8b
 
 ## 🎙️ Troubleshooting
 
-| Issue                               | Possible Cause                                             | Solution                                                                                   |
-|-------------------------------------|------------------------------------------------------------|--------------------------------------------------------------------------------------------|
-| 🎧 **No mic input / camera access** | Browser permissions or wrong device selected               | Check browser settings → Allow mic and camera, and ensure the correct devices are selected |
-| ❌ **Cannot install Whisper**        | Make sure Python version is compatible with Whisper        | Check Whisper official site [openai-whisper](https://pypi.org/project/openai-whisper/)     |
-| ❌ **“Model not found” error**       | You haven’t pulled the model                               | Example, run `ollama pull phi3`                                                            |
-| 🐍 **`pip` command not found**      | pip not installed                                          | macOS/Linux: `sudo apt install python3-pip` or `brew install python3`                      |
-| 🐢 **Slow transcription**           | Whisper base model is large (Not yet available in the app) | Try smaller Whisper models (like `tiny` or `base`)(Not yet available in the app)           |
+| Issue                               | Possible Cause                                      | Solution                                                                                   |
+|-------------------------------------|-----------------------------------------------------|--------------------------------------------------------------------------------------------|
+| 🎧 **No mic input / camera access** | Browser permissions or wrong device selected        | Check browser settings → Allow mic and camera, and ensure the correct devices are selected |
+| ❌ **Cannot install Whisper**        | Make sure Python version is compatible with Whisper | Check Whisper official site [openai-whisper](https://pypi.org/project/openai-whisper/)     |
+| ❌ **“Model not found” error**       | You haven’t pulled the model                        | Example, run `ollama pull phi3`                                                            |
+| 🐍 **`pip` command not found**      | pip not installed                                   | macOS/Linux: `sudo apt install python3-pip` or `brew install python3`                      |
+| 🐢 **Slow transcription**           | Whisper base model is large                         | Try smaller Whisper models (like `tiny` or `base`) (Not yet available in the app)          |
 
 ---
 
@@ -82,7 +82,7 @@ ai-model=llama3.1:8b
 You can replace `llama3.1:8b` with another Ollama model, such as `mistral`, `phi3`, or any other model available
 locally.
 
-Or, when running your Spring Boot app, you can override any property like this:
+Or, when running the app, you can override any property like this:
 
 ```bash
 mvn spring-boot:run -Dspring-boot.run.arguments="--ai.model=phi3"
@@ -110,9 +110,9 @@ Here’s a quick guide:
 | **24+ GB RAM / M3 Pro–Max**  | **Llama 3.1 (13B)**   | ~8–9 GB         | 🟢 High-quality, detailed reasoning<br>🟢 Handles multi-turn interviews beautifully<br>🟢 Very consistent and coherent | 🔴 Slower on smaller laptops<br>🔴 Heavy model                             |
 | **Server / Multi-GPU Setup** | **Llama 3.1 (70B)**   | ~40–45 GB       | 🟢 Near GPT-4 quality<br>🟢 Exceptional reasoning and memory<br>🟢 Ideal for research or production AI agents          | 🔴 Requires 64 GB+ RAM or GPU cluster<br>🔴 Very slow download / load      |
 
-All models are available at [Ollama library](https://ollama.com/library).
+Check available models at [Ollama library](https://ollama.com/library).
 
-Example of getting a Model:
+Example of getting a model:
 
 ```bash
 ollama pull llama3.1:8b
@@ -163,7 +163,7 @@ ollama list
 - [x] 🎯 Scoring system — rate clarity, confidence, and relevance
 - [ ] 📄 Resume Interview Mode — tailor questions based on uploaded resume
 - [ ] 💻 Technical Interview Mode — technical questions
-- [ ] 📊 Progress Analytics — visualize your evaluation scores over time
+- [ ] 📊 Progress Analytics — graphs for improvement over time
 - [ ] 🤖 Add more AI models (e.g., OpenAI GPT-4, Claude, Gemini)
 - [ ] 🗣️ Text-to-Speech for AI questions and feedback
 - [ ] 🧠 Feedback memory — personalized tips based on past sessions
@@ -173,7 +173,6 @@ ollama list
 ### 🧪 Experimental Ideas
 
 * 💬 **AI interviewer personalities** (strict, friendly, technical)
-* 📊 **Performance insights** — graphs for improvement over time
 * 🗂️ **Integration with Google Drive or Notion** for saving feedback
 
 ---
@@ -182,7 +181,7 @@ ollama list
 
 * **Backend:** Java 17, Spring Boot
 * **Frontend:** HTML, JavaScript, CSS, Bootstrap
-* **AI:** Ollama (Phi3), Whisper (speech-to-text), FFmpeg (audio)
+* **AI:** Ollama, Whisper (speech-to-text), FFmpeg (audio)
 * **Build Tool:** Maven
 
 ---
