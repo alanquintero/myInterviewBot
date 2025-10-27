@@ -28,7 +28,7 @@ Make sure you have the following installed before running the app:
 |--------------------|--------------------------------------------------------------------------------|---------------------------------------------------------------------|----------------------|
 | **Java 17+**       | Required to run the Spring Boot app                                            | [Download Java](https://adoptium.net/)                              | ~300 MB              |
 | **Ollama**         | Local LLM runtime                                                              | [Install Ollama](https://ollama.ai/download)                        | ~1.5 GB              |
-| **Ollama model**   | Check out the available models at [Ollama library](https://ollama.com/library) | Example: `ollama pull phi3`                                         | Depends on the model |
+| **AI model**       | Check out the available models at [Ollama library](https://ollama.com/library) | Example: `ollama pull phi3`                                         | Depends on the model |
 | **Python 3 + pip** | Required for Whisper                                                           | [Install Python](https://www.python.org/downloads/)                 | ~500 MB              |
 | **FFmpeg**         | Required by Whisper for audio processing                                       | macOS: `brew install ffmpeg` <br> Ubuntu: `sudo apt install ffmpeg` | ~200 MB              |
 | **Whisper**        | Speech-to-text transcription                                                   | `pip install -U openai-whisper`                                     | ~1.5 GB              |
@@ -54,19 +54,20 @@ ai-model=llama3.1:8b
    ```
 
 4. **Open the app:**
-   Visit [http://localhost:8080](http://localhost:8080) in your browser.
+
+5. Visit [http://localhost:8080](http://localhost:8080) in your browser.
 
 ---
 
 ## 🎙️ Troubleshooting
 
-| Issue                               | Possible Cause                                      | Solution                                                                                   |
-|-------------------------------------|-----------------------------------------------------|--------------------------------------------------------------------------------------------|
-| 🎧 **No mic input / camera access** | Browser permissions or wrong device selected        | Check browser settings → Allow mic and camera, and ensure the correct devices are selected |
-| ❌ **Cannot install Whisper**        | Make sure Python version is compatible with Whisper | Check Whisper official site [openai-whisper](https://pypi.org/project/openai-whisper/)     |
-| ❌ **“Model not found” error**       | You haven’t pulled the model                        | Run `ollama pull phi3`                                                                     |
-| 🐍 **`pip` command not found**      | pip not installed                                   | macOS/Linux: `sudo apt install python3-pip` or `brew install python3`                      |
-| 🐢 **Slow transcription**           | Whisper base model is large                         | Try smaller Whisper models (like `tiny` or `base`)                                         |
+| Issue                               | Possible Cause                                             | Solution                                                                                   |
+|-------------------------------------|------------------------------------------------------------|--------------------------------------------------------------------------------------------|
+| 🎧 **No mic input / camera access** | Browser permissions or wrong device selected               | Check browser settings → Allow mic and camera, and ensure the correct devices are selected |
+| ❌ **Cannot install Whisper**        | Make sure Python version is compatible with Whisper        | Check Whisper official site [openai-whisper](https://pypi.org/project/openai-whisper/)     |
+| ❌ **“Model not found” error**       | You haven’t pulled the model                               | Example, run `ollama pull phi3`                                                            |
+| 🐍 **`pip` command not found**      | pip not installed                                          | macOS/Linux: `sudo apt install python3-pip` or `brew install python3`                      |
+| 🐢 **Slow transcription**           | Whisper base model is large (Not yet available in the app) | Try smaller Whisper models (like `tiny` or `base`)(Not yet available in the app)           |
 
 ---
 
@@ -81,7 +82,7 @@ ai-model=llama3.1:8b
 You can replace `llama3.1:8b` with another Ollama model, such as `mistral`, `phi3`, or any other model available
 locally.
 
-When running your Spring Boot app, you can override any property like this:
+Or, when running your Spring Boot app, you can override any property like this:
 
 ```bash
 mvn spring-boot:run -Dspring-boot.run.arguments="--ai.model=phi3"
@@ -100,16 +101,28 @@ java -jar myinterviewbot.jar \ --ai.provider=ollama \ --ai.model=phi3:latest
 Picking the right model depends on what you care about most — **speed**, **accuracy**, or **resource usage**.
 Here’s a quick guide:
 
-| 💻 Laptop Type               | 🧠 Recommended Model  | ✅ Benefits                                                                                                             | ⚠️ Limitations                                                             |
-|------------------------------|-----------------------|------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
-| **8–12 GB RAM**              | **Phi-3 Mini (3.8B)** | 🟢 Extremely fast<br>🟢 Small download (~2 GB)<br>🟢 Great for quick Q&A and light tasks                               | 🔴 Limited reasoning depth<br>🔴 Not ideal for long conversations          |
-| **8–12 GB RAM**              | **Mistral 7B**        | 🟢 Smart and efficient<br>🟢 Handles follow-ups better than Phi-3<br>🟢 Good general-purpose model                     | 🔴 Slightly robotic tone<br>🔴 Less consistent on complex logic            |
-| **16–18 GB RAM**             | **Llama 3.1 (8B)**    | 🟢 Excellent reasoning<br>🟢 Natural, human-like answers<br>🟢 Great for behavioral interview simulation               | 🔴 Slightly slower startup<br>🔴 Requires quantized version for best speed |
-| **16–18 GB RAM**             | **Gemma 2 (9B)**      | 🟢 Balanced quality and speed<br>🟢 Friendly conversational tone<br>🟢 Efficient on Apple Silicon                      | 🔴 Can occasionally repeat or overexplain                                  |
-| **24+ GB RAM / M3 Pro–Max**  | **Llama 3.1 (13B)**   | 🟢 High-quality, detailed reasoning<br>🟢 Handles multi-turn interviews beautifully<br>🟢 Very consistent and coherent | 🔴 Slower on smaller laptops<br>🔴 Heavy model (~8–9 GB)                   |
-| **Server / Multi-GPU Setup** | **Llama 3.1 (70B)**   | 🟢 Near GPT-4 quality<br>🟢 Exceptional reasoning and memory<br>🟢 Ideal for research or production AI agents          | 🔴 Requires 64GB+ RAM or GPU cluster<br>🔴 Slow download and load times    |
+| 💻 Laptop Type               | 🧠 Recommended Model  | 📦 Approx. Size | ✅ Benefits                                                                                                             | ⚠️ Limitations                                                             |
+|------------------------------|-----------------------|-----------------|------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
+| **8–12 GB RAM**              | **Phi-3 Mini (3.8B)** | ~2 GB           | 🟢 Extremely fast<br>🟢 Small download<br>🟢 Great for quick Q&A and light tasks                                       | 🔴 Limited reasoning depth<br>🔴 Not ideal for long conversations          |
+| **8–12 GB RAM**              | **Mistral 7B**        | ~4 GB           | 🟢 Smart and efficient<br>🟢 Handles follow-ups better than Phi-3<br>🟢 Good general-purpose model                     | 🔴 Slightly robotic tone<br>🔴 Less consistent on complex logic            |
+| **16–18 GB RAM**             | **Llama 3.1 (8B)**    | ~5 GB           | 🟢 Excellent reasoning<br>🟢 Natural, human-like answers<br>🟢 Great for behavioral interview simulation               | 🔴 Slightly slower startup<br>🔴 Requires quantized version for best speed |
+| **16–18 GB RAM**             | **Gemma 2 (9B)**      | ~6 GB           | 🟢 Balanced quality and speed<br>🟢 Friendly conversational tone<br>🟢 Efficient on Apple Silicon                      | 🔴 Can occasionally repeat or overexplain                                  |
+| **24+ GB RAM / M3 Pro–Max**  | **Llama 3.1 (13B)**   | ~8–9 GB         | 🟢 High-quality, detailed reasoning<br>🟢 Handles multi-turn interviews beautifully<br>🟢 Very consistent and coherent | 🔴 Slower on smaller laptops<br>🔴 Heavy model                             |
+| **Server / Multi-GPU Setup** | **Llama 3.1 (70B)**   | ~40–45 GB       | 🟢 Near GPT-4 quality<br>🟢 Exceptional reasoning and memory<br>🟢 Ideal for research or production AI agents          | 🔴 Requires 64 GB+ RAM or GPU cluster<br>🔴 Very slow download / load      |
 
 All models are available at [Ollama library](https://ollama.com/library).
+
+Example of getting a Model:
+
+```bash
+ollama pull llama3.1:8b
+```
+
+Show all the models that are currently installed on your machine:
+
+```bash
+ollama list
+```
 
 ---
 
@@ -155,6 +168,7 @@ All models are available at [Ollama library](https://ollama.com/library).
 - [ ] 🗣️ Text-to-Speech for AI questions and feedback
 - [ ] 🧠 Feedback memory — personalized tips based on past sessions
 - [ ] 🎨 Improved UI/UX — modern dashboard, light/dark mode, analytics
+- [ ] 🤖 Add support for smaller Whisper models (e.g., tiny, base)
 
 ### 🧪 Experimental Ideas
 
