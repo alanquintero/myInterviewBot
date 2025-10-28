@@ -163,6 +163,7 @@ ollama list
 - [x] 🎯 Scoring system — rate clarity, confidence, relevance, etc.
 - [ ] 📄 Resume Interview Mode — tailor questions based on uploaded resume
 - [ ] 💻 Technical Interview Mode — technical questions
+- [ ] 🤝 Mock Interview Mode – A session to practice common questions asked in job interviews
 - [ ] 📊 Progress Analytics — graphs for improvement over time
 - [ ] 🤖 Add more AI providers (e.g., OpenAI GPT-4, Claude, Gemini)
 - [ ] 🗣️ Text-to-Speech for AI questions and feedback

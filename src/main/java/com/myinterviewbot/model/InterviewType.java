@@ -12,6 +12,7 @@ package com.myinterviewbot.model;
  */
 public enum InterviewType {
     BEHAVIORAL,
+    RESUME,
     TECHNICAL,
-    RESUME
+    MOCK_INTERVIEW
 }
