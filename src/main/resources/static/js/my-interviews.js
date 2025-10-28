@@ -16,15 +16,18 @@ export async function loadInterviews(page = 1) {
         const response = await fetch('/history/v1/all');
         interviewsData = await response.json();
 
-        if (!interviewsData.length) {
+        if (!interviewsData.entries.length) {
             listContainer.innerHTML = '<p>No interviews found.</p>';
             return;
         }
 
-        const totalPages = Math.ceil(interviewsData.length / PAGE_SIZE);
+        // Displaying Score summary
+        renderScoreSummary(interviewsData.scoreSummary);
+
+        const totalPages = Math.ceil(interviewsData.entries.length / PAGE_SIZE);
         const start = (page - 1) * PAGE_SIZE;
         const end = start + PAGE_SIZE;
-        const pageItems = interviewsData.slice(start, end);
+        const pageItems = interviewsData.entries.slice(start, end);
 
         // Render interviews
         pageItems.forEach(interview => {
@@ -35,24 +38,24 @@ export async function loadInterviews(page = 1) {
 
             /* Evaluation start */
             // Clarity
-            const clarityScore = interview.evaluation.clarityScore ?? "N/A";
-            const clarityFeedback = interview.evaluation.clarityFeedback && interview.evaluation.clarityFeedback.trim() !== '' ? interview.evaluation.clarityFeedback : "No feedback provided";
+            const clarityScore = interview.evaluation?.clarityScore ?? "N/A";
+            const clarityFeedback = interview.evaluation?.clarityFeedback && interview.evaluation.clarityFeedback.trim() !== '' ? interview.evaluation.clarityFeedback : "No feedback provided";
 
             // Structure
-            const structureScore = interview.evaluation.structureScore ?? "N/A";
-            const structureFeedback = interview.evaluation.structureFeedback && interview.evaluation.structureFeedback.trim() !== '' ? interview.evaluation.structureFeedback : "No feedback provided";
+            const structureScore = interview.evaluation?.structureScore ?? "N/A";
+            const structureFeedback = interview.evaluation?.structureFeedback && interview.evaluation.structureFeedback.trim() !== '' ? interview.evaluation.structureFeedback : "No feedback provided";
 
             // Relevance
-            const relevanceScore = interview.evaluation.relevanceScore ?? "N/A";
-            const relevanceFeedback = interview.evaluation.relevanceFeedback && interview.evaluation.relevanceFeedback.trim() !== '' ? interview.evaluation.relevanceFeedback : "No feedback provided";
+            const relevanceScore = interview.evaluation?.relevanceScore ?? "N/A";
+            const relevanceFeedback = interview.evaluation?.relevanceFeedback && interview.evaluation.relevanceFeedback.trim() !== '' ? interview.evaluation.relevanceFeedback : "No feedback provided";
 
             // Communication
-            const communicationScore = interview.evaluation.communicationScore ?? "N/A";
-            const communicationFeedback = interview.evaluation.communicationFeedback && interview.evaluation.communicationFeedback.trim() !== '' ? interview.evaluation.communicationFeedback : "No feedback provided";
+            const communicationScore = interview.evaluation?.communicationScore ?? "N/A";
+            const communicationFeedback = interview.evaluation?.communicationFeedback && interview.evaluation.communicationFeedback.trim() !== '' ? interview.evaluation.communicationFeedback : "No feedback provided";
 
             // Depth
-            const depthScore = interview.evaluation.depthScore ?? "N/A";
-            const depthFeedback = interview.evaluation.depthFeedback && interview.evaluation.depthFeedback.trim() !== '' ? interview.evaluation.depthFeedback : "No feedback provided";
+            const depthScore = interview.evaluation?.depthScore ?? "N/A";
+            const depthFeedback = interview.evaluation?.depthFeedback && interview.evaluation.depthFeedback.trim() !== '' ? interview.evaluation.depthFeedback : "No feedback provided";
             /* Evaluation ends */
 
             card.innerHTML = `
@@ -128,4 +131,40 @@ export async function loadInterviews(page = 1) {
         loading.classList.add('hidden');
         currentPage = page;
     }
+}
+
+function renderScoreSummary(scoreSummary) {
+    if (!scoreSummary) {
+        return;
+    }
+
+    const summaryContainer = document.getElementById('scoreSummary');
+    summaryContainer.innerHTML = ''; // clear previous content
+
+    // Add title dynamically
+    const title = document.createElement('h4');
+    title.innerText = "Average Evaluation Scores";
+    summaryContainer.appendChild(title);
+
+    // Add list for the scores
+    const list = document.createElement('ul');
+    list.className = 'list-group list-group-horizontal justify-content-center';
+
+    const keys = [
+        {key: 'clarityScoreAverage', label: 'Clarity'},
+        {key: 'structureScoreAverage', label: 'Structure'},
+        {key: 'relevanceScoreAverage', label: 'Relevance'},
+        {key: 'communicationScoreAverage', label: 'Communication'},
+        {key: 'depthScoreAverage', label: 'Depth'}
+    ];
+
+    keys.forEach(k => {
+        const value = scoreSummary[k.key] ?? 0;
+        const item = document.createElement('li');
+        item.className = 'list-group-item';
+        item.innerHTML = `<strong>${k.label}:</strong> ${value.toFixed(1)}/10`;
+        list.appendChild(item);
+    });
+
+    summaryContainer.appendChild(list);
 }

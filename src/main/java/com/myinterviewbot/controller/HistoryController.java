@@ -4,14 +4,13 @@
  */
 package com.myinterviewbot.controller;
 
-import com.myinterviewbot.model.InterviewEntry;
+import com.myinterviewbot.model.MyInterviews;
 import com.myinterviewbot.service.InterviewDataService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * REST controller for handling history requests.
@@ -21,6 +20,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/history/v1")
 public class HistoryController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HistoryController.class);
 
     private final InterviewDataService interviewDataService;
 
@@ -32,11 +33,9 @@ public class HistoryController {
      * Get all interviews sorted by timestamp descending
      */
     @GetMapping("/all")
-    public List<InterviewEntry> getAllInterviews() {
-        return interviewDataService.getAllInterviews()
-                .stream()
-                .sorted(Comparator.comparingLong(InterviewEntry::getTimestamp).reversed())
-                .toList();
+    public MyInterviews getAllInterviews() {
+        LOGGER.info("Get All Interviews");
+        return interviewDataService.getMyInterviews();
     }
 
     /**
@@ -44,6 +43,7 @@ public class HistoryController {
      */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteInterview(@PathVariable("id") long id) {
+        LOGGER.info("Delete Interview {}", id);
         boolean removed = interviewDataService.removeInterview(id);
         if (removed) {
             return ResponseEntity.ok("Interview deleted");
