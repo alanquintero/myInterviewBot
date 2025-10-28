@@ -12,6 +12,7 @@ package com.myinterviewbot.model;
 public class InterviewEntry {
 
     private long timestamp;
+    private InterviewType interviewType;
     private String profession;
     private String question;
     private String answer;
@@ -22,8 +23,9 @@ public class InterviewEntry {
     public InterviewEntry() {
     }
 
-    public InterviewEntry(final long timestamp, final String profession, final String question, final String answer, final String feedback, final String videoUrl, final Evaluation evaluation) {
+    public InterviewEntry(final long timestamp, final InterviewType interviewType, final String profession, final String question, final String answer, final String feedback, final String videoUrl, final Evaluation evaluation) {
         this.timestamp = timestamp;
+        this.interviewType = interviewType;
         this.profession = profession;
         this.question = question;
         this.answer = answer;
@@ -39,6 +41,14 @@ public class InterviewEntry {
 
     public void setTimestamp(final long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public InterviewType getInterviewType() {
+        return interviewType;
+    }
+
+    public void setInterviewType(InterviewType interviewType) {
+        this.interviewType = interviewType;
     }
 
     public String getProfession() {

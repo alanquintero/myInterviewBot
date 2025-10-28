@@ -4,10 +4,7 @@
  */
 package com.myinterviewbot.controller;
 
-import com.myinterviewbot.model.Evaluation;
-import com.myinterviewbot.model.FeedbackResponse;
-import com.myinterviewbot.model.InterviewEntry;
-import com.myinterviewbot.model.QuestionResponse;
+import com.myinterviewbot.model.*;
 import com.myinterviewbot.service.FfmpegService;
 import com.myinterviewbot.service.InterviewDataService;
 import com.myinterviewbot.service.PromptService;
@@ -107,7 +104,7 @@ public class InterviewController {
         // Saves the interview entry
         final long timestamp = Utils.getTimestamp(videoFile.getName());
         final String videoUrl = Utils.getVideoUrl(videoFile.getName());
-        interviewDataService.addInterview(timestamp, new InterviewEntry(timestamp, profession, question, transcript, feedback, videoUrl, evaluation));
+        interviewDataService.addInterview(timestamp, new InterviewEntry(timestamp, InterviewType.BEHAVIORAL, profession, question, transcript, feedback, videoUrl, evaluation));
 
         return new FeedbackResponse(feedback, transcript, evaluation);
     }
