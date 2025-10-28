@@ -160,18 +160,20 @@ ollama list
 
 - [x] 🧭 Conversation history — track progress over time
 - [x] 💻 Custom Questions — enter the question you want to practice
-- [x] 🎯 Scoring system — rate clarity, confidence, and relevance
+- [x] 🎯 Scoring system — rate clarity, confidence, relevance, etc.
 - [ ] 📄 Resume Interview Mode — tailor questions based on uploaded resume
 - [ ] 💻 Technical Interview Mode — technical questions
 - [ ] 📊 Progress Analytics — graphs for improvement over time
-- [ ] 🤖 Add more AI models (e.g., OpenAI GPT-4, Claude, Gemini)
+- [ ] 🤖 Add more AI providers (e.g., OpenAI GPT-4, Claude, Gemini)
 - [ ] 🗣️ Text-to-Speech for AI questions and feedback
-- [ ] 🧠 Feedback memory — personalized tips based on past sessions
-- [ ] 🎨 Improved UI/UX — modern dashboard, light/dark mode, analytics
 - [ ] 🤖 Add support for smaller Whisper models (e.g., tiny, base)
+- [ ] 🎨 Improved UI/UX — modern dashboard, light/dark mode, analytics
+- [ ] ⚙️ Settings fully customizable from the app — change AI provider, select models, enable or disable text-to-speech,
+  etc.
 
 ### 🧪 Experimental Ideas
 
+* 🧠 **Feedback memory** — personalized tips based on past sessions
 * 💬 **AI interviewer personalities** (strict, friendly, technical)
 * 🗂️ **Integration with Google Drive or Notion** for saving feedback
 
