@@ -164,13 +164,15 @@ ollama list
 - [ ] 📄 Resume Interview Mode — tailor questions based on uploaded resume
 - [ ] 💻 Technical Interview Mode — technical questions
 - [ ] 🤝 Mock Interview Mode – A session to practice common questions asked in job interviews
+- [ ] 🔁 Continuous Interview Mode - Seamlessly move from feedback to the next question to simulate a complete interview
+  session
 - [ ] 📊 Progress Analytics — graphs for improvement over time
 - [ ] 🤖 Add more AI providers (e.g., OpenAI GPT-4, Claude, Gemini)
 - [ ] 🗣️ Text-to-Speech for AI questions and feedback
 - [ ] 🤖 Add support for smaller Whisper models (e.g., tiny, base)
 - [ ] 🎨 Improved UI/UX — modern dashboard, light/dark mode, analytics
-- [ ] ⚙️ Settings fully customizable from the app — change AI provider, select models, enable or disable text-to-speech,
-  etc.
+- [ ] ⚙️ Settings fully customizable from the app — change AI provider, change AI model, enable or disable
+  text-to-speech, change recording time, etc.
 
 ### 🧪 Experimental Ideas
 
