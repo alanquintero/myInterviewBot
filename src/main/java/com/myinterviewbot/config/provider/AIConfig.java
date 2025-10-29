@@ -2,7 +2,7 @@
  * Copyright 2025 Alan Quintero
  * Source: https://github.com/alanquintero/myInterviewBot
  */
-package com.myinterviewbot.config;
+package com.myinterviewbot.config.provider;
 
 import com.myinterviewbot.service.ai.model.AIService;
 import com.myinterviewbot.service.ai.model.OllamaService;

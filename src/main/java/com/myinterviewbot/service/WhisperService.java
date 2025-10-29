@@ -4,14 +4,16 @@
  */
 package com.myinterviewbot.service;
 
+import com.myinterviewbot.service.whisper.Whisper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 
 /**
- * Service responsible for transcribing audio files to text using Whisper AI.
+ * Service responsible for transcribing audio files to text.
  *
  * <p>This service handles communication with the Whisper transcription engine
  * and returns the text output of an audio file.</p>
@@ -23,6 +25,9 @@ public class WhisperService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WhisperService.class);
 
+    @Autowired
+    private Whisper whisper;
+
     /**
      * Transcribes a given audio file into text.
      *
@@ -31,33 +36,6 @@ public class WhisperService {
      */
     public String transcribe(final File audioFile) {
         LOGGER.info("Transcribing audio file...");
-        try {
-            final ProcessBuilder pb = new ProcessBuilder(
-                    "whisper",
-                    audioFile.getAbsolutePath(),
-                    "--model", "base",
-                    "--language", "en",
-                    "--output_format", "txt",
-                    "--output_dir", audioFile.getParent()
-            );
-
-            pb.redirectErrorStream(true);
-            final Process process = pb.start();
-            process.waitFor();
-
-            // Whisper saves a file like filename.txt
-            final String baseName = audioFile.getName().replaceFirst("\\.mp3$", "");
-            final File transcriptFile = new File(audioFile.getParentFile(), baseName + ".txt");
-            if (!transcriptFile.exists()) {
-                throw new RuntimeException("Whisper transcription failed — no output file found.");
-            }
-
-            final String transcript = new String(java.nio.file.Files.readAllBytes(transcriptFile.toPath()));
-            LOGGER.info("Text generated from audio file: {}", transcript);
-            return transcript;
-        } catch (Exception e) {
-            LOGGER.error("Whisper transcription failed.", e);
-        }
-        return null;
+        return whisper.transcribe(audioFile);
     }
 }
