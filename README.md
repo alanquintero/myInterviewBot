@@ -172,7 +172,7 @@ ollama list
 - [ ] 🤖 Add support for smaller Whisper models (e.g., tiny, base)
 - [ ] 🎨 Improved UI/UX — modern dashboard, light/dark mode, analytics
 - [ ] ⚙️ Settings fully customizable from the app — change AI provider, change AI model, enable or disable
-  text-to-speech, change recording time, etc.
+  text-to-speech, change recording time, only audio interview, etc.
 
 ### 🧪 Experimental Ideas
 
