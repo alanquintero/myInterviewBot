@@ -1,4 +1,9 @@
+/* Title */
+const interviewTitle = document.getElementById("interviewTitle");
+const interviewLogo = document.getElementById("interviewLogo");
+
 /* Input section */
+const behavioralInputSection = document.getElementById("behavioralInputSection");
 const inputProfession = document.getElementById("inputProfession");
 const inputQuestion = document.getElementById("inputQuestion");
 const commonQuestionsBtn = document.getElementById("commonQuestionsBtn");
@@ -8,8 +13,8 @@ const generateQuestionBtn = document.getElementById("generateQuestionBtn");
 const resetBtnTop = document.getElementById("resetBtnTop");
 const readyBtn = document.getElementById("readyBtn");
 
-/* Loading Question GIF */
-const loadingQuestion = document.getElementById("loadingQuestion");
+/* Loading GIF */
+const loading = document.getElementById("loading");
 
 /* Recording & Playback section */
 const recordingPlaybackContainer = document.getElementById("recordingPlaybackContainer");
@@ -52,6 +57,8 @@ const MAX_RECORDING_TIME = 150; // in seconds (2 minutes 30 seconds)
 const RECORD_VIDEO_AGAIN_TXT = "Click to record again →";
 const RECORD_BTN_IMG_URL = "img/button/record.png";
 const STOP_RECORD_BTN_IMG_URL = "img/button/stop.gif";
+const BEHAVIORAL_INTERVIEW_LOGO_URL = "img/interview/behavioral.png";
+const RESUME_INTERVIEW_LOGO_URL = "img/interview/resume.png";
 let timerInterval;
 let mediaRecorder;
 let currentStream = null;
@@ -86,7 +93,7 @@ function setProfessionIfBlank() {
 
 // Call API to generate a question
 async function generateQuestion(profession) {
-    loadingQuestion.classList.remove("hidden"); // show loading GIF
+    loading.classList.remove("hidden"); // show loading GIF
     try {
         const res = await fetch(`/api/v1/question?profession=${encodeURIComponent(profession)}`);
         const data = await res.json();
@@ -99,7 +106,7 @@ async function generateQuestion(profession) {
     } catch (err) {
         console.error(err);
     } finally {
-        loadingQuestion.classList.add("hidden"); // hide loading GIF
+        loading.classList.add("hidden"); // hide loading GIF
     }
 }
 
@@ -453,3 +460,59 @@ document.querySelectorAll('#commonQuestionsModal .list-group-item').forEach(item
         modal.hide();
     });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const items = document.querySelectorAll(".list-group-item");
+
+    items.forEach(item => {
+        item.addEventListener("click", () => {
+            // Remove 'active' from all
+            items.forEach(i => i.classList.remove("active"));
+            // Add 'active' to the clicked one
+            item.classList.add("active");
+
+            if (item.id === "behavioral") {
+                console.log("Behavioral interview selected");
+                interviewTitle.textContent = "Behavioral Interview";
+                interviewLogo.src = BEHAVIORAL_INTERVIEW_LOGO_URL;
+                behavioralInputSection.classList.remove("hidden");
+            } else if (item.id === "resume") {
+                console.log("Resume-based interview selected");
+                interviewTitle.textContent = "Resume-based Interview";
+                interviewLogo.src = RESUME_INTERVIEW_LOGO_URL;
+                behavioralInputSection.classList.add("hidden");
+            }
+        });
+    });
+});
+
+document.getElementById("uploadResumeBtn").addEventListener("click", () => {
+    const fileInput = document.getElementById("resumeInput");
+    const file = fileInput.files[0];
+    const feedback = document.getElementById("uploadFeedback");
+
+    if (!file) {
+        feedback.textContent = "Please select a file to upload.";
+        feedback.className = "text-danger";
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("resume", file);
+
+    fetch("/upload-resume", {
+        method: "POST",
+        body: formData
+    })
+        .then(res => res.json())
+        .then(data => {
+            feedback.textContent = data.message;
+            feedback.className = data.success ? "text-success" : "text-danger";
+        })
+        .catch(err => {
+            console.error(err);
+            feedback.textContent = "Error uploading file.";
+            feedback.className = "text-danger";
+        });
+});
+
