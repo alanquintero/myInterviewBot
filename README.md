@@ -94,6 +94,12 @@ Example of running a JAR overring properties:
 java -jar myinterviewbot.jar \ --ai.provider=ollama \ --ai.model=phi3:latest
 ```
 
+Example of running app in other port:
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=9090"
+```
+
 ---
 
 ## 🧩 Choosing the Right Ollama Model
