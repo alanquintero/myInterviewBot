@@ -13,8 +13,8 @@ const generateQuestionBtn = document.getElementById("generateQuestionBtn");
 const resetBtnTop = document.getElementById("resetBtnTop");
 const readyBtn = document.getElementById("readyBtn");
 
-/* Loading Question GIF */
-const loadingQuestion = document.getElementById("loadingQuestion");
+/* Loading GIF */
+const loading = document.getElementById("loading");
 
 /* Recording & Playback section */
 const recordingPlaybackContainer = document.getElementById("recordingPlaybackContainer");
@@ -93,7 +93,7 @@ function setProfessionIfBlank() {
 
 // Call API to generate a question
 async function generateQuestion(profession) {
-    loadingQuestion.classList.remove("hidden"); // show loading GIF
+    loading.classList.remove("hidden"); // show loading GIF
     try {
         const res = await fetch(`/api/v1/question?profession=${encodeURIComponent(profession)}`);
         const data = await res.json();
@@ -106,7 +106,7 @@ async function generateQuestion(profession) {
     } catch (err) {
         console.error(err);
     } finally {
-        loadingQuestion.classList.add("hidden"); // hide loading GIF
+        loading.classList.add("hidden"); // hide loading GIF
     }
 }
 
@@ -484,5 +484,35 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
+});
+
+document.getElementById("uploadResumeBtn").addEventListener("click", () => {
+    const fileInput = document.getElementById("resumeInput");
+    const file = fileInput.files[0];
+    const feedback = document.getElementById("uploadFeedback");
+
+    if (!file) {
+        feedback.textContent = "Please select a file to upload.";
+        feedback.className = "text-danger";
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("resume", file);
+
+    fetch("/upload-resume", {
+        method: "POST",
+        body: formData
+    })
+        .then(res => res.json())
+        .then(data => {
+            feedback.textContent = data.message;
+            feedback.className = data.success ? "text-success" : "text-danger";
+        })
+        .catch(err => {
+            console.error(err);
+            feedback.textContent = "Error uploading file.";
+            feedback.className = "text-danger";
+        });
 });
 
