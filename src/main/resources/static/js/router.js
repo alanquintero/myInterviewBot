@@ -1,4 +1,5 @@
 import {loadInterviews} from './my-interviews.js';
+import {loadSettings} from './settings.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const links = document.querySelectorAll('.nav-link[data-page]');
@@ -22,6 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (page === 'myInterviews') {
                 console.log("MyInterviews page");
                 loadInterviews();
+            }
+
+            if(page === "settings") {
+                console.log("Settings page");
+                loadSettings();
             }
         });
     });

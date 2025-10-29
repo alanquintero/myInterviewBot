@@ -4,11 +4,14 @@
  */
 package com.myinterviewbot.controller;
 
+import com.myinterviewbot.model.Settings;
 import com.myinterviewbot.service.InterviewDataService;
 import com.myinterviewbot.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +30,24 @@ public class SettingsController {
 
     public SettingsController() {
         this.interviewDataService = InterviewDataService.getInstance();
+    }
+
+    @Value("${ai.provider}")
+    private String aiProvider;
+
+    @Value("${ai.model}")
+    private String aiModel;
+
+    @Value("${whisper.provider}")
+    private String whisperProvider;
+
+    /**
+     * Get all settings
+     */
+    @GetMapping("/all")
+    public Settings getAllSettings() {
+        LOGGER.info("Get All Settings");
+        return new Settings(aiProvider, aiModel, whisperProvider);
     }
 
     /**

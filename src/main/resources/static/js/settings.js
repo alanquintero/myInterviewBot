@@ -25,3 +25,31 @@ function showMessage(text, type) {
     messageContainer.style.display = 'block';
     setTimeout(() => messageContainer.style.display = 'none', 3000);
 }
+
+export async function loadSettings() {
+    const settingsContainer = document.getElementById('settingsContainer');
+
+    try {
+        const response = await fetch('/settings/v1/all');
+        let settings = await response.json();
+
+        if (!settings) {
+            settingsContainer.innerHTML = '<p>No settings found.</p>';
+            return;
+        }
+
+        settingsContainer.innerHTML = `
+                <div class="card p-3 mt-3 shadow-sm">
+                    <ul class="list-group list-group-flush text-start">
+                        <li class="list-group-item"><strong>AI provider:</strong> ${settings.aiProvider}</li>
+                        <li class="list-group-item"><strong>AI model:</strong> ${settings.aiModel}</li>
+                        <li class="list-group-item"><strong>Whisper provider:</strong> ${settings.whisperProvider}</li>
+                    </ul>
+                </div>
+            `;
+    } catch (err) {
+        console.error(err);
+        settingsContainer.innerHTML = '<p>Error loading settings.</p>';
+    } finally {
+    }
+}
