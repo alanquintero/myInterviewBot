@@ -1,8 +1,11 @@
 body {
     font-family: Arial, sans-serif;
-    max-width: 800px;
     margin: auto;
     padding: 20px;
+}
+
+#content {
+    max-width: 800px;
 }
 
 button {
@@ -124,4 +127,11 @@ textarea {
 
 #evaluation-result {
     text-align: left;
+}
+
+/* Left side menu */
+.list-group-item.active {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
 }
