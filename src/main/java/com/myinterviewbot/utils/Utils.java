@@ -246,4 +246,14 @@ public class Utils {
         // fallback: return full text
         return text.trim();
     }
+
+    /**
+     * Returns the name of the operating system the user is currently using.
+     *
+     * @return A String containing the operating system name (e.g., "Windows 10", "Mac OS X", "Linux").
+     */
+    public static String getOperatingSystemName() {
+        // The "os.name" system property contains the full name of the operating system.
+        return System.getProperty("os.name");
+    }
 }
