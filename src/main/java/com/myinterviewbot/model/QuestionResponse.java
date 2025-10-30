@@ -4,16 +4,24 @@
  */
 package com.myinterviewbot.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 /**
  * DTO class to return the question.
  *
  * @author Alan Quintero
  */
-@Data
-@AllArgsConstructor
 public class QuestionResponse {
+
     private String question;
+
+    public QuestionResponse(final String question) {
+        this.question = question;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(final String question) {
+        this.question = question;
+    }
 }
