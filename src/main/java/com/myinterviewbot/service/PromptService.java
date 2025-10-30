@@ -156,6 +156,11 @@ public class PromptService {
                 + " Candidate Response: " + transcript;
 
         final String evaluationTxt = aiService.executePrompt(prompt);
+        if (evaluationTxt == null || evaluationTxt.isEmpty()) {
+            LOGGER.warn("Evaluation text is null");
+            return null;
+        }
+
         final String evaluationJson = Utils.extractJson(evaluationTxt);
 
         LOGGER.info("Evaluation JSON: {}", evaluationJson);
