@@ -17,10 +17,13 @@ public class Settings {
 
     private String whisperProvider;
 
-    public Settings(final String aiProvider, final String aiModel, final String whisperProvider) {
+    private String operatingSystem;
+
+    public Settings(final String aiProvider, final String aiModel, final String whisperProvider, final String operatingSystem) {
         this.aiProvider = aiProvider;
         this.aiModel = aiModel;
         this.whisperProvider = whisperProvider;
+        this.operatingSystem = operatingSystem;
     }
 
     public String getAiProvider() {
@@ -45,5 +48,13 @@ public class Settings {
 
     public void setWhisperProvider(final String whisperProvider) {
         this.whisperProvider = whisperProvider;
+    }
+
+    public String getOperatingSystem() {
+        return operatingSystem;
+    }
+
+    public void setOperatingSystem(final String operatingSystem) {
+        this.operatingSystem = operatingSystem;
     }
 }

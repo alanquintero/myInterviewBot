@@ -47,7 +47,7 @@ public class SettingsController {
     @GetMapping("/all")
     public Settings getAllSettings() {
         LOGGER.info("Get All Settings");
-        return new Settings(aiProvider, aiModel, whisperProvider);
+        return new Settings(aiProvider, aiModel, whisperProvider, Utils.getOperatingSystemName());
     }
 
     /**

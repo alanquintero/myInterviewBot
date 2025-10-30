@@ -44,6 +44,7 @@ export async function loadSettings() {
                         <li class="list-group-item"><strong>AI provider:</strong> ${settings.aiProvider}</li>
                         <li class="list-group-item"><strong>AI model:</strong> ${settings.aiModel}</li>
                         <li class="list-group-item"><strong>Whisper provider:</strong> ${settings.whisperProvider}</li>
+                        <li class="list-group-item"><strong>Operating System:</strong> ${settings.operatingSystem}</li>
                     </ul>
                 </div>
             `;
