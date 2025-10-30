@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Behavioral Interview Trainer</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<h1>Behavioral Interview Trainer</h1>
+
+<section>
+    <h2>Questions</h2>
+    <ul>
+        <li th:each="question : ${questions}">
+            <span th:text="${question}"></span>
+        </li>
+    </ul>
+</section>
+
+<section>
+    <h2>Add a New Question</h2>
+    <form th:action="@{/add}" method="post">
+        <input type="text" name="question" placeholder="Enter your question" required>
+        <button type="submit">Add</button>
+    </form>
+</section>
+
+</body>
+</html>

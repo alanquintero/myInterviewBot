@@ -1,0 +1,16 @@
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-primary"
+     xmlns:th="http://www.thymeleaf.org">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <img th:src="@{/img/myInterviewBot.ico}" alt="Logo" width="30" height="30" class="rounded-circle me-2">
+            MyInterviewBot
+        </a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="#" data-page="home">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-page="myInterviews">My Interviews</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-page="settings">Settings</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>

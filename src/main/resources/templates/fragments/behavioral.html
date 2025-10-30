@@ -1,0 +1,44 @@
+<div th:fragment="behavioralSection" id="behavioralInputSection" xmlns:th="http://www.thymeleaf.org">
+    <!-- Profession -->
+    <div class="mb-3 d-flex justify-content-between align-items-center">
+        <label for="inputProfession" class="form-label mb-0">Profession:</label>
+    </div>
+    <input type="text" class="form-control" id="inputProfession" placeholder="e.g. Software Engineer">
+    <br>
+
+    <!-- Question -->
+    <div class="mb-3 d-flex justify-content-between align-items-center">
+        <label for="inputQuestion" class="form-label mb-0">Question:</label>
+        <button id="commonQuestionsBtn" type="button" class="btn btn-outline-info btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#commonQuestionsModal">
+            <i class="bi bi-info-circle"></i> Common Questions
+        </button>
+    </div>
+    <textarea class="form-control" id="inputQuestion" rows="3"
+              placeholder="e.g. Tell me about a time you faced a challenge at work."></textarea>
+
+    <!-- Button section -->
+    <div id="buttonsSection" class="input-group mb-3">
+        <button id="generateQuestionBtn"
+                class="btn btn-primary mb-3 d-flex align-items-center justify-content-center"
+                title="AI generates a Question">
+            Generate Question&nbsp;
+            <img th:src="@{/img/button/ai-stars.png}" alt="AI Icon"
+                 style="width: 20px; height: 20px; margin-right: 8px;">
+        </button>
+        <button type="button" class="btn btn-info mb-3 d-flex align-items-center justify-content-center"
+                data-bs-toggle="modal" data-bs-target="#infoModal">Info
+        </button>
+        <button id="resetBtnTop"
+                class="btn btn-warning mb-3 d-flex align-items-center justify-content-center"
+                title="Reset the question">
+            Reset
+        </button>
+        <button id="readyBtn"
+                class="btn btn-success mb-3 d-flex align-items-center justify-content-center"
+                title="Click me when you are ready to answer the question">
+            Ready!
+        </button>
+    </div>
+</div>

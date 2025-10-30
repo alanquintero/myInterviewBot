@@ -1,0 +1,15 @@
+<fieldset th:fragment="resumeSection" id="resumeSection" class="border rounded p-3 mb-4"
+          xmlns:th="http://www.thymeleaf.org">
+    <legend class="float-none w-auto px-3 text-primary fw-semibold">Resume Section</legend>
+
+    <div class="mb-3">
+        <label for="resumeInput" class="form-label">Upload your resume (PDF, DOCX):</label>
+        <input class="form-control" type="file" id="resumeInput" accept=".pdf,.doc,.docx">
+    </div>
+
+    <button id="uploadResumeBtn" class="btn btn-primary">
+        Upload Resume
+    </button>
+
+    <div id="uploadFeedback" class="mt-2"></div>
+</fieldset>
