@@ -12,11 +12,9 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * Service responsible for sending prompts to the Ollama AI model and retrieving responses.
@@ -33,6 +31,8 @@ public class OllamaService implements AIService {
 
     /**
      * Calls the Ollama AI model with a given prompt and returns the response.
+     * The prompt is written directly to the process's standard input (STDIN)
+     * to avoid shell piping overhead, which is particularly slow on Windows.
      *
      * @param prompt the text prompt to send to Ollama
      * @return the AI-generated response
@@ -41,99 +41,126 @@ public class OllamaService implements AIService {
     public String executePrompt(final String prompt) {
         LOGGER.info("Running Ollama with model: {}", aiModel);
         LOGGER.info("Calling Ollama with the prompt: {}", prompt);
+
+        // Define the common executable name for the platform
+        final String executable = System.getProperty("os.name").toLowerCase().contains("win") ? "ollama.exe" : "ollama";
+        final ProcessBuilder pb = new ProcessBuilder(executable, "run", aiModel);
+
+        // Set environment variables directly on the ProcessBuilder
+        pb.environment().put("OLLAMA_NO_COLOR", "1");
+        pb.environment().put("OLLAMA_SILENT", "1");
+        pb.redirectErrorStream(true); // Redirect stderr to stdout
+
+        // The ExecutorService is used to handle asynchronous reading of the output
+        final ExecutorService executor = Executors.newSingleThreadExecutor();
+        Process process = null;
+
         try {
-            final ProcessBuilder pb;
-            if (System.getProperty("os.name").toLowerCase().contains("win")) {
-                LOGGER.info("Creating Windows command");
-                // Windows execution using cmd.exe
-                final String windowsCommand = "echo " + prompt.replace("\"", "\\\"") + " | ollama run " + aiModel;
-                final String[] cmdArgs = {"cmd.exe", "/c", windowsCommand};
-                pb = new ProcessBuilder(cmdArgs);
-                pb.environment().put("OLLAMA_NO_COLOR", "1");
-                pb.environment().put("OLLAMA_SILENT", "1");
-                LOGGER.info("Executing Windows command: {}", windowsCommand);
-            } else {
-                LOGGER.info("Creating Unix/Linux/Mac command");
-                // Unix/Linux/Mac execution using bash
-                final String command = "echo \"" + prompt.replace("\"", "\\\"") + "\" | OLLAMA_NO_COLOR=1 OLLAMA_SILENT=1 ollama run " + aiModel;
-                final String[] bashArgs = {"bash", "-c", command};
-                pb = new ProcessBuilder(bashArgs);
-                pb.redirectErrorStream(true);
-                LOGGER.info("Executing command: {}", command);
-            }
-            pb.redirectErrorStream(true);
+            // 1. Start the Ollama process
+            process = pb.start();
+            LOGGER.info("Ollama process started successfully using direct execution.");
 
-            final Process process = pb.start();
-            LOGGER.info("Ollama process started successfully.");
+            // 2. Write the prompt directly to the process's STDIN
+            try (OutputStream os = process.getOutputStream()) {
+                os.write(prompt.getBytes(StandardCharsets.UTF_8));
+                os.flush();
+            } // os.close() is called automatically here
 
-            // Reader to capture process output
+            // 3. Set up the asynchronous reader
             final BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)
             );
-
             final StringBuilder output = new StringBuilder();
             final long startTime = System.currentTimeMillis();
-            boolean finished = false;
 
-            // Read asynchronously to avoid blocking indefinitely
-            final ExecutorService executor = Executors.newSingleThreadExecutor();
+            // Task to read the output asynchronously
             final Future<?> readerFuture = executor.submit(() -> {
                 try {
                     int ch;
                     while ((ch = reader.read()) != -1) {
-                        char c = (char) ch;
-                        output.append(c);
-                        if (output.length() % 300 == 0) {
+                        output.append((char) ch);
+                        if (output.length() % 500 == 0) {
                             LOGGER.debug("Ollama partial output: {} chars", output.length());
                         }
                     }
                 } catch (IOException e) {
-                    LOGGER.error("Error reading Ollama output", e);
+                    // This catch block handles the expected closure/cancellation when process exits
+                    if (!executor.isShutdown()) {
+                        LOGGER.error("Error reading Ollama output", e);
+                    }
                 }
             });
 
-            // Wait for process to finish (max 90 seconds)
+            // 4. Wait for process to finish
+            boolean finished = false;
             if (process.waitFor(90, TimeUnit.SECONDS)) {
                 finished = true;
             } else {
+                // If timeout, forcibly terminate the process
                 process.destroyForcibly();
-                LOGGER.error("Ollama process timed out after 90 seconds");
+                LOGGER.error("Ollama process timed out after 90 seconds. Process forcibly destroyed.");
             }
 
-            // Stop the reader
-            readerFuture.cancel(true);
-            executor.shutdownNow();
-
-            LOGGER.info("Ollama process exited with code: {}; process finished: {}", process.exitValue(), finished);
+            // 5. Cleanup and Logging
+            final int exitValue = process.exitValue();
+            LOGGER.info("Ollama process exited with code: {}; process finished: {}", exitValue, finished);
             final long duration = System.currentTimeMillis() - startTime;
             LOGGER.info("Ollama call completed in {} ms", duration);
 
-            final String result = output.toString().trim();
-            LOGGER.debug("Full Ollama output:\n{}", result);
+            // Cancel the reader task, giving it a small moment to complete reading the buffer
+            readerFuture.cancel(true);
 
-            if (result.isEmpty() || process.exitValue() != 0) {
+            // Wait for the reader thread to actually stop (optional, but robust)
+            try {
+                readerFuture.get(100, TimeUnit.MILLISECONDS);
+            } catch (TimeoutException ignored) {
+                // Ignore if it takes too long to stop, as we are shutting down the executor next
+            }
+
+            final String rawResult = output.toString();
+            LOGGER.debug("Full Ollama output (RAW):\n{}", rawResult);
+
+            if (rawResult.isEmpty() || exitValue != 0) {
+                if (exitValue != 0) {
+                    LOGGER.error("Ollama process exited with non-zero code: {}", exitValue);
+                } else {
+                    LOGGER.warn("Ollama returned empty output.");
+                }
                 return "";
             }
 
             /*
-             * Remove any special characters from the text, including those inserted
-             * by the AI during "thinking" or processing, which may appear in the output.
+             * Remove terminal and non-printable characters from the text.
              */
-            final String cleanedResult = output.toString()
+            final String cleanedResult = rawResult
                     // Remove ANSI color codes and cursor control sequences
                     .replaceAll("\u001B\\[[;\\d]*[ -/]*[@-~]", "")
                     // Remove other terminal control sequences (like [?25l, [?25h)
                     .replaceAll("\\[\\?\\d+[hl]", "")
-                    // Remove non-printable characters
-                    .replaceAll("[^\\p{Print}]", "")
+                    // Remove non-printable characters (excluding common whitespace)
+                    .replaceAll("[^\\p{Print}\\s]", "")
                     .trim();
 
             LOGGER.info("Clean Ollama output:\n{}", cleanedResult);
             return cleanedResult;
 
+        } catch (InterruptedException e) {
+            // Re-assert the interrupt flag
+            Thread.currentThread().interrupt();
+            LOGGER.error("Ollama process execution was interrupted", e);
+            return "";
         } catch (Exception e) {
             LOGGER.error("Error running Ollama", e);
             return "";
+        } finally {
+            // Ensure the ExecutorService is always shut down
+            if (executor != null) {
+                executor.shutdownNow();
+            }
+            // Ensure process resources are closed if it was started
+            if (process != null && process.isAlive()) {
+                process.destroyForcibly();
+            }
         }
     }
 }
