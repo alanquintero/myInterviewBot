@@ -2,11 +2,14 @@
 const interviewTitle = document.getElementById("interviewTitle");
 const interviewLogo = document.getElementById("interviewLogo");
 
-/* Input section */
-const behavioralInputSection = document.getElementById("behavioralInputSection");
+/* Behavioral section */
+const behavioralSection = document.getElementById("behavioralSection");
 const inputProfession = document.getElementById("inputProfession");
 const inputQuestion = document.getElementById("inputQuestion");
 const commonQuestionsBtn = document.getElementById("commonQuestionsBtn");
+
+/* Resume section */
+const resumeSection = document.getElementById("resumeSection");
 
 /* Button section */
 const generateQuestionBtn = document.getElementById("generateQuestionBtn");
@@ -475,12 +478,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log("Behavioral interview selected");
                 interviewTitle.textContent = "Behavioral Interview";
                 interviewLogo.src = BEHAVIORAL_INTERVIEW_LOGO_URL;
-                behavioralInputSection.classList.remove("hidden");
+                behavioralSection.classList.remove("hidden");
+                resumeSection.classList.add("hidden");
             } else if (item.id === "resume") {
                 console.log("Resume-based interview selected");
                 interviewTitle.textContent = "Resume-based Interview";
                 interviewLogo.src = RESUME_INTERVIEW_LOGO_URL;
-                behavioralInputSection.classList.add("hidden");
+                behavioralSection.classList.add("hidden");
+                resumeSection.classList.remove("hidden");
             }
         });
     });
