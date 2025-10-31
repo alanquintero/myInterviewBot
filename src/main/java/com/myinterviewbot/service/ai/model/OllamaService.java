@@ -128,7 +128,9 @@ public class OllamaService implements AIService {
             try {
                 readerFuture.get(100, TimeUnit.MILLISECONDS);
             } catch (TimeoutException ignored) {
-                // Ignore if it takes too long to stop, as we are shutting down the executor next
+                // We are shutting down the executor next
+                LOGGER.warn("Switching to low performance mode");
+                GlobalConfig.slowPerformanceMode = true;
             }
 
             final String rawResult = output.toString();
