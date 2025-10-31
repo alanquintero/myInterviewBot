@@ -8,6 +8,8 @@ import com.myinterviewbot.model.Evaluation;
 import com.myinterviewbot.service.ai.model.AIService;
 import com.myinterviewbot.utils.Utils;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,8 @@ import java.util.Random;
 
 @Service
 public class LowPerformancePromptService implements Prompt{
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LowPerformancePromptService.class);
 
     private static final Random random = new Random();
 
@@ -39,6 +43,8 @@ public class LowPerformancePromptService implements Prompt{
                         " \nAnswer: " + transcript
         );
         final String feedback = aiService.executePrompt(feedbackPrompt);
+        LOGGER.info("Feedback: {}", feedback);
+
         return Utils.removeQuotesAndFormatList(feedback);
     }
 
