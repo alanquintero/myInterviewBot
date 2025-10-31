@@ -4,8 +4,6 @@
  */
 package com.myinterviewbot.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.myinterviewbot.model.Evaluation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
@@ -256,53 +254,5 @@ public class Utils {
     public static String getOperatingSystemName() {
         // The "os.name" system property contains the full name of the operating system.
         return System.getProperty("os.name");
-    }
-
-    public static Evaluation generateEvaluation(final String evaluationTxt) {
-        LOGGER.info("Evaluation: {}", evaluationTxt);
-        final String evaluationJson = Utils.extractJson(evaluationTxt);
-
-        LOGGER.info("Evaluation JSON: {}", evaluationJson);
-        if (evaluationJson == null) {
-            LOGGER.warn("Evaluation JSON not found in evaluation output: {}", evaluationTxt);
-            return null;
-        }
-
-        try {
-            final ObjectMapper mapper = new ObjectMapper();
-            final Evaluation evaluation = mapper.readValue(evaluationJson, Evaluation.class);
-            validateFeedback(evaluation);
-            return evaluation;
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-        }
-        LOGGER.warn("Evaluation failed. Please try again later.");
-        return null;
-    }
-
-    private static void validateFeedback(final Evaluation evaluation) {
-        if (evaluation == null) {
-            return;
-        }
-        // Clarity
-        if (evaluation.getClarityFeedback() == null || evaluation.getClarityFeedback().isEmpty()) {
-            evaluation.setClarityScore(0);
-        }
-        // Structure
-        if (evaluation.getStructureFeedback() == null || evaluation.getStructureFeedback().isEmpty()) {
-            evaluation.setStructureScore(0);
-        }
-        // Relevance
-        if (evaluation.getRelevanceFeedback() == null || evaluation.getRelevanceFeedback().isEmpty()) {
-            evaluation.setRelevanceScore(0);
-        }
-        // Communication
-        if (evaluation.getCommunicationFeedback() == null || evaluation.getCommunicationFeedback().isEmpty()) {
-            evaluation.setCommunicationScore(0);
-        }
-        // Depth
-        if (evaluation.getDepthFeedback() == null || evaluation.getDepthFeedback().isEmpty()) {
-            evaluation.setDepthScore(0);
-        }
     }
 }

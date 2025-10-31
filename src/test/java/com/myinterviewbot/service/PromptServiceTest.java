@@ -2,7 +2,6 @@ package com.myinterviewbot.service;
 
 import com.myinterviewbot.model.Evaluation;
 import com.myinterviewbot.service.ai.model.AIService;
-import com.myinterviewbot.service.prompt.HighPerformancePromptService;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,13 +13,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-public class HighPerformancePromptServiceTest {
+public class PromptServiceTest {
 
     @Mock
     private AIService aiService;
 
     @InjectMocks
-    private HighPerformancePromptService highPerformancePromptService;
+    private PromptService promptService;
 
     @BeforeEach
     void setUp() {
@@ -38,7 +37,7 @@ public class HighPerformancePromptServiceTest {
         when(session.getAttribute("firstQuestion")).thenReturn(true);
 
         // When
-        final String question = highPerformancePromptService.generateQuestion(profession, session);
+        final String question = promptService.generateQuestion(profession, session);
 
         // Then
         assertEquals(expectedQuestion, question);
@@ -57,7 +56,7 @@ public class HighPerformancePromptServiceTest {
         when(session.getAttribute("firstQuestion")).thenReturn(false);
 
         // When
-        final String question = highPerformancePromptService.generateQuestion(profession, session);
+        final String question = promptService.generateQuestion(profession, session);
 
         // Then
         assertEquals(expectedQuestion, question);
@@ -76,7 +75,7 @@ public class HighPerformancePromptServiceTest {
         when(session.getAttribute("firstQuestion")).thenReturn(false);
 
         // When
-        final String question = highPerformancePromptService.generateQuestion(profession, session);
+        final String question = promptService.generateQuestion(profession, session);
 
         // Then
         assertEquals(expectedQuestion, question);
@@ -95,7 +94,7 @@ public class HighPerformancePromptServiceTest {
         when(session.getAttribute("firstQuestion")).thenReturn(true);
 
         // When
-        final String question = highPerformancePromptService.generateQuestion(profession, session);
+        final String question = promptService.generateQuestion(profession, session);
 
         // Then
         assertEquals(expectedQuestion, question);
@@ -112,7 +111,7 @@ public class HighPerformancePromptServiceTest {
         when(aiService.executePrompt(anyString())).thenReturn(expectedFeedback);
 
         // When
-        final String feedback = highPerformancePromptService.generateFeedback(profession, transcript, question);
+        final String feedback = promptService.generateFeedback(profession, transcript, question);
 
         // Then
         assertEquals(expectedFeedback, feedback);
@@ -129,7 +128,7 @@ public class HighPerformancePromptServiceTest {
         when(aiService.executePrompt(anyString())).thenReturn(expectedFeedback);
 
         // When
-        final String feedback = highPerformancePromptService.generateFeedback(profession, transcript, question);
+        final String feedback = promptService.generateFeedback(profession, transcript, question);
 
         // Then
         assertEquals(expectedFeedback, feedback);
@@ -144,7 +143,7 @@ public class HighPerformancePromptServiceTest {
         when(aiService.executePrompt(anyString())).thenReturn(evaluationResponse);
 
         // When
-        final Evaluation evaluation = highPerformancePromptService.generateEvaluation("transcript", "profession", "question");
+        final Evaluation evaluation = promptService.generateEvaluation("transcript", "profession", "question");
 
         // Then
         assertNotNull(evaluation);
@@ -167,7 +166,7 @@ public class HighPerformancePromptServiceTest {
         when(aiService.executePrompt(anyString())).thenReturn(evaluationResponse);
 
         // When
-        final Evaluation evaluation = highPerformancePromptService.generateEvaluation("transcript", "profession", "question");
+        final Evaluation evaluation = promptService.generateEvaluation("transcript", "profession", "question");
 
         // Then
         assertNull(evaluation);

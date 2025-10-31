@@ -7,9 +7,8 @@ package com.myinterviewbot.controller;
 import com.myinterviewbot.model.*;
 import com.myinterviewbot.service.FfmpegService;
 import com.myinterviewbot.service.InterviewDataService;
-import com.myinterviewbot.service.prompt.HighPerformancePromptService;
+import com.myinterviewbot.service.PromptService;
 import com.myinterviewbot.service.WhisperService;
-import com.myinterviewbot.service.prompt.PromptService;
 import com.myinterviewbot.utils.Utils;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
@@ -51,7 +50,7 @@ public class InterviewController {
     /**
      * Generates an interview question for a specific profession.
      *
-     * <p>The question is generated dynamically using the {@link HighPerformancePromptService}.</p>
+     * <p>The question is generated dynamically using the {@link PromptService}.</p>
      *
      * @param profession the profession for which to generate a question
      * @return a {@link QuestionResponse} containing the generated question

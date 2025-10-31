@@ -4,7 +4,6 @@
  */
 package com.myinterviewbot.service.ai.model;
 
-import com.myinterviewbot.config.GlobalConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -107,11 +106,6 @@ public class OllamaService implements AIService {
             LOGGER.info("Ollama process exited with code: {}; process finished: {}", exitValue, finished);
             final long duration = System.currentTimeMillis() - startTime;
             LOGGER.info("Ollama call completed in {} ms", duration);
-            if (duration > 10000 && GlobalConfig.isFirstPromptRun) {
-                LOGGER.warn("Switching to low performance mode");
-                GlobalConfig.slowPerformanceMode = true;
-                GlobalConfig.isFirstPromptRun = false;
-            }
 
             // Cancel the reader task, giving it a small moment to complete reading the buffer
             readerFuture.cancel(true);
@@ -119,11 +113,8 @@ public class OllamaService implements AIService {
             // Wait for the reader thread to actually stop (optional, but robust)
             try {
                 readerFuture.get(100, TimeUnit.MILLISECONDS);
-            } catch (TimeoutException | CancellationException exception) {
-                // We are shutting down the executor next
-                LOGGER.error(exception.getMessage());
-                LOGGER.warn("Switching to low performance mode");
-                GlobalConfig.slowPerformanceMode = true;
+            } catch (TimeoutException ignored) {
+                // Ignore if it takes too long to stop, as we are shutting down the executor next
             }
 
             final String rawResult = output.toString();
@@ -163,7 +154,9 @@ public class OllamaService implements AIService {
             return "";
         } finally {
             // Ensure the ExecutorService is always shut down
-            executor.shutdownNow();
+            if (executor != null) {
+                executor.shutdownNow();
+            }
             // Ensure process resources are closed if it was started
             if (process != null && process.isAlive()) {
                 process.destroyForcibly();

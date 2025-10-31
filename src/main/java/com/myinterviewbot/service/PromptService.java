@@ -2,8 +2,9 @@
  * Copyright 2025 Alan Quintero
  * Source: https://github.com/alanquintero/myInterviewBot
  */
-package com.myinterviewbot.service.prompt;
+package com.myinterviewbot.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myinterviewbot.model.Evaluation;
 import com.myinterviewbot.service.ai.model.AIService;
 import com.myinterviewbot.utils.Utils;
@@ -22,9 +23,9 @@ import org.springframework.stereotype.Service;
  * @author Alan Quintero
  */
 @Service
-public class HighPerformancePromptService implements Prompt {
+public class PromptService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HighPerformancePromptService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PromptService.class);
 
     private static final int QUESTION_MAX_NUMBER_OF_WORDS = 35;
     private static final int FEEDBACK_MAX_NUMBER_OF_WORDS = 250;
@@ -33,7 +34,6 @@ public class HighPerformancePromptService implements Prompt {
     @Autowired
     private AIService aiService;
 
-    @Override
     public String generateQuestion(final String profession, final HttpSession session) {
         LOGGER.info("Generating question for profession: {}", profession);
 
@@ -98,7 +98,6 @@ public class HighPerformancePromptService implements Prompt {
         return Utils.removeQuotes(question);
     }
 
-    @Override
     public String generateFeedback(final String transcript, final String profession, final String question) {
         String prompt = "You are a technical hiring manager. Evaluate the following interview answer, focusing on clarity, structure, relevance, and communication style. "
                 + "Provide actionable feedback in 3–4 concise sentences, output only the feedback, no extra commentary. "
@@ -138,7 +137,6 @@ public class HighPerformancePromptService implements Prompt {
         return Utils.removeQuotesAndFormatList(feedback);
     }
 
-    @Override
     public Evaluation generateEvaluation(final String transcript, final String profession, final String question) {
         final String jsonParameters = "{clarityScore:  int, clarityFeedback: string, structureScore: int, structureFeedback: string, relevanceScore: int, relevanceFeedback: string, communicationScore: int, communicationFeedback: string, depthScore: int, depthFeedback: string}";
 
@@ -163,6 +161,49 @@ public class HighPerformancePromptService implements Prompt {
             return null;
         }
 
-        return Utils.generateEvaluation(evaluationTxt);
+        final String evaluationJson = Utils.extractJson(evaluationTxt);
+
+        LOGGER.info("Evaluation JSON: {}", evaluationJson);
+        if (evaluationJson == null) {
+            LOGGER.warn("Evaluation JSON not found in evaluation output: {}", evaluationTxt);
+            return null;
+        }
+
+        try {
+            final ObjectMapper mapper = new ObjectMapper();
+            final Evaluation evaluation = mapper.readValue(evaluationJson, Evaluation.class);
+            validateFeedback(evaluation);
+            return evaluation;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+        LOGGER.warn("Evaluation failed. Please try again later.");
+        return null;
+    }
+
+    private void validateFeedback(final Evaluation evaluation) {
+        if (evaluation == null) {
+            return;
+        }
+        // Clarity
+        if (evaluation.getClarityFeedback() == null || evaluation.getClarityFeedback().isEmpty()) {
+            evaluation.setClarityScore(0);
+        }
+        // Structure
+        if (evaluation.getStructureFeedback() == null || evaluation.getStructureFeedback().isEmpty()) {
+            evaluation.setStructureScore(0);
+        }
+        // Relevance
+        if (evaluation.getRelevanceFeedback() == null || evaluation.getRelevanceFeedback().isEmpty()) {
+            evaluation.setRelevanceScore(0);
+        }
+        // Communication
+        if (evaluation.getCommunicationFeedback() == null || evaluation.getCommunicationFeedback().isEmpty()) {
+            evaluation.setCommunicationScore(0);
+        }
+        // Depth
+        if (evaluation.getDepthFeedback() == null || evaluation.getDepthFeedback().isEmpty()) {
+            evaluation.setDepthScore(0);
+        }
     }
 }
