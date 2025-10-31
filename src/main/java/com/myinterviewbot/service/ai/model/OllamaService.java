@@ -5,7 +5,6 @@
 package com.myinterviewbot.service.ai.model;
 
 import com.myinterviewbot.config.GlobalConfig;
-import com.myinterviewbot.config.provider.AIConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -129,6 +128,7 @@ public class OllamaService implements AIService {
                 readerFuture.get(100, TimeUnit.MILLISECONDS);
             } catch (TimeoutException | CancellationException exception) {
                 // We are shutting down the executor next
+                LOGGER.error(exception.getMessage());
                 LOGGER.warn("Switching to low performance mode");
                 GlobalConfig.slowPerformanceMode = true;
             }

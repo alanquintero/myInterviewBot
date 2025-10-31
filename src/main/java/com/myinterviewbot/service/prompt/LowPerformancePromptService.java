@@ -36,8 +36,7 @@ public class LowPerformancePromptService implements Prompt{
                         "Identify which parts of Situation, Task, Action, and Result are strong and which could be improved. " +
                         "Be concise, 2-3 sentences max." +
                         "\nQuestion: " + question +
-                        " \nAnswer: " + transcript,
-                question, transcript
+                        " \nAnswer: " + transcript
         );
         final String feedback = aiService.executePrompt(feedbackPrompt);
         return Utils.removeQuotesAndFormatList(feedback);

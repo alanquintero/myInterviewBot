@@ -259,6 +259,7 @@ public class Utils {
     }
 
     public static Evaluation generateEvaluation(final String evaluationTxt) {
+        LOGGER.debug("Evaluation: {}", evaluationTxt);
         final String evaluationJson = Utils.extractJson(evaluationTxt);
 
         LOGGER.info("Evaluation JSON: {}", evaluationJson);
