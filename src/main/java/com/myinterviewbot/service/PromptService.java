@@ -138,7 +138,7 @@ public class PromptService {
     }
 
     public Evaluation generateEvaluation(final String transcript, final String profession, final String question) {
-        final String evaluationJsonFormat = "{ \"clarityScore\": 0,\"clarityFeedback\": \"\",\"structureScore\": 0,\"structureFeedback\": \"\",\"relevanceScore\": 0,\"relevanceFeedback\": \"\",\"communicationScore\": 0,\"communicationFeedback\": \"\",\"depthScore\": 0,\"depthFeedback\": \"\"}";
+        final String jsonParameters = "{clarityScore:  int, clarityFeedback: string, structureScore: int, structureFeedback: string, relevanceScore: int, relevanceFeedback: string, communicationScore: int, communicationFeedback: string, depthScore: int, depthFeedback: string}";
 
         final String prompt = "You are a technical hiring manager. Evaluate the following " + profession + " candidate's response to a behavioral interview question: " + question
                 + " Parameters to evaluate (score each from 1 to 10, 10 = excellent): "
@@ -151,7 +151,7 @@ public class PromptService {
                 + "- Provide numeric scores for each parameter. "
                 + "- Add a one-sentence comment per parameter if needed. "
                 + "- Be very strict: If the candidate provides a minimal answer, off-topic, irrelevant answer, does not directly address the question, does not contain examples or meaningful details, lacks detail and examples, or even if grammar and vocabulary are correct, give low scores (1-2). "
-                + "- Output only in JSON format: " + evaluationJsonFormat
+                + "- Output only in JSON format, create a JSON using the next parameters: " + jsonParameters
                 + " - Include all JSON parameters, even if one of them is missing or not applicable. "
                 + " Candidate Response: " + transcript;
 
