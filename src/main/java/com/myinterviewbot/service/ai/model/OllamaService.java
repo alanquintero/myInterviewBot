@@ -42,7 +42,7 @@ public class OllamaService implements AIService {
     @Override
     public String executePrompt(final String prompt) {
         final String ollamaCommand;
-        if(GlobalConfig.slowPerformanceMode) {
+        if (GlobalConfig.slowPerformanceMode) {
             ollamaCommand = aiModel + " --num-predict 64 --ctx 512";
         } else {
             ollamaCommand = aiModel;
@@ -115,7 +115,7 @@ public class OllamaService implements AIService {
             LOGGER.info("Ollama process exited with code: {}; process finished: {}", exitValue, finished);
             final long duration = System.currentTimeMillis() - startTime;
             LOGGER.info("Ollama call completed in {} ms", duration);
-            if(duration > 10000 && GlobalConfig.isFirstPromptRun) {
+            if (duration > 10000 && GlobalConfig.isFirstPromptRun) {
                 LOGGER.warn("Switching to low performance mode");
                 GlobalConfig.slowPerformanceMode = true;
                 GlobalConfig.isFirstPromptRun = false;
@@ -127,7 +127,7 @@ public class OllamaService implements AIService {
             // Wait for the reader thread to actually stop (optional, but robust)
             try {
                 readerFuture.get(100, TimeUnit.MILLISECONDS);
-            } catch (TimeoutException ignored) {
+            } catch (TimeoutException | CancellationException exception) {
                 // We are shutting down the executor next
                 LOGGER.warn("Switching to low performance mode");
                 GlobalConfig.slowPerformanceMode = true;
