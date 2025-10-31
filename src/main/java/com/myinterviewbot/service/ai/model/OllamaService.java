@@ -40,19 +40,12 @@ public class OllamaService implements AIService {
      */
     @Override
     public String executePrompt(final String prompt) {
-        final String ollamaCommand;
-        if (GlobalConfig.slowPerformanceMode) {
-            ollamaCommand = aiModel + " --num-predict 64 --ctx 512";
-        } else {
-            ollamaCommand = aiModel;
-        }
-
         LOGGER.info("Running Ollama with model: {}", aiModel);
         LOGGER.info("Calling Ollama with the prompt: {}", prompt);
 
         // Define the common executable name for the platform
         final String executable = System.getProperty("os.name").toLowerCase().contains("win") ? "ollama.exe" : "ollama";
-        final ProcessBuilder pb = new ProcessBuilder(executable, "run", ollamaCommand);
+        final ProcessBuilder pb = new ProcessBuilder(executable, "run", aiModel);
 
         // Set environment variables directly on the ProcessBuilder
         pb.environment().put("OLLAMA_NO_COLOR", "1");
