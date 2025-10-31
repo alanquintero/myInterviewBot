@@ -4,6 +4,8 @@
  */
 package com.myinterviewbot.service.ai.model;
 
+import com.myinterviewbot.model.PromptResponse;
+
 /**
  * Interface for AI Services
  *
@@ -11,5 +13,5 @@ package com.myinterviewbot.service.ai.model;
  */
 public interface AIService {
 
-    String executePrompt(final String prompt);
+    PromptResponse executePrompt(final String prompt);
 }

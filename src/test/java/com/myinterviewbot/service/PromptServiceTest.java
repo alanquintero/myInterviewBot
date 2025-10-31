@@ -1,6 +1,7 @@
 package com.myinterviewbot.service;
 
 import com.myinterviewbot.model.Evaluation;
+import com.myinterviewbot.model.PromptResponse;
 import com.myinterviewbot.service.ai.model.AIService;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,16 +32,19 @@ public class PromptServiceTest {
         // Given
         final String profession = "software engineer";
         final String expectedQuestion = "Tell me about a time you faced a challenge.";
-        when(aiService.executePrompt(anyString())).thenReturn(expectedQuestion);
+        final PromptResponse expectedPromptResponse = new PromptResponse(false, expectedQuestion);
+        when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
         final HttpSession session = mock(HttpSession.class);
         when(session.getAttribute("currentProfession")).thenReturn(null);
         when(session.getAttribute("firstQuestion")).thenReturn(true);
 
         // When
-        final String question = promptService.generateQuestion(profession, session);
+        final PromptResponse promptResponse = promptService.generateQuestion(profession, session);
 
         // Then
-        assertEquals(expectedQuestion, question);
+        assertNotNull(promptResponse);
+        assertNotNull(promptResponse.getPromptResponse());
+        assertEquals(expectedQuestion, promptResponse.getPromptResponse().toString());
         verify(session, times(1)).setAttribute("firstQuestion", false);
         verify(aiService, times(1)).executePrompt(anyString());
     }
@@ -50,16 +54,19 @@ public class PromptServiceTest {
         // Given
         final String profession = "software engineer";
         final String expectedQuestion = "Tell me about a time you faced a challenge.";
-        when(aiService.executePrompt(anyString())).thenReturn(expectedQuestion);
+        final PromptResponse expectedPromptResponse = new PromptResponse(false, expectedQuestion);
+        when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
         final HttpSession session = mock(HttpSession.class);
         when(session.getAttribute("currentProfession")).thenReturn(profession);
         when(session.getAttribute("firstQuestion")).thenReturn(false);
 
         // When
-        final String question = promptService.generateQuestion(profession, session);
+        final PromptResponse promptResponse = promptService.generateQuestion(profession, session);
 
         // Then
-        assertEquals(expectedQuestion, question);
+        assertNotNull(promptResponse);
+        assertNotNull(promptResponse.getPromptResponse());
+        assertEquals(expectedQuestion, promptResponse.getPromptResponse().toString());
         verify(session, never()).setAttribute(anyString(), anyBoolean());
         verify(aiService, times(1)).executePrompt(anyString());
     }
@@ -69,16 +76,19 @@ public class PromptServiceTest {
         // Given
         final String profession = "vet";
         final String expectedQuestion = "Tell me about a time you faced a challenge.";
-        when(aiService.executePrompt(anyString())).thenReturn(expectedQuestion);
+        final PromptResponse expectedPromptResponse = new PromptResponse(false, expectedQuestion);
+        when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
         final HttpSession session = mock(HttpSession.class);
         when(session.getAttribute("currentProfession")).thenReturn("software engineer");
         when(session.getAttribute("firstQuestion")).thenReturn(false);
 
         // When
-        final String question = promptService.generateQuestion(profession, session);
+        final PromptResponse promptResponse = promptService.generateQuestion(profession, session);
 
         // Then
-        assertEquals(expectedQuestion, question);
+        assertNotNull(promptResponse);
+        assertNotNull(promptResponse.getPromptResponse());
+        assertEquals(expectedQuestion, promptResponse.getPromptResponse());
         verify(session, times(1)).setAttribute("firstQuestion", false);
         verify(aiService, times(1)).executePrompt(anyString());
     }
@@ -88,16 +98,19 @@ public class PromptServiceTest {
         // Given
         final String profession = "software engineer";
         final String expectedQuestion = "Tell me about a time you faced a challenge Tell me about a time you faced a challenge Tell me about a time you faced a challenge Tell me about a time you faced a challenge.";
-        when(aiService.executePrompt(anyString())).thenReturn(expectedQuestion);
+        final PromptResponse expectedPromptResponse = new PromptResponse(false, expectedQuestion);
+        when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
         final HttpSession session = mock(HttpSession.class);
         when(session.getAttribute("currentProfession")).thenReturn(null);
         when(session.getAttribute("firstQuestion")).thenReturn(true);
 
         // When
-        final String question = promptService.generateQuestion(profession, session);
+        final PromptResponse promptResponse = promptService.generateQuestion(profession, session);
 
         // Then
-        assertEquals(expectedQuestion, question);
+        assertNotNull(promptResponse);
+        assertNotNull(promptResponse.getPromptResponse());
+        assertEquals(expectedQuestion, promptResponse.getPromptResponse());
         verify(aiService, atLeast(2)).executePrompt(anyString());
     }
 
@@ -108,13 +121,16 @@ public class PromptServiceTest {
         final String transcript = "";
         final String question = "Tell me about a time you faced a challenge.";
         final String expectedFeedback = "Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience.";
-        when(aiService.executePrompt(anyString())).thenReturn(expectedFeedback);
+        final PromptResponse expectedPromptResponse = new PromptResponse(false, expectedFeedback);
+        when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
 
         // When
-        final String feedback = promptService.generateFeedback(profession, transcript, question);
+        final PromptResponse promptResponse = promptService.generateFeedback(profession, transcript, question);
 
         // Then
-        assertEquals(expectedFeedback, feedback);
+        assertNotNull(promptResponse);
+        assertNotNull(promptResponse.getPromptResponse());
+        assertEquals(expectedFeedback, promptResponse.getPromptResponse());
         verify(aiService, times(1)).executePrompt(anyString());
     }
 
@@ -125,13 +141,16 @@ public class PromptServiceTest {
         final String transcript = "A challenge I faced was when my team’s project was falling behind schedule due to unclear requirements. I took the initiative to organize a quick sync with stakeholders to clarify expectations and re-prioritize tasks. After aligning everyone, we adjusted the sprint goals and completed the project on time. It taught me how important proactive communication is when things start to go off track.";
         final String question = "Tell me about a time you faced a challenge.";
         final String expectedFeedback = "Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience. Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience. Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience. Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience.";
-        when(aiService.executePrompt(anyString())).thenReturn(expectedFeedback);
+        final PromptResponse expectedPromptResponse = new PromptResponse(false, expectedFeedback);
+        when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
 
         // When
-        final String feedback = promptService.generateFeedback(profession, transcript, question);
+        final PromptResponse promptResponse = promptService.generateFeedback(profession, transcript, question);
 
         // Then
-        assertEquals(expectedFeedback, feedback);
+        assertNotNull(promptResponse);
+        assertNotNull(promptResponse.getPromptResponse());
+        assertEquals(expectedFeedback, promptResponse.getPromptResponse());
         verify(aiService, times(1)).executePrompt(anyString());
     }
 
@@ -139,13 +158,16 @@ public class PromptServiceTest {
     void generateEvaluation() {
         // Given
         final String evaluationResponse = "{ \"clarityScore\": 1,\"clarityFeedback\": \"good\",\"structureScore\": 5,\"structureFeedback\": \"nice\",\"relevanceScore\": 2,\"relevanceFeedback\": \"ok then\",\"communicationScore\": 3,\"communicationFeedback\": \"excellent\",\"depthScore\": 4,\"depthFeedback\": \"ok\"}";
-        ;
-        when(aiService.executePrompt(anyString())).thenReturn(evaluationResponse);
+        final PromptResponse expectedPromptResponse = new PromptResponse(false, evaluationResponse);
+        when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
 
         // When
-        final Evaluation evaluation = promptService.generateEvaluation("transcript", "profession", "question");
+        final PromptResponse promptResponse = promptService.generateEvaluation("transcript", "profession", "question");
 
         // Then
+        assertNotNull(promptResponse);
+        assertNotNull(promptResponse.getPromptResponse());
+        Evaluation evaluation = (Evaluation) promptResponse.getPromptResponse();
         assertNotNull(evaluation);
         assertEquals(1, evaluation.getClarityScore());
         assertEquals("good", evaluation.getClarityFeedback());
@@ -163,12 +185,14 @@ public class PromptServiceTest {
     void generateEvaluation_invalidEvaluationResponse() {
         // Given
         final String evaluationResponse = "{\"error\": \"oh no\"}";
-        when(aiService.executePrompt(anyString())).thenReturn(evaluationResponse);
+        final PromptResponse expectedPromptResponse = new PromptResponse(false, evaluationResponse);
+        when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
 
         // When
-        final Evaluation evaluation = promptService.generateEvaluation("transcript", "profession", "question");
+        final PromptResponse promptResponse = promptService.generateEvaluation("transcript", "profession", "question");
 
         // Then
-        assertNull(evaluation);
+        assertNotNull(promptResponse);
+        assertNull(promptResponse.getPromptResponse());
     }
 }

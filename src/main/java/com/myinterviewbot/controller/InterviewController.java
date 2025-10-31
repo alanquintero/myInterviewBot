@@ -29,7 +29,7 @@ import java.io.File;
  * @author Alan Quintero
  */
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/interview/v1")
 public class InterviewController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InterviewController.class);
@@ -55,10 +55,11 @@ public class InterviewController {
      * @return a {@link QuestionResponse} containing the generated question
      */
     @GetMapping("/question")
-    public QuestionResponse getQuestion(@RequestParam("profession") final String profession, final HttpSession session) {
+    public PromptResponse getQuestion(@RequestParam("profession") final String profession, final HttpSession session) {
         LOGGER.info("/question profession: {}", profession);
-        final String question = promptService.generateQuestion(profession, session);
-        return new QuestionResponse(question);
+        final PromptResponse promptResponse = promptService.generateQuestion(profession, session);
+        promptResponse.setPromptResponse(new QuestionResponse(promptResponse.getPromptResponse().toString()));
+        return promptResponse;
     }
 
     /**
@@ -73,39 +74,43 @@ public class InterviewController {
      * @return AI-generated feedback on the candidate's answer
      */
     @PostMapping(value = "/feedback", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public FeedbackResponse getFeedback(@RequestParam("file") final MultipartFile file, @RequestParam("profession") final String profession, @RequestParam("question") final String question) throws Exception {
+    public PromptResponse getFeedback(@RequestParam("file") final MultipartFile file, @RequestParam("profession") final String profession, @RequestParam("question") final String question) throws Exception {
         LOGGER.info("/feedback file: {}; profession: {}; question: {}", file, profession, question);
         final FeedbackResponse emptyResult = new FeedbackResponse("", "", null);
 
         // Save file locally
         final File videoFile = Utils.saveVideo(file);
         if (videoFile == null) {
-            return emptyResult;
+            return new PromptResponse(true, "");
         }
 
         // Extract audio
         final File audioFile = ffmpegService.extractAudio(videoFile);
         if (audioFile == null) {
-            return emptyResult;
+            return new PromptResponse(true, "");
         }
 
         // Transcribe audio
         final String transcript = whisperService.transcribe(audioFile);
         if (transcript == null || transcript.isEmpty()) {
-            return emptyResult;
+            return new PromptResponse(true, "");
         }
 
+        // TODO do the below calls in different APIs
         // Generating AI feedback
-        final String feedback = promptService.generateFeedback(transcript, profession, question);
+        PromptResponse promptResponse = promptService.generateFeedback(transcript, profession, question);
+        final String feedback = promptResponse.getPromptResponse().toString();
 
         // Generating AI evaluation
-        final Evaluation evaluation = promptService.generateEvaluation(transcript, profession, question);
+        promptResponse = promptService.generateEvaluation(transcript, profession, question);
+        final Evaluation evaluation = (Evaluation) promptResponse.getPromptResponse();
 
         // Saves the interview entry
         final long timestamp = Utils.getTimestamp(videoFile.getName());
         final String videoUrl = Utils.getVideoUrl(videoFile.getName());
         interviewDataService.addInterview(timestamp, new InterviewEntry(timestamp, InterviewType.BEHAVIORAL, profession, question, transcript, feedback, videoUrl, evaluation));
 
-        return new FeedbackResponse(feedback, transcript, evaluation);
+        promptResponse.setPromptResponse(new FeedbackResponse(feedback, transcript, evaluation));
+        return promptResponse;
     }
 }

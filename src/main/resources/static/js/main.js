@@ -98,7 +98,7 @@ function setProfessionIfBlank() {
 async function generateQuestion(profession) {
     loading.classList.remove("hidden"); // show loading GIF
     try {
-        const res = await fetch(`/api/v1/question?profession=${encodeURIComponent(profession)}`);
+        const res = await fetch(`/interview/v1/question?profession=${encodeURIComponent(profession)}`);
         const data = await res.json();
 
         if (!data.question || data.question.trim() === '') {
@@ -305,7 +305,7 @@ async function sendVideo(blob) {
     stopCamera();
 
     try {
-        const res = await fetch("/api/v1/feedback", {
+        const res = await fetch("/interview/v1/feedback", {
             method: "POST",
             body: formData
         });
