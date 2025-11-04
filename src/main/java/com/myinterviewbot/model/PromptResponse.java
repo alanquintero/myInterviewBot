@@ -4,23 +4,28 @@
  */
 package com.myinterviewbot.model;
 
+/**
+ * DTO class to store the prompt response.
+ *
+ * @author Alan Quintero
+ */
 public class PromptResponse {
 
-    private boolean insufficientSystemRequirements;
+    private PromptStats promptStats;
 
     private Object promptResponse;
 
-    public PromptResponse(final boolean insufficientSystemRequirements, final Object promptResponse) {
-        this.insufficientSystemRequirements = insufficientSystemRequirements;
+    public PromptResponse(final PromptStats promptStats, final Object promptResponse) {
+        this.promptStats = promptStats;
         this.promptResponse = promptResponse;
     }
 
-    public boolean isInsufficientSystemRequirements() {
-        return insufficientSystemRequirements;
+    public PromptStats getPromptStats() {
+        return promptStats;
     }
 
-    public void setInsufficientSystemRequirements(final boolean insufficientSystemRequirements) {
-        this.insufficientSystemRequirements = insufficientSystemRequirements;
+    public void setPromptStats(final PromptStats promptStats) {
+        this.promptStats = promptStats;
     }
 
     public Object getPromptResponse() {
@@ -34,8 +39,7 @@ public class PromptResponse {
     @Override
     public String toString() {
         return "PromptResponse{" +
-                "insufficientSystemRequirements=" + insufficientSystemRequirements +
-                ", promptResponse=" + promptResponse +
+                "promptStats=" + promptStats +
                 '}';
     }
 }

@@ -104,11 +104,11 @@ async function generateQuestion(profession) {
         const res = await fetch(`/interview/v1/question?profession=${encodeURIComponent(profession)}`);
         const data = await res.json();
 
-        if (!data || !data.promptResponse) {
+        if (!data) {
             alert('No question was generated. Please try again.');
             return;
         } else {
-            checkInsufficientSystemRequirements(data)
+            checkSlowPromptResponse(data.promptStats)
         }
 
         if (!data.promptResponse.question || data.promptResponse.question.trim() === '') {
@@ -321,11 +321,11 @@ async function sendVideo(blob) {
         });
         const data = await res.json();
 
-        if (!data || !data.promptResponse) {
+        if (!data) {
             alert('No feedback was generated. Please try again.');
             return;
         } else {
-            checkInsufficientSystemRequirements(data)
+            checkSlowPromptResponse(data.promptStats)
         }
 
         if (!data.promptResponse.feedback || data.promptResponse.feedback.trim() === '') {
@@ -547,16 +547,16 @@ export async function checkSystemRequirements() {
         if (!data) {
             alert('Something went wrong. Please reload the page.');
         } else {
-            checkInsufficientSystemRequirements(data)
+            checkSlowPromptResponse(data)
         }
     } catch (err) {
         console.error(err);
     }
 }
 
-function checkInsufficientSystemRequirements(data) {
-    console.log("insufficientSystemRequirements: " + data.insufficientSystemRequirements);
-    if (data.insufficientSystemRequirements) {
+function checkSlowPromptResponse(systemRequirements) {
+    console.log("slowPromptResponse: " + systemRequirements.slowPromptResponse);
+    if (systemRequirements.slowPromptResponse) {
         console.log("Insufficient System Requirements detected");
         slowSystem.classList.remove("hidden");
     } else {

@@ -2,6 +2,7 @@ package com.myinterviewbot.service;
 
 import com.myinterviewbot.model.Evaluation;
 import com.myinterviewbot.model.PromptResponse;
+import com.myinterviewbot.model.PromptStats;
 import com.myinterviewbot.service.ai.model.AIService;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +33,7 @@ public class PromptServiceTest {
         // Given
         final String profession = "software engineer";
         final String expectedQuestion = "Tell me about a time you faced a challenge.";
-        final PromptResponse expectedPromptResponse = new PromptResponse(false, expectedQuestion);
+        final PromptResponse expectedPromptResponse = new PromptResponse(new PromptStats(false, 0), expectedQuestion);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
         final HttpSession session = mock(HttpSession.class);
         when(session.getAttribute("currentProfession")).thenReturn(null);
@@ -54,7 +55,7 @@ public class PromptServiceTest {
         // Given
         final String profession = "software engineer";
         final String expectedQuestion = "Tell me about a time you faced a challenge.";
-        final PromptResponse expectedPromptResponse = new PromptResponse(false, expectedQuestion);
+        final PromptResponse expectedPromptResponse = new PromptResponse(new PromptStats(false, 0), expectedQuestion);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
         final HttpSession session = mock(HttpSession.class);
         when(session.getAttribute("currentProfession")).thenReturn(profession);
@@ -76,7 +77,7 @@ public class PromptServiceTest {
         // Given
         final String profession = "vet";
         final String expectedQuestion = "Tell me about a time you faced a challenge.";
-        final PromptResponse expectedPromptResponse = new PromptResponse(false, expectedQuestion);
+        final PromptResponse expectedPromptResponse = new PromptResponse(new PromptStats(false, 0), expectedQuestion);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
         final HttpSession session = mock(HttpSession.class);
         when(session.getAttribute("currentProfession")).thenReturn("software engineer");
@@ -98,7 +99,7 @@ public class PromptServiceTest {
         // Given
         final String profession = "software engineer";
         final String expectedQuestion = "Tell me about a time you faced a challenge Tell me about a time you faced a challenge Tell me about a time you faced a challenge Tell me about a time you faced a challenge.";
-        final PromptResponse expectedPromptResponse = new PromptResponse(false, expectedQuestion);
+        final PromptResponse expectedPromptResponse = new PromptResponse(new PromptStats(false, 0), expectedQuestion);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
         final HttpSession session = mock(HttpSession.class);
         when(session.getAttribute("currentProfession")).thenReturn(null);
@@ -121,7 +122,7 @@ public class PromptServiceTest {
         final String transcript = "";
         final String question = "Tell me about a time you faced a challenge.";
         final String expectedFeedback = "Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience.";
-        final PromptResponse expectedPromptResponse = new PromptResponse(false, expectedFeedback);
+        final PromptResponse expectedPromptResponse = new PromptResponse(new PromptStats(false, 0), expectedFeedback);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
 
         // When
@@ -141,7 +142,7 @@ public class PromptServiceTest {
         final String transcript = "A challenge I faced was when my team’s project was falling behind schedule due to unclear requirements. I took the initiative to organize a quick sync with stakeholders to clarify expectations and re-prioritize tasks. After aligning everyone, we adjusted the sprint goals and completed the project on time. It taught me how important proactive communication is when things start to go off track.";
         final String question = "Tell me about a time you faced a challenge.";
         final String expectedFeedback = "Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience. Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience. Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience. Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience.";
-        final PromptResponse expectedPromptResponse = new PromptResponse(false, expectedFeedback);
+        final PromptResponse expectedPromptResponse = new PromptResponse(new PromptStats(false, 0), expectedFeedback);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
 
         // When
@@ -158,7 +159,7 @@ public class PromptServiceTest {
     void generateEvaluation() {
         // Given
         final String evaluationResponse = "{ \"clarityScore\": 1,\"clarityFeedback\": \"good\",\"structureScore\": 5,\"structureFeedback\": \"nice\",\"relevanceScore\": 2,\"relevanceFeedback\": \"ok then\",\"communicationScore\": 3,\"communicationFeedback\": \"excellent\",\"depthScore\": 4,\"depthFeedback\": \"ok\"}";
-        final PromptResponse expectedPromptResponse = new PromptResponse(false, evaluationResponse);
+        final PromptResponse expectedPromptResponse = new PromptResponse(new PromptStats(false, 0), evaluationResponse);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
 
         // When
@@ -185,7 +186,7 @@ public class PromptServiceTest {
     void generateEvaluation_invalidEvaluationResponse() {
         // Given
         final String evaluationResponse = "{\"error\": \"oh no\"}";
-        final PromptResponse expectedPromptResponse = new PromptResponse(false, evaluationResponse);
+        final PromptResponse expectedPromptResponse = new PromptResponse(new PromptStats(false, 0), evaluationResponse);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
 
         // When

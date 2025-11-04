@@ -5,6 +5,7 @@
 package com.myinterviewbot.service.ai.model;
 
 import com.myinterviewbot.model.PromptResponse;
+import com.myinterviewbot.model.PromptStats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +43,7 @@ public class OllamaService implements AIService {
     public PromptResponse executePrompt(final String prompt) {
         LOGGER.info("Running Ollama with model: {}", aiModel);
         LOGGER.info("Calling Ollama with the prompt: {}", prompt);
-        boolean insufficientSystemRequirements = false;
+        boolean slowPromptResponse = false;
 
         // Define the common executable name for the platform
         final String executable = System.getProperty("os.name").toLowerCase().contains("win") ? "ollama.exe" : "ollama";
@@ -57,6 +58,7 @@ public class OllamaService implements AIService {
         final ExecutorService executor = Executors.newSingleThreadExecutor();
         Process process = null;
 
+        final long startTime = System.currentTimeMillis();
         try {
             // 1. Start the Ollama process
             process = pb.start();
@@ -73,7 +75,6 @@ public class OllamaService implements AIService {
                     new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)
             );
             final StringBuilder output = new StringBuilder();
-            final long startTime = System.currentTimeMillis();
 
             // Task to read the output asynchronously
             final Future<?> readerFuture = executor.submit(() -> {
@@ -117,7 +118,7 @@ public class OllamaService implements AIService {
                 readerFuture.get(100, TimeUnit.MILLISECONDS);
             } catch (TimeoutException | CancellationException e) {
                 // Ignore if it takes too long to stop, as we are shutting down the executor next
-                insufficientSystemRequirements = true;
+                slowPromptResponse = true;
             }
 
             final String rawResult = output.toString();
@@ -129,7 +130,8 @@ public class OllamaService implements AIService {
                 } else {
                     LOGGER.warn("Ollama returned empty output.");
                 }
-                return new PromptResponse(insufficientSystemRequirements, "");
+
+                return new PromptResponse(new PromptStats(slowPromptResponse, (duration / 1000.0)), "");
             }
 
             /*
@@ -145,16 +147,16 @@ public class OllamaService implements AIService {
                     .trim();
 
             LOGGER.info("Clean Ollama output:\n{}", cleanedResult);
-            return new PromptResponse(insufficientSystemRequirements, cleanedResult);
+            return new PromptResponse(new PromptStats(slowPromptResponse, (duration / 1000.0)), cleanedResult);
 
         } catch (InterruptedException e) {
             // Re-assert the interrupt flag
             Thread.currentThread().interrupt();
             LOGGER.error("Ollama process execution was interrupted", e);
-            return new PromptResponse(insufficientSystemRequirements, "");
+            return new PromptResponse(new PromptStats(slowPromptResponse, ((System.currentTimeMillis() - startTime) / 1000.0)), "");
         } catch (Exception e) {
             LOGGER.error("Error running Ollama", e);
-            return new PromptResponse(insufficientSystemRequirements, "");
+            return new PromptResponse(new PromptStats(slowPromptResponse, ((System.currentTimeMillis() - startTime) / 1000.0)), "");
         } finally {
             // Ensure the ExecutorService is always shut down
             if (executor != null) {
