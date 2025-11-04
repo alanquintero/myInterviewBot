@@ -4,7 +4,6 @@
  */
 package com.myinterviewbot.model;
 
-
 /**
  * Enum for interview type.
  *

@@ -82,19 +82,19 @@ public class InterviewController {
         // Save file locally
         final File videoFile = Utils.saveVideo(file);
         if (videoFile == null) {
-            return new PromptResponse(true, "");
+            return new PromptResponse(new PromptStats(true, 0), "");
         }
 
         // Extract audio
         final File audioFile = ffmpegService.extractAudio(videoFile);
         if (audioFile == null) {
-            return new PromptResponse(true, "");
+            return new PromptResponse(new PromptStats(true, 0), "");
         }
 
         // Transcribe audio
         final String transcript = whisperService.transcribe(audioFile);
         if (transcript == null || transcript.isEmpty()) {
-            return new PromptResponse(true, "");
+            return new PromptResponse(new PromptStats(true, 0), "");
         }
 
         // TODO do the below calls in different APIs
