@@ -1,9 +1,13 @@
+import {checkSystemRequirements} from './main.js';
 import {loadInterviews} from './my-interviews.js';
 import {loadSettings} from './settings.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const links = document.querySelectorAll('.nav-link[data-page]');
     const pages = document.querySelectorAll('.page');
+
+    // Check system requirements when app starts
+    checkSystemRequirements();
 
     links.forEach(link => {
         link.addEventListener('click', (e) => {
@@ -20,12 +24,18 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById(`${page}Page`).classList.remove('hidden');
 
             // Load interviews only when visiting the interviews page
+            if (page === 'home') {
+                console.log("Home page");
+                checkSystemRequirements();
+            }
+
+            // Load interviews only when visiting the interviews page
             if (page === 'myInterviews') {
                 console.log("MyInterviews page");
                 loadInterviews();
             }
 
-            if(page === "settings") {
+            if (page === "settings") {
                 console.log("Settings page");
                 loadSettings();
             }

@@ -30,4 +30,12 @@ public class PromptResponse {
     public void setPromptResponse(final Object promptResponse) {
         this.promptResponse = promptResponse;
     }
+
+    @Override
+    public String toString() {
+        return "PromptResponse{" +
+                "insufficientSystemRequirements=" + insufficientSystemRequirements +
+                ", promptResponse=" + promptResponse +
+                '}';
+    }
 }
