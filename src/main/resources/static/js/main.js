@@ -104,11 +104,11 @@ async function generateQuestion(profession) {
         const res = await fetch(`/interview/v1/question?profession=${encodeURIComponent(profession)}`);
         const data = await res.json();
 
-        if(!data || !data.promptResponse) {
+        if (!data || !data.promptResponse) {
             alert('No question was generated. Please try again.');
             return;
         } else {
-            checkSystemRequirements(data)
+            checkInsufficientSystemRequirements(data)
         }
 
         if (!data.promptResponse.question || data.promptResponse.question.trim() === '') {
@@ -321,11 +321,11 @@ async function sendVideo(blob) {
         });
         const data = await res.json();
 
-        if(!data || !data.promptResponse) {
+        if (!data || !data.promptResponse) {
             alert('No feedback was generated. Please try again.');
             return;
         } else {
-            checkSystemRequirements(data)
+            checkInsufficientSystemRequirements(data)
         }
 
         if (!data.promptResponse.feedback || data.promptResponse.feedback.trim() === '') {
@@ -539,9 +539,24 @@ document.getElementById("uploadResumeBtn").addEventListener("click", () => {
         });
 });
 
-function checkSystemRequirements(data) {
+export async function checkSystemRequirements() {
+    try {
+        const response = await fetch('/api/v1/requirements');
+        let data = await response.json();
+
+        if (!data) {
+            alert('Something went wrong. Please reload the page.');
+        } else {
+            checkInsufficientSystemRequirements(data)
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+function checkInsufficientSystemRequirements(data) {
     console.log("insufficientSystemRequirements: " + data.insufficientSystemRequirements);
-    if(data.insufficientSystemRequirements) {
+    if (data.insufficientSystemRequirements) {
         console.log("Insufficient System Requirements detected");
         slowSystem.classList.remove("hidden");
     } else {

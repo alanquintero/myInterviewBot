@@ -51,6 +51,5 @@ export async function loadSettings() {
     } catch (err) {
         console.error(err);
         settingsContainer.innerHTML = '<p>Error loading settings.</p>';
-    } finally {
     }
 }
