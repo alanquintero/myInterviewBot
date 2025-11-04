@@ -1,3 +1,6 @@
+/* Slow system alert */
+const slowSystem = document.getElementById("slowSystem");
+
 /* Title */
 const interviewTitle = document.getElementById("interviewTitle");
 const interviewLogo = document.getElementById("interviewLogo");
@@ -101,10 +104,17 @@ async function generateQuestion(profession) {
         const res = await fetch(`/interview/v1/question?profession=${encodeURIComponent(profession)}`);
         const data = await res.json();
 
-        if (!data.question || data.question.trim() === '') {
+        if(!data || !data.promptResponse) {
+            alert('No question was generated. Please try again.');
+            return;
+        } else {
+            checkSystemRequirements(data)
+        }
+
+        if (!data.promptResponse.question || data.promptResponse.question.trim() === '') {
             alert('No question was generated. Please try again.');
         } else {
-            inputQuestion.value = data.question;
+            inputQuestion.value = data.promptResponse.question;
         }
     } catch (err) {
         console.error(err);
@@ -311,7 +321,14 @@ async function sendVideo(blob) {
         });
         const data = await res.json();
 
-        if (!data.feedback || data.feedback.trim() === '') {
+        if(!data || !data.promptResponse) {
+            alert('No feedback was generated. Please try again.');
+            return;
+        } else {
+            checkSystemRequirements(data)
+        }
+
+        if (!data.promptResponse.feedback || data.promptResponse.feedback.trim() === '') {
             alert('No feedback was generated. Please try again.');
             generateFeedbackBtn.disabled = false;
         } else {
@@ -320,32 +337,33 @@ async function sendVideo(blob) {
             feedbackSection.classList.remove("hidden");
             resetSection.classList.remove("hidden");
 
-            transcriptEl.innerText = data.transcript || "";
-            feedbackEl.innerText = data.feedback || "No feedback returned";
+            transcriptEl.innerText = data.promptResponse.transcript || "";
+            feedbackEl.innerText = data.promptResponse.feedback || "No feedback returned";
         }
 
         // Evaluation
-        if (data?.evaluation) {
+        if (data?.promptResponse?.evaluation) {
+            const evaluation = data.promptResponse.evaluation;
             /* Evaluation start */
             // Clarity
-            const clarityScore = data.evaluation.clarityScore ?? "N/A";
-            const clarityFeedback = data.evaluation.clarityFeedback && data.evaluation.clarityFeedback.trim() !== '' ? data.evaluation.clarityFeedback : "No feedback provided";
+            const clarityScore = evaluation.clarityScore ?? "N/A";
+            const clarityFeedback = evaluation.clarityFeedback && evaluation.clarityFeedback.trim() !== '' ? evaluation.clarityFeedback : "No feedback provided";
 
             // Structure
-            const structureScore = data.evaluation.structureScore ?? "N/A";
-            const structureFeedback = data.evaluation.structureFeedback && data.evaluation.structureFeedback.trim() !== '' ? data.evaluation.structureFeedback : "No feedback provided";
+            const structureScore = evaluation.structureScore ?? "N/A";
+            const structureFeedback = evaluation.structureFeedback && evaluation.structureFeedback.trim() !== '' ? evaluation.structureFeedback : "No feedback provided";
 
             // Relevance
-            const relevanceScore = data.evaluation.relevanceScore ?? "N/A";
-            const relevanceFeedback = data.evaluation.relevanceFeedback && data.evaluation.relevanceFeedback.trim() !== '' ? data.evaluation.relevanceFeedback : "No feedback provided";
+            const relevanceScore = evaluation.relevanceScore ?? "N/A";
+            const relevanceFeedback = evaluation.relevanceFeedback && evaluation.relevanceFeedback.trim() !== '' ? evaluation.relevanceFeedback : "No feedback provided";
 
             // Communication
-            const communicationScore = data.evaluation.communicationScore ?? "N/A";
-            const communicationFeedback = data.evaluation.communicationFeedback && data.evaluation.communicationFeedback.trim() !== '' ? data.evaluation.communicationFeedback : "No feedback provided";
+            const communicationScore = evaluation.communicationScore ?? "N/A";
+            const communicationFeedback = evaluation.communicationFeedback && evaluation.communicationFeedback.trim() !== '' ? evaluation.communicationFeedback : "No feedback provided";
 
             // Depth
-            const depthScore = data.evaluation.depthScore ?? "N/A";
-            const depthFeedback = data.evaluation.depthFeedback && data.evaluation.depthFeedback.trim() !== '' ? data.evaluation.depthFeedback : "No feedback provided";
+            const depthScore = evaluation.depthScore ?? "N/A";
+            const depthFeedback = evaluation.depthFeedback && evaluation.depthFeedback.trim() !== '' ? evaluation.depthFeedback : "No feedback provided";
             /* Evaluation ends */
 
             evaluationContainer.innerHTML = `
@@ -521,3 +539,13 @@ document.getElementById("uploadResumeBtn").addEventListener("click", () => {
         });
 });
 
+function checkSystemRequirements(data) {
+    console.log("insufficientSystemRequirements: " + data.insufficientSystemRequirements);
+    if(data.insufficientSystemRequirements) {
+        console.log("Insufficient System Requirements detected");
+        slowSystem.classList.remove("hidden");
+    } else {
+        console.log("System Requirements are met");
+        slowSystem.classList.add("hidden");
+    }
+}

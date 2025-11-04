@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1")
 public class MainController {
 
-    @GetMapping("/generate")
+    @GetMapping("/requirements")
     public PromptResponse checkSystemRequirements() {
         return new PromptResponse(true, "");
     }
