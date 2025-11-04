@@ -53,6 +53,12 @@
 
     <!-- Pages Container -->
     <main id="content" class="container-fluid mt-4">
+
+        <div id="slowSystem" class="alert alert-danger hidden" role="alert">
+            ⚠️ System performance appears insufficient for local AI inference. Consider using a smaller model or
+            switching to a faster system.
+        </div>
+
         <!-- Home Page -->
         <div id="homePage" class="page">
             <!-- Home content -->
@@ -177,6 +183,7 @@
 
                 <!-- Loading Feedback GIF -->
                 <div id="loadingFeedback" class="mb-4 text-center hidden">
+                    <label id="loadingFeedbackText" class="mb-0"></label>
                     <img src="img/loading.gif" alt="Loading..." style="width: 50px; height: 50px;">
                 </div>
 

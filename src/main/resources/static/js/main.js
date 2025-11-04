@@ -1,3 +1,6 @@
+/* Slow system alert */
+const slowSystem = document.getElementById("slowSystem");
+
 /* Title */
 const interviewTitle = document.getElementById("interviewTitle");
 const interviewLogo = document.getElementById("interviewLogo");
@@ -39,6 +42,7 @@ const generateFeedbackSection = document.getElementById("generateFeedbackSection
 const generateFeedbackBtn = document.getElementById("generateFeedbackBtn");
 
 /* Loading Feedback GIF */
+const loadingFeedbackText = document.getElementById("loadingFeedbackText");
 const loadingFeedback = document.getElementById("loadingFeedback");
 
 /* Transcript & Feedback section */
@@ -98,13 +102,20 @@ function setProfessionIfBlank() {
 async function generateQuestion(profession) {
     loading.classList.remove("hidden"); // show loading GIF
     try {
-        const res = await fetch(`/api/v1/question?profession=${encodeURIComponent(profession)}`);
+        const res = await fetch(`/interview/v1/question?profession=${encodeURIComponent(profession)}`);
         const data = await res.json();
 
-        if (!data.question || data.question.trim() === '') {
+        if (!data) {
+            alert('No question was generated. Please try again.');
+            return;
+        } else {
+            checkSlowPromptResponse(data.promptStats)
+        }
+
+        if (!data.promptResponse.question || data.promptResponse.question.trim() === '') {
             alert('No question was generated. Please try again.');
         } else {
-            inputQuestion.value = data.question;
+            inputQuestion.value = data.promptResponse.question;
         }
     } catch (err) {
         console.error(err);
@@ -298,57 +309,70 @@ async function sendVideo(blob) {
     formData.append("profession", inputProfession.value)
     formData.append("question", inputQuestion.value)
 
-    loadingFeedback.classList.remove("hidden");
     generateFeedbackBtn.disabled = true;
+    loadingFeedback.classList.remove("hidden");
+    loadingFeedbackText.innerText = "Loading transcript...";
     recordBtn.disabled = true;
     recordLabel.textContent = "";
     stopCamera();
 
     try {
-        const res = await fetch("/api/v1/feedback", {
+        const res = await fetch("/interview/v1/transcript", {
             method: "POST",
             body: formData
         });
-        const data = await res.json();
+        const transcript = await res.json();
 
-        if (!data.feedback || data.feedback.trim() === '') {
-            alert('No feedback was generated. Please try again.');
+        if (!transcript) {
+            alert('No transcript was generated. Please try again.');
+            return;
+        }
+
+        if (!transcript.transcript || transcript.transcript.trim() === '') {
+            alert('No transcript was generated. Please try again.');
             generateFeedbackBtn.disabled = false;
         } else {
             transcriptFeedbackContainer.classList.remove("hidden");
             transcriptSection.classList.remove("hidden");
+            transcriptEl.innerText = transcript.transcript || "";
+            loadingFeedbackText.innerText = "Loading feedback...";
+
+            const feedback = await generateFeedback(transcript.transcript);
+
             feedbackSection.classList.remove("hidden");
             resetSection.classList.remove("hidden");
 
-            transcriptEl.innerText = data.transcript || "";
-            feedbackEl.innerText = data.feedback || "No feedback returned";
-        }
+            feedbackEl.innerText = feedback.promptResponse || "No feedback returned";
 
-        // Evaluation
-        if (data?.evaluation) {
-            /* Evaluation start */
-            // Clarity
-            const clarityScore = data.evaluation.clarityScore ?? "N/A";
-            const clarityFeedback = data.evaluation.clarityFeedback && data.evaluation.clarityFeedback.trim() !== '' ? data.evaluation.clarityFeedback : "No feedback provided";
+            loadingFeedbackText.innerText = "Loading evaluation...";
+            const evaluationResponse = await generateEvaluation(transcript, feedback.promptResponse);
 
-            // Structure
-            const structureScore = data.evaluation.structureScore ?? "N/A";
-            const structureFeedback = data.evaluation.structureFeedback && data.evaluation.structureFeedback.trim() !== '' ? data.evaluation.structureFeedback : "No feedback provided";
+            // Evaluation
+            if (evaluationResponse?.promptResponse) {
+                const evaluation = evaluationResponse.promptResponse;
+                /* Evaluation start */
+                // Clarity
+                const clarityScore = evaluation.clarityScore ?? "N/A";
+                const clarityFeedback = evaluation.clarityFeedback && evaluation.clarityFeedback.trim() !== '' ? evaluation.clarityFeedback : "No feedback provided";
 
-            // Relevance
-            const relevanceScore = data.evaluation.relevanceScore ?? "N/A";
-            const relevanceFeedback = data.evaluation.relevanceFeedback && data.evaluation.relevanceFeedback.trim() !== '' ? data.evaluation.relevanceFeedback : "No feedback provided";
+                // Structure
+                const structureScore = evaluation.structureScore ?? "N/A";
+                const structureFeedback = evaluation.structureFeedback && evaluation.structureFeedback.trim() !== '' ? evaluation.structureFeedback : "No feedback provided";
 
-            // Communication
-            const communicationScore = data.evaluation.communicationScore ?? "N/A";
-            const communicationFeedback = data.evaluation.communicationFeedback && data.evaluation.communicationFeedback.trim() !== '' ? data.evaluation.communicationFeedback : "No feedback provided";
+                // Relevance
+                const relevanceScore = evaluation.relevanceScore ?? "N/A";
+                const relevanceFeedback = evaluation.relevanceFeedback && evaluation.relevanceFeedback.trim() !== '' ? evaluation.relevanceFeedback : "No feedback provided";
 
-            // Depth
-            const depthScore = data.evaluation.depthScore ?? "N/A";
-            const depthFeedback = data.evaluation.depthFeedback && data.evaluation.depthFeedback.trim() !== '' ? data.evaluation.depthFeedback : "No feedback provided";
-            /* Evaluation ends */
+                // Communication
+                const communicationScore = evaluation.communicationScore ?? "N/A";
+                const communicationFeedback = evaluation.communicationFeedback && evaluation.communicationFeedback.trim() !== '' ? evaluation.communicationFeedback : "No feedback provided";
 
-            evaluationContainer.innerHTML = `
+                // Depth
+                const depthScore = evaluation.depthScore ?? "N/A";
+                const depthFeedback = evaluation.depthFeedback && evaluation.depthFeedback.trim() !== '' ? evaluation.depthFeedback : "No feedback provided";
+                /* Evaluation ends */
+
+                evaluationContainer.innerHTML = `
                 <div class="card p-3 mt-3 shadow-sm">
                     <h5 class="mb-3 text-start">🧠 Evaluation Summary</h5>
                     <ul class="list-group list-group-flush text-start">
@@ -360,18 +384,59 @@ async function sendVideo(blob) {
                     </ul>
                 </div>
             `;
-        } else {
-            console.warn("Evaluation is not present");
-            evaluationContainer.innerHTML =
-                "<p style='color: gray;'>No evaluation available yet.</p>";
+            } else {
+                console.warn("Evaluation is not present");
+                evaluationContainer.innerHTML =
+                    "<p style='color: gray;'>No evaluation available yet.</p>";
+            }
         }
-
     } catch (err) {
         console.error(err);
         generateFeedbackBtn.disabled = false;
     } finally {
+        loadingFeedbackText.innerHTML = "";
         loadingFeedback.classList.add("hidden");
     }
+}
+
+// Call API to generate feedback
+async function generateFeedback(transcript) {
+    const formData = new FormData();
+    formData.append("transcript", transcript);
+    formData.append("profession", inputProfession.value)
+    formData.append("question", inputQuestion.value)
+
+    try {
+        const res = await fetch("/interview/v1/feedback", {
+            method: "POST",
+            body: formData
+        });
+        return await res.json();
+        ;
+    } catch (err) {
+        console.error(err);
+    }
+    return null;
+}
+
+// Call API to generate evaluation
+async function generateEvaluation(transcript, feedback) {
+    const formData = new FormData();
+    formData.append("transcript", new Blob([JSON.stringify(transcript)], {type: "application/json"}));
+    formData.append("feedback", feedback);
+    formData.append("profession", inputProfession.value)
+    formData.append("question", inputQuestion.value)
+
+    try {
+        const res = await fetch("/interview/v1/evaluation", {
+            method: "POST",
+            body: formData,
+        });
+        return await res.json();
+    } catch (err) {
+        console.error(err);
+    }
+    return null;
 }
 
 // Show UI elements for when Recording is active
@@ -521,3 +586,28 @@ document.getElementById("uploadResumeBtn").addEventListener("click", () => {
         });
 });
 
+export async function checkSystemRequirements() {
+    try {
+        const response = await fetch('/api/v1/requirements');
+        let data = await response.json();
+
+        if (!data) {
+            alert('Something went wrong. Please reload the page.');
+        } else {
+            checkSlowPromptResponse(data)
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+function checkSlowPromptResponse(systemRequirements) {
+    console.log("slowPromptResponse: " + systemRequirements.slowPromptResponse);
+    if (systemRequirements.slowPromptResponse) {
+        console.log("Insufficient System Requirements detected");
+        slowSystem.classList.remove("hidden");
+    } else {
+        console.log("System Requirements are met");
+        slowSystem.classList.add("hidden");
+    }
+}

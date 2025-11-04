@@ -6,6 +6,7 @@ package com.myinterviewbot.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myinterviewbot.model.Evaluation;
+import com.myinterviewbot.model.PromptResponse;
 import com.myinterviewbot.service.ai.model.AIService;
 import com.myinterviewbot.utils.Utils;
 import jakarta.servlet.http.HttpSession;
@@ -34,7 +35,7 @@ public class PromptService {
     @Autowired
     private AIService aiService;
 
-    public String generateQuestion(final String profession, final HttpSession session) {
+    public PromptResponse generateQuestion(final String profession, final HttpSession session) {
         LOGGER.info("Generating question for profession: {}", profession);
 
         String lastProfession = (String) session.getAttribute("currentProfession");
@@ -60,7 +61,8 @@ public class PromptService {
             Sometimes the model response with a very long question, the next code will try to avoid returning a long question by asking the model to generate another question.
             This process will be repeated a maximum of three time, hope the model can generate a good question.
         */
-        String question = aiService.executePrompt(prompt);
+        PromptResponse promptResponse = aiService.executePrompt(prompt);
+        String question = promptResponse.getPromptResponse().toString();
         int words = Utils.countWords(question);
         if (words > QUESTION_MAX_NUMBER_OF_WORDS) {
             LOGGER.warn("⚠︎⚠︎⚠︎ Question has more than " + QUESTION_MAX_NUMBER_OF_WORDS + " words, asking model to generate another question...");
@@ -79,7 +81,8 @@ public class PromptService {
                 };
 
                 // Extracting the question because AI sometimes gives an explanation of what it did to shorten the question.
-                question = Utils.extractQuestion(aiService.executePrompt(prompt));
+                promptResponse = aiService.executePrompt(prompt);
+                question = Utils.extractQuestion(promptResponse.getPromptResponse().toString());
                 words = Utils.countWords(question);
                 if (words <= QUESTION_MAX_NUMBER_OF_WORDS) {
                     break;
@@ -95,17 +98,19 @@ public class PromptService {
             LOGGER.info("Number of words in the question: {}", words);
         }
 
-        return Utils.removeQuotes(question);
+        promptResponse.setPromptResponse(Utils.removeQuotes(question));
+        return promptResponse;
     }
 
-    public String generateFeedback(final String transcript, final String profession, final String question) {
+    public PromptResponse generateFeedback(final String transcript, final String profession, final String question) {
         String prompt = "You are a technical hiring manager. Evaluate the following interview answer, focusing on clarity, structure, relevance, and communication style. "
                 + "Provide actionable feedback in 3–4 concise sentences, output only the feedback, no extra commentary. "
                 + "Candidate profession: " + profession + ". "
                 + "Question: " + question + ". "
                 + "Candidate answer: " + transcript;
 
-        String feedback = aiService.executePrompt(prompt);
+        PromptResponse promptResponse = aiService.executePrompt(prompt);
+        String feedback = promptResponse.getPromptResponse().toString();
 
         /*
             Sometimes the model response with a very long feedback, the next code will try to avoid returning a long feedback by asking the model to generate another feedback.
@@ -119,7 +124,8 @@ public class PromptService {
                 requestNewFeedback++;
                 prompt = "Please provide the next feedback in " + FEEDBACK_MAX_NUMBER_OF_WORDS + " words or less: " + feedback;
 
-                feedback = aiService.executePrompt(prompt);
+                promptResponse = aiService.executePrompt(prompt);
+                feedback = promptResponse.getPromptResponse().toString();
                 words = Utils.countWords(feedback);
                 if (words <= FEEDBACK_MAX_NUMBER_OF_WORDS) {
                     break;
@@ -134,10 +140,12 @@ public class PromptService {
         } else {
             LOGGER.info("Number of words in the feedback: {}", words);
         }
-        return Utils.removeQuotesAndFormatList(feedback);
+
+        promptResponse.setPromptResponse(Utils.removeQuotesAndFormatList(feedback));
+        return promptResponse;
     }
 
-    public Evaluation generateEvaluation(final String transcript, final String profession, final String question) {
+    public PromptResponse generateEvaluation(final String transcript, final String profession, final String question) {
         final String jsonParameters = "{clarityScore:  int, clarityFeedback: string, structureScore: int, structureFeedback: string, relevanceScore: int, relevanceFeedback: string, communicationScore: int, communicationFeedback: string, depthScore: int, depthFeedback: string}";
 
         final String prompt = "You are a technical hiring manager. Evaluate the following " + profession + " candidate's response to a behavioral interview question: " + question
@@ -155,10 +163,13 @@ public class PromptService {
                 + " - Include all JSON parameters, even if one of them is missing or not applicable. "
                 + " Candidate Response: " + transcript;
 
-        final String evaluationTxt = aiService.executePrompt(prompt);
+        PromptResponse promptResponse = aiService.executePrompt(prompt);
+
+        String evaluationTxt = promptResponse.getPromptResponse().toString();
         if (evaluationTxt == null || evaluationTxt.isEmpty()) {
             LOGGER.warn("Evaluation text is null");
-            return null;
+            promptResponse.setPromptResponse(null);
+            return promptResponse;
         }
 
         final String evaluationJson = Utils.extractJson(evaluationTxt);
@@ -166,19 +177,22 @@ public class PromptService {
         LOGGER.info("Evaluation JSON: {}", evaluationJson);
         if (evaluationJson == null) {
             LOGGER.warn("Evaluation JSON not found in evaluation output: {}", evaluationTxt);
-            return null;
+            promptResponse.setPromptResponse(null);
+            return promptResponse;
         }
 
         try {
             final ObjectMapper mapper = new ObjectMapper();
             final Evaluation evaluation = mapper.readValue(evaluationJson, Evaluation.class);
             validateFeedback(evaluation);
-            return evaluation;
+            promptResponse.setPromptResponse(evaluation);
+            return promptResponse;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }
         LOGGER.warn("Evaluation failed. Please try again later.");
-        return null;
+        promptResponse.setPromptResponse(null);
+        return promptResponse;
     }
 
     private void validateFeedback(final Evaluation evaluation) {

@@ -191,7 +191,6 @@ public class Utils {
         if (response == null) {
             return null;
         }
-        ;
 
         // Remove quotes
         String cleaned = removeQuotes(response);

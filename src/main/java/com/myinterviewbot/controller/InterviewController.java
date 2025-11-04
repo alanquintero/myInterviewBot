@@ -29,7 +29,7 @@ import java.io.File;
  * @author Alan Quintero
  */
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/interview/v1")
 public class InterviewController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InterviewController.class);
@@ -55,57 +55,84 @@ public class InterviewController {
      * @return a {@link QuestionResponse} containing the generated question
      */
     @GetMapping("/question")
-    public QuestionResponse getQuestion(@RequestParam("profession") final String profession, final HttpSession session) {
+    public PromptResponse getQuestion(@RequestParam("profession") final String profession, final HttpSession session) {
         LOGGER.info("/question profession: {}", profession);
-        final String question = promptService.generateQuestion(profession, session);
-        return new QuestionResponse(question);
+        final PromptResponse promptResponse = promptService.generateQuestion(profession, session);
+        promptResponse.setPromptResponse(new QuestionResponse(promptResponse.getPromptResponse().toString()));
+        return promptResponse;
     }
 
     /**
-     * Receives a candidate's video answer, processes it, and returns feedback.
+     * Receives a candidate's video answer, processes it, and returns the transcript.
      *
      * <p>The process includes storing the video, extracting audio, transcribing
-     * it to text, and sending the transcript to Ollama for evaluation.</p>
+     * it to text, and sending back the transcript.</p>
      *
-     * @param file       the uploaded video file from the candidate
-     * @param profession the candidate's profession
-     * @param question   the question asked to the candidate
-     * @return AI-generated feedback on the candidate's answer
+     * @param file the uploaded video file from the candidate
+     * @return the transcript
      */
-    @PostMapping(value = "/feedback", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public FeedbackResponse getFeedback(@RequestParam("file") final MultipartFile file, @RequestParam("profession") final String profession, @RequestParam("question") final String question) throws Exception {
-        LOGGER.info("/feedback file: {}; profession: {}; question: {}", file, profession, question);
-        final FeedbackResponse emptyResult = new FeedbackResponse("", "", null);
-
+    @PostMapping(value = "/transcript", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Transcript getTranscript(@RequestParam("file") final MultipartFile file) {
+        LOGGER.info("/transcript file: {}", file);
         // Save file locally
         final File videoFile = Utils.saveVideo(file);
         if (videoFile == null) {
-            return emptyResult;
+            return new Transcript();
         }
 
         // Extract audio
         final File audioFile = ffmpegService.extractAudio(videoFile);
         if (audioFile == null) {
-            return emptyResult;
+            return new Transcript();
         }
 
         // Transcribe audio
         final String transcript = whisperService.transcribe(audioFile);
-        if (transcript == null || transcript.isEmpty()) {
-            return emptyResult;
+        if (transcript == null) {
+            return new Transcript();
         }
 
-        // Generating AI feedback
-        final String feedback = promptService.generateFeedback(transcript, profession, question);
+        return new Transcript(transcript, videoFile.getName());
+    }
+
+
+    /**
+     * Receives a transcript, asks AI for feedback, and returns feedback.
+     *
+     * @param profession the candidate's profession
+     * @param question   the question asked to the candidate
+     * @return AI-generated feedback on the candidate's answer
+     */
+    @PostMapping(value = "/feedback")
+    public PromptResponse getFeedback(@RequestParam("transcript") final String transcript, @RequestParam("profession") final String profession, @RequestParam("question") final String question) {
+        LOGGER.info("/feedback transcript: {}, profession: {}; question: {}", transcript, profession, question);
+        return promptService.generateFeedback(transcript, profession, question);
+    }
+
+    /**
+     * Receives a transcript, asks AI for an evaluation, and returns evaluation.
+     *
+     * <p>The process includes storing the interview entry.</p>
+     *
+     * @param transcript the candidate's transcript
+     * @param feedback   the AI generated feedback
+     * @param profession the candidate's profession
+     * @param question   the question asked to the candidate
+     * @return AI-generated evaluation on the candidate's answer
+     */
+    @PostMapping(value = "/evaluation", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public PromptResponse getEvaluation(@RequestPart("transcript") final Transcript transcript, @RequestParam("feedback") final String feedback, @RequestParam("profession") final String profession, @RequestParam("question") final String question) {
+        LOGGER.info("/evaluation transcript: {}, profession: {}; question: {}", transcript, profession, question);
 
         // Generating AI evaluation
-        final Evaluation evaluation = promptService.generateEvaluation(transcript, profession, question);
+        final PromptResponse promptResponse = promptService.generateEvaluation(transcript.getTranscript(), profession, question);
+        final Evaluation evaluation = (Evaluation) promptResponse.getPromptResponse();
 
         // Saves the interview entry
-        final long timestamp = Utils.getTimestamp(videoFile.getName());
-        final String videoUrl = Utils.getVideoUrl(videoFile.getName());
-        interviewDataService.addInterview(timestamp, new InterviewEntry(timestamp, InterviewType.BEHAVIORAL, profession, question, transcript, feedback, videoUrl, evaluation));
+        final long timestamp = Utils.getTimestamp(transcript.getFileName());
+        final String videoUrl = Utils.getVideoUrl(transcript.getFileName());
+        interviewDataService.addInterview(timestamp, new InterviewEntry(timestamp, InterviewType.BEHAVIORAL, profession, question, transcript.getTranscript(), feedback, videoUrl, evaluation));
 
-        return new FeedbackResponse(feedback, transcript, evaluation);
+        return promptResponse;
     }
 }
