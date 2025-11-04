@@ -42,6 +42,7 @@ const generateFeedbackSection = document.getElementById("generateFeedbackSection
 const generateFeedbackBtn = document.getElementById("generateFeedbackBtn");
 
 /* Loading Feedback GIF */
+const loadingFeedbackText = document.getElementById("loadingFeedbackText");
 const loadingFeedback = document.getElementById("loadingFeedback");
 
 /* Transcript & Feedback section */
@@ -308,65 +309,70 @@ async function sendVideo(blob) {
     formData.append("profession", inputProfession.value)
     formData.append("question", inputQuestion.value)
 
-    loadingFeedback.classList.remove("hidden");
     generateFeedbackBtn.disabled = true;
+    loadingFeedback.classList.remove("hidden");
+    loadingFeedbackText.innerText = "Loading transcript...";
     recordBtn.disabled = true;
     recordLabel.textContent = "";
     stopCamera();
 
     try {
-        const res = await fetch("/interview/v1/feedback", {
+        const res = await fetch("/interview/v1/transcript", {
             method: "POST",
             body: formData
         });
-        const data = await res.json();
+        const transcript = await res.json();
 
-        if (!data) {
-            alert('No feedback was generated. Please try again.');
+        if (!transcript) {
+            alert('No transcript was generated. Please try again.');
             return;
-        } else {
-            checkSlowPromptResponse(data.promptStats)
         }
 
-        if (!data.promptResponse.feedback || data.promptResponse.feedback.trim() === '') {
-            alert('No feedback was generated. Please try again.');
+        if (!transcript.transcript || transcript.transcript.trim() === '') {
+            alert('No transcript was generated. Please try again.');
             generateFeedbackBtn.disabled = false;
         } else {
             transcriptFeedbackContainer.classList.remove("hidden");
             transcriptSection.classList.remove("hidden");
+            transcriptEl.innerText = transcript.transcript || "";
+            loadingFeedbackText.innerText = "Loading feedback...";
+
+            const feedback = await generateFeedback(transcript.transcript);
+
             feedbackSection.classList.remove("hidden");
             resetSection.classList.remove("hidden");
 
-            transcriptEl.innerText = data.promptResponse.transcript || "";
-            feedbackEl.innerText = data.promptResponse.feedback || "No feedback returned";
-        }
+            feedbackEl.innerText = feedback.promptResponse || "No feedback returned";
 
-        // Evaluation
-        if (data?.promptResponse?.evaluation) {
-            const evaluation = data.promptResponse.evaluation;
-            /* Evaluation start */
-            // Clarity
-            const clarityScore = evaluation.clarityScore ?? "N/A";
-            const clarityFeedback = evaluation.clarityFeedback && evaluation.clarityFeedback.trim() !== '' ? evaluation.clarityFeedback : "No feedback provided";
+            loadingFeedbackText.innerText = "Loading evaluation...";
+            const evaluationResponse = await generateEvaluation(transcript, feedback.promptResponse);
 
-            // Structure
-            const structureScore = evaluation.structureScore ?? "N/A";
-            const structureFeedback = evaluation.structureFeedback && evaluation.structureFeedback.trim() !== '' ? evaluation.structureFeedback : "No feedback provided";
+            // Evaluation
+            if (evaluationResponse?.promptResponse) {
+                const evaluation = evaluationResponse.promptResponse;
+                /* Evaluation start */
+                // Clarity
+                const clarityScore = evaluation.clarityScore ?? "N/A";
+                const clarityFeedback = evaluation.clarityFeedback && evaluation.clarityFeedback.trim() !== '' ? evaluation.clarityFeedback : "No feedback provided";
 
-            // Relevance
-            const relevanceScore = evaluation.relevanceScore ?? "N/A";
-            const relevanceFeedback = evaluation.relevanceFeedback && evaluation.relevanceFeedback.trim() !== '' ? evaluation.relevanceFeedback : "No feedback provided";
+                // Structure
+                const structureScore = evaluation.structureScore ?? "N/A";
+                const structureFeedback = evaluation.structureFeedback && evaluation.structureFeedback.trim() !== '' ? evaluation.structureFeedback : "No feedback provided";
 
-            // Communication
-            const communicationScore = evaluation.communicationScore ?? "N/A";
-            const communicationFeedback = evaluation.communicationFeedback && evaluation.communicationFeedback.trim() !== '' ? evaluation.communicationFeedback : "No feedback provided";
+                // Relevance
+                const relevanceScore = evaluation.relevanceScore ?? "N/A";
+                const relevanceFeedback = evaluation.relevanceFeedback && evaluation.relevanceFeedback.trim() !== '' ? evaluation.relevanceFeedback : "No feedback provided";
 
-            // Depth
-            const depthScore = evaluation.depthScore ?? "N/A";
-            const depthFeedback = evaluation.depthFeedback && evaluation.depthFeedback.trim() !== '' ? evaluation.depthFeedback : "No feedback provided";
-            /* Evaluation ends */
+                // Communication
+                const communicationScore = evaluation.communicationScore ?? "N/A";
+                const communicationFeedback = evaluation.communicationFeedback && evaluation.communicationFeedback.trim() !== '' ? evaluation.communicationFeedback : "No feedback provided";
 
-            evaluationContainer.innerHTML = `
+                // Depth
+                const depthScore = evaluation.depthScore ?? "N/A";
+                const depthFeedback = evaluation.depthFeedback && evaluation.depthFeedback.trim() !== '' ? evaluation.depthFeedback : "No feedback provided";
+                /* Evaluation ends */
+
+                evaluationContainer.innerHTML = `
                 <div class="card p-3 mt-3 shadow-sm">
                     <h5 class="mb-3 text-start">🧠 Evaluation Summary</h5>
                     <ul class="list-group list-group-flush text-start">
@@ -378,18 +384,59 @@ async function sendVideo(blob) {
                     </ul>
                 </div>
             `;
-        } else {
-            console.warn("Evaluation is not present");
-            evaluationContainer.innerHTML =
-                "<p style='color: gray;'>No evaluation available yet.</p>";
+            } else {
+                console.warn("Evaluation is not present");
+                evaluationContainer.innerHTML =
+                    "<p style='color: gray;'>No evaluation available yet.</p>";
+            }
         }
-
     } catch (err) {
         console.error(err);
         generateFeedbackBtn.disabled = false;
     } finally {
+        loadingFeedbackText.innerHTML = "";
         loadingFeedback.classList.add("hidden");
     }
+}
+
+// Call API to generate feedback
+async function generateFeedback(transcript) {
+    const formData = new FormData();
+    formData.append("transcript", transcript);
+    formData.append("profession", inputProfession.value)
+    formData.append("question", inputQuestion.value)
+
+    try {
+        const res = await fetch("/interview/v1/feedback", {
+            method: "POST",
+            body: formData
+        });
+        return await res.json();
+        ;
+    } catch (err) {
+        console.error(err);
+    }
+    return null;
+}
+
+// Call API to generate evaluation
+async function generateEvaluation(transcript, feedback) {
+    const formData = new FormData();
+    formData.append("transcript", new Blob([JSON.stringify(transcript)], {type: "application/json"}));
+    formData.append("feedback", feedback);
+    formData.append("profession", inputProfession.value)
+    formData.append("question", inputQuestion.value)
+
+    try {
+        const res = await fetch("/interview/v1/evaluation", {
+            method: "POST",
+            body: formData,
+        });
+        return await res.json();
+    } catch (err) {
+        console.error(err);
+    }
+    return null;
 }
 
 // Show UI elements for when Recording is active
