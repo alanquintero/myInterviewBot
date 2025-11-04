@@ -177,6 +177,9 @@ function reset() {
     mediaRecorder = null;
     currentStream = null;
     isRecording = false;
+
+    // reset the question selected in the modal
+    document.querySelectorAll('#commonQuestionsModal .list-group-item').forEach(i => i.classList.remove('active'));
 }
 
 // Click on Generate Feedback button
