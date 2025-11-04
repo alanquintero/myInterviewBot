@@ -9,11 +9,7 @@ package com.myinterviewbot.model;
  *
  * @author Alan Quintero
  */
-public class SystemRequirements {
-
-    private boolean slowPromptResponse;
-
-    private double secondsTakenToRespondPrompt;
+public class SystemRequirements extends PromptStats {
 
     private boolean aiProviderAvailable;
 
@@ -22,24 +18,7 @@ public class SystemRequirements {
     private boolean whisperServiceAvailable;
 
     public SystemRequirements(final boolean slowPromptResponse, final double secondsTakenToRespondPrompt) {
-        this.slowPromptResponse = slowPromptResponse;
-        this.secondsTakenToRespondPrompt = secondsTakenToRespondPrompt;
-    }
-
-    public boolean isSlowPromptResponse() {
-        return slowPromptResponse;
-    }
-
-    public void setSlowPromptResponse(final boolean slowPromptResponse) {
-        this.slowPromptResponse = slowPromptResponse;
-    }
-
-    public double getSecondsTakenToRespondPrompt() {
-        return secondsTakenToRespondPrompt;
-    }
-
-    public void setSecondsTakenToRespondPrompt(final double secondsTakenToRespondPrompt) {
-        this.secondsTakenToRespondPrompt = secondsTakenToRespondPrompt;
+        super(slowPromptResponse, secondsTakenToRespondPrompt);
     }
 
     public boolean isAiProviderAvailable() {
@@ -69,8 +48,8 @@ public class SystemRequirements {
     @Override
     public String toString() {
         return "SystemRequirements{" +
-                "slowPromptResponse=" + slowPromptResponse +
-                ", secondsTakenToRespondPrompt=" + secondsTakenToRespondPrompt +
+                "slowPromptResponse=" + isSlowPromptResponse() +
+                ", secondsTakenToRespondPrompt=" + getSecondsTakenToRespondPrompt() +
                 '}';
     }
 }
