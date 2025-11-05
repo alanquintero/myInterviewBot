@@ -53,27 +53,4 @@ public class MainController {
         LOGGER.info("SystemRequirements check complete: {}", systemRequirements);
         return systemRequirements;
     }
-
-    @GetMapping("/")
-    public String showMainPage(Model model) {
-        model.addAttribute("pageTitle", "Behavioral Interview");
-        model.addAttribute("currentPage", "behavioralPage");
-        return "layout";
-    }
-
-    @GetMapping("/interview/behavioral")
-    public String behavioral(Model model) {
-        LOGGER.info("/interview/behavioral");
-        model.addAttribute("pageTitle", "Behavioral Interview");
-        model.addAttribute("content", "behavioralPage :: content");
-        return "layout";
-    }
-
-    @GetMapping("/interview/resume")
-    public String resume(Model model) {
-        LOGGER.info("/interview/resume");
-        model.addAttribute("pageTitle", "Resume Interview");
-        model.addAttribute("content", "resumePage :: content");
-        return "layout";
-    }
 }

@@ -1,0 +1,37 @@
+<fieldset th:fragment="feedbackSection" xmlns:th="http://www.thymeleaf.org">
+    <!-- Loading Feedback GIF -->
+    <div id="loadingFeedback" class="mb-4 text-center hidden">
+        <label id="loadingFeedbackText" class="mb-0"></label>
+        <img th:src="@{img/loading.gif}" alt="Loading..." style="width: 50px; height: 50px;">
+    </div>
+
+    <!-- Transcript & Feedback section -->
+    <fieldset id="transcriptFeedbackContainer" class="border rounded p-3 mb-4 position-relative hidden">
+        <legend class="float-none w-auto px-3 text-primary fw-semibold">Feedback section</legend>
+
+        <!-- Transcript section -->
+        <div id="transcriptSection" class="mb-4">
+            <h5>Transcript</h5>
+            <div id="transcript" class="form-control bg-light p-2" readonly
+                 style="white-space: pre-wrap;"></div>
+        </div>
+
+        <!-- Feedback section -->
+        <div id="feedbackSection" class="mb-4 position-relative">
+            <h5>Feedback</h5>
+            <div id="feedback" class="form-control bg-light p-2" readonly
+                 style="white-space: pre-wrap;"></div>
+        </div>
+
+        <!-- Evaluation section -->
+        <div id="evaluation-result"></div>
+    </fieldset>
+
+    <!-- Reset section -->
+    <div id="resetSection" class="mb-4 hidden">
+        <button id="resetBtnBottom"
+                class="btn btn-warning mb-3 d-flex align-items-center justify-content-center">
+            Reset
+        </button>
+    </div>
+</fieldset>
