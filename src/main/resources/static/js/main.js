@@ -529,33 +529,6 @@ document.querySelectorAll('#commonQuestionsModal .list-group-item').forEach(item
     });
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-    const items = document.querySelectorAll(".list-group-item");
-
-    items.forEach(item => {
-        item.addEventListener("click", () => {
-            // Remove 'active' from all
-            items.forEach(i => i.classList.remove("active"));
-            // Add 'active' to the clicked one
-            item.classList.add("active");
-
-            if (item.id === "behavioral") {
-                console.log("Behavioral interview selected");
-                interviewTitle.textContent = "Behavioral Interview";
-                interviewLogo.src = BEHAVIORAL_INTERVIEW_LOGO_URL;
-                behavioralSection.classList.remove("hidden");
-                //resumeSection.classList.add("hidden");
-            } else if (item.id === "resume") {
-                console.log("Resume-based interview selected");
-                interviewTitle.textContent = "Resume-based Interview";
-                interviewLogo.src = RESUME_INTERVIEW_LOGO_URL;
-                behavioralSection.classList.add("hidden");
-                //resumeSection.classList.remove("hidden");
-            }
-        });
-    });
-});
-
 export async function checkSystemRequirements() {
     try {
         const response = await fetch('/api/v1/requirements');

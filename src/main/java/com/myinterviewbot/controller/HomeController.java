@@ -33,4 +33,11 @@ public class HomeController {
         model.addAttribute("content", "resumePage :: content");
         return "layout";
     }
+
+    @GetMapping("/settings")
+    public String settings(Model model) {
+        LOGGER.info("/settings");
+        model.addAttribute("content", "settingsPage :: content");
+        return "layout";
+    }
 }
