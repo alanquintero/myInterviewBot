@@ -13,6 +13,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String showMainPage(Model model) {
+        LOGGER.info("at root /");
         model.addAttribute("pageTitle", "Behavioral Interview");
         model.addAttribute("currentPage", "behavioralPage");
         return "layout";
@@ -30,14 +31,21 @@ public class HomeController {
     public String resume(Model model) {
         LOGGER.info("/interview/resume");
         model.addAttribute("pageTitle", "Resume Interview");
-        model.addAttribute("content", "resumePage :: content");
+        model.addAttribute("currentPage", "resumePage");
+        return "layout";
+    }
+
+    @GetMapping("/my-interviews")
+    public String myInterviews(Model model) {
+        LOGGER.info("/my-interviews");
+        model.addAttribute("currentPage", "myInterviewsPage");
         return "layout";
     }
 
     @GetMapping("/settings")
     public String settings(Model model) {
         LOGGER.info("/settings");
-        model.addAttribute("content", "settingsPage :: content");
+        model.addAttribute("currentPage", "settingsPage");
         return "layout";
     }
 }

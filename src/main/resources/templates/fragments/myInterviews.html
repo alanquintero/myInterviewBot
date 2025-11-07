@@ -1,0 +1,41 @@
+<div th:fragment="myInterviewsSection" xmlns:th="http://www.thymeleaf.org">
+
+    <div class="page">
+
+        <h2 class="mb-4">My Interviews</h2>
+
+        <!-- Score Summary -->
+        <div id="scoreSummary" class="mb-4 text-center"></div>
+
+        <!-- Pagination Controls -->
+        <nav>
+            <ul id="paginationTop" class="pagination justify-content-center mt-3"></ul>
+        </nav>
+
+        <!-- My Interviews -->
+        <div id="interviewsList"></div>
+
+        <!-- Pagination Controls -->
+        <nav>
+            <ul id="paginationBottom" class="pagination justify-content-center mt-3"></ul>
+        </nav>
+
+        <!-- Loading GIF -->
+        <div id="historyLoading" class="mb-4 text-center hidden">
+            <img src="img/loading.gif" alt="Loading..." style="width: 50px; height: 50px;">
+        </div>
+    </div>
+
+    <!-- Load script only for myInterviews fragment -->
+    <script th:src="@{/js/my-interviews.js}" type="module"></script>
+    <script type="module">
+        import {loadInterviews} from '/js/my-interviews.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (document.getElementById('interviewsList')) {
+                loadInterviews();
+            }
+        });
+    </script>
+
+</div>

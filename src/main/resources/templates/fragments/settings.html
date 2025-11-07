@@ -1,5 +1,6 @@
-<div th:fragment="settingsPage" xmlns:th="http://www.thymeleaf.org">
-    <div id="settingsPage" class="page hidden">
+<div th:fragment="settingsSection" xmlns:th="http://www.thymeleaf.org">
+
+    <div class="page">
         <div class="settings-page container-fluid mt-5">
             <h2 class="text-center mb-4">Settings</h2>
 
@@ -28,4 +29,14 @@
 
     <!-- Load script only for the settings fragment -->
     <script th:src="@{/js/settings.js}" type="module"></script>
+    <script type="module">
+        import {loadSettings} from '/js/settings.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (document.getElementById('settingsContainer')) {
+                loadSettings();
+            }
+        });
+    </script>
+
 </div>
