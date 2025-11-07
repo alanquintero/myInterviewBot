@@ -1,6 +1,3 @@
-/* Resume section */
-const resumeSection = document.getElementById("resumeSection");
-
 document.getElementById("uploadResumeBtn").addEventListener("click", () => {
     const fileInput = document.getElementById("resumeInput");
     const file = fileInput.files[0];
@@ -30,4 +27,3 @@ document.getElementById("uploadResumeBtn").addEventListener("click", () => {
             feedback.className = "text-danger";
         });
 });
-

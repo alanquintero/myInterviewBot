@@ -1,12 +1,6 @@
-/* Slow system alert */
-const slowSystem = document.getElementById("slowSystem");
+import {checkSlowPromptResponse} from './system-requirements.js';
 
-/* Title */
-const interviewTitle = document.getElementById("interviewTitle");
-const interviewLogo = document.getElementById("interviewLogo");
-
-/* Behavioral section */
-const behavioralSection = document.getElementById("behavioralSection");
+/* Behavioral section *//**/
 const inputProfession = document.getElementById("inputProfession");
 const inputQuestion = document.getElementById("inputQuestion");
 const commonQuestionsBtn = document.getElementById("commonQuestionsBtn");
@@ -61,8 +55,6 @@ const MAX_RECORDING_TIME = 150; // in seconds (2 minutes 30 seconds)
 const RECORD_VIDEO_AGAIN_TXT = "Click to record again →";
 const RECORD_BTN_IMG_URL = "img/button/record.png";
 const STOP_RECORD_BTN_IMG_URL = "img/button/stop.gif";
-const BEHAVIORAL_INTERVIEW_LOGO_URL = "img/interview/behavioral.png";
-const RESUME_INTERVIEW_LOGO_URL = "img/interview/resume.png";
 let timerInterval;
 let mediaRecorder;
 let currentStream = null;
@@ -412,7 +404,6 @@ async function generateFeedback(transcript) {
             body: formData
         });
         return await res.json();
-        ;
     } catch (err) {
         console.error(err);
     }
@@ -520,37 +511,11 @@ function setResetButtonsDisabled(disabled) {
 document.querySelectorAll('#commonQuestionsModal .list-group-item').forEach(item => {
     item.addEventListener('click', () => {
         document.getElementById('inputQuestion').value = item.textContent
-            .replace(/^\d+\.\s*/, '') // remove leading number and dot
-            .replace(/\r?\n|\r/g, ' ') // replace any line breaks with space
-            .trim(); // remove extra spaces at start/end
+            .replace(/^\d+\.\s*/, '')       // remove leading number and dot
+            .replace(/\s+/g, ' ')           // replace multiple spaces or line breaks with a single space
+            .trim();                        // remove extra spaces at start/end
 
         const modal = bootstrap.Modal.getInstance(document.getElementById('commonQuestionsModal'));
         modal.hide();
     });
 });
-
-export async function checkSystemRequirements() {
-    try {
-        const response = await fetch('/api/v1/requirements');
-        let data = await response.json();
-
-        if (!data) {
-            alert('Something went wrong. Please reload the page.');
-        } else {
-            checkSlowPromptResponse(data)
-        }
-    } catch (err) {
-        console.error(err);
-    }
-}
-
-function checkSlowPromptResponse(systemRequirements) {
-    console.log("slowPromptResponse: " + systemRequirements.slowPromptResponse);
-    if (systemRequirements.slowPromptResponse) {
-        console.log("Insufficient System Requirements detected");
-        slowSystem.classList.remove("hidden");
-    } else {
-        console.log("System Requirements are met");
-        slowSystem.classList.add("hidden");
-    }
-}

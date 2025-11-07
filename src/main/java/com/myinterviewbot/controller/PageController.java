@@ -1,3 +1,7 @@
+/**
+ * Copyright 2025 Alan Quintero
+ * Source: https://github.com/alanquintero/myInterviewBot
+ */
 package com.myinterviewbot.controller;
 
 import org.slf4j.Logger;
@@ -6,10 +10,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+/**
+ * Controller responsible for handling page navigation within the application.
+ * <p>
+ * This class maps high-level routes to their corresponding Thymeleaf views,
+ * setting the appropriate model attributes such as {@code pageTitle} and
+ * {@code currentPage}. It serves as the central routing hub for rendering
+ * layout-based pages (e.g., behavioral interview, resume interview, settings, etc.).
+ * </p>
+ *
+ * @author Alan Quintero
+ */
 @Controller
-public class HomeController {
+public class PageController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PageController.class);
 
     @GetMapping("/")
     public String showMainPage(Model model) {
@@ -22,9 +37,7 @@ public class HomeController {
     @GetMapping("/interview/behavioral")
     public String behavioral(Model model) {
         LOGGER.info("/interview/behavioral");
-        model.addAttribute("pageTitle", "Behavioral Interview");
-        model.addAttribute("content", "behavioralPage :: content");
-        return "layout";
+        return showMainPage(model);
     }
 
     @GetMapping("/interview/resume")

@@ -21,15 +21,15 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/v1")
-public class MainController {
+public class ApiController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApiController.class);
 
     private static SystemRequirements systemRequirements = null;
 
     private final SystemRequirementsService systemRequirementsService;
 
-    public MainController(final SystemRequirementsService systemRequirementsService) {
+    public ApiController(final SystemRequirementsService systemRequirementsService) {
         this.systemRequirementsService = systemRequirementsService;
     }
 
