@@ -1,0 +1,13 @@
+<div th:fragment="content" xmlns:th="http://www.thymeleaf.org">
+
+    <div class="d-flex justify-content-center align-items-center mb-4">
+        <img th:src="@{/img/interview/behavioral.png}" class="rounded-circle me-3 logo">
+        <h1>Behavioral Interview</h1>
+    </div>
+
+    <div th:replace="~{fragments/top :: topSection}"></div>
+    <div th:replace="~{fragments/behavioral :: behavioralSection}"></div>
+    <div th:replace="~{fragments/recording :: recordingSection}"></div>
+    <div th:replace="~{fragments/feedback :: feedbackSection}"></div>
+
+</div>

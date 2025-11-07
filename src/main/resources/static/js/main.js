@@ -1,18 +1,9 @@
-/* Slow system alert */
-const slowSystem = document.getElementById("slowSystem");
+import {checkSlowPromptResponse} from './system-requirements.js';
 
-/* Title */
-const interviewTitle = document.getElementById("interviewTitle");
-const interviewLogo = document.getElementById("interviewLogo");
-
-/* Behavioral section */
-const behavioralSection = document.getElementById("behavioralSection");
+/* Behavioral section *//**/
 const inputProfession = document.getElementById("inputProfession");
 const inputQuestion = document.getElementById("inputQuestion");
 const commonQuestionsBtn = document.getElementById("commonQuestionsBtn");
-
-/* Resume section */
-const resumeSection = document.getElementById("resumeSection");
 
 /* Button section */
 const generateQuestionBtn = document.getElementById("generateQuestionBtn");
@@ -64,8 +55,6 @@ const MAX_RECORDING_TIME = 150; // in seconds (2 minutes 30 seconds)
 const RECORD_VIDEO_AGAIN_TXT = "Click to record again →";
 const RECORD_BTN_IMG_URL = "img/button/record.png";
 const STOP_RECORD_BTN_IMG_URL = "img/button/stop.gif";
-const BEHAVIORAL_INTERVIEW_LOGO_URL = "img/interview/behavioral.png";
-const RESUME_INTERVIEW_LOGO_URL = "img/interview/resume.png";
 let timerInterval;
 let mediaRecorder;
 let currentStream = null;
@@ -415,7 +404,6 @@ async function generateFeedback(transcript) {
             body: formData
         });
         return await res.json();
-        ;
     } catch (err) {
         console.error(err);
     }
@@ -523,94 +511,11 @@ function setResetButtonsDisabled(disabled) {
 document.querySelectorAll('#commonQuestionsModal .list-group-item').forEach(item => {
     item.addEventListener('click', () => {
         document.getElementById('inputQuestion').value = item.textContent
-            .replace(/^\d+\.\s*/, '') // remove leading number and dot
-            .replace(/\r?\n|\r/g, ' ') // replace any line breaks with space
-            .trim(); // remove extra spaces at start/end
+            .replace(/^\d+\.\s*/, '')       // remove leading number and dot
+            .replace(/\s+/g, ' ')           // replace multiple spaces or line breaks with a single space
+            .trim();                        // remove extra spaces at start/end
 
         const modal = bootstrap.Modal.getInstance(document.getElementById('commonQuestionsModal'));
         modal.hide();
     });
 });
-
-document.addEventListener("DOMContentLoaded", () => {
-    const items = document.querySelectorAll(".list-group-item");
-
-    items.forEach(item => {
-        item.addEventListener("click", () => {
-            // Remove 'active' from all
-            items.forEach(i => i.classList.remove("active"));
-            // Add 'active' to the clicked one
-            item.classList.add("active");
-
-            if (item.id === "behavioral") {
-                console.log("Behavioral interview selected");
-                interviewTitle.textContent = "Behavioral Interview";
-                interviewLogo.src = BEHAVIORAL_INTERVIEW_LOGO_URL;
-                behavioralSection.classList.remove("hidden");
-                resumeSection.classList.add("hidden");
-            } else if (item.id === "resume") {
-                console.log("Resume-based interview selected");
-                interviewTitle.textContent = "Resume-based Interview";
-                interviewLogo.src = RESUME_INTERVIEW_LOGO_URL;
-                behavioralSection.classList.add("hidden");
-                resumeSection.classList.remove("hidden");
-            }
-        });
-    });
-});
-
-document.getElementById("uploadResumeBtn").addEventListener("click", () => {
-    const fileInput = document.getElementById("resumeInput");
-    const file = fileInput.files[0];
-    const feedback = document.getElementById("uploadFeedback");
-
-    if (!file) {
-        feedback.textContent = "Please select a file to upload.";
-        feedback.className = "text-danger";
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append("resume", file);
-
-    fetch("/upload-resume", {
-        method: "POST",
-        body: formData
-    })
-        .then(res => res.json())
-        .then(data => {
-            feedback.textContent = data.message;
-            feedback.className = data.success ? "text-success" : "text-danger";
-        })
-        .catch(err => {
-            console.error(err);
-            feedback.textContent = "Error uploading file.";
-            feedback.className = "text-danger";
-        });
-});
-
-export async function checkSystemRequirements() {
-    try {
-        const response = await fetch('/api/v1/requirements');
-        let data = await response.json();
-
-        if (!data) {
-            alert('Something went wrong. Please reload the page.');
-        } else {
-            checkSlowPromptResponse(data)
-        }
-    } catch (err) {
-        console.error(err);
-    }
-}
-
-function checkSlowPromptResponse(systemRequirements) {
-    console.log("slowPromptResponse: " + systemRequirements.slowPromptResponse);
-    if (systemRequirements.slowPromptResponse) {
-        console.log("Insufficient System Requirements detected");
-        slowSystem.classList.remove("hidden");
-    } else {
-        console.log("System Requirements are met");
-        slowSystem.classList.add("hidden");
-    }
-}
