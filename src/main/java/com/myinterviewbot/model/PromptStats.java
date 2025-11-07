@@ -11,13 +11,28 @@ package com.myinterviewbot.model;
  */
 public class PromptStats {
 
+    private boolean executedSuccessfully;
+
+    private String reasonExecutionFailed;
+
     private boolean slowPromptResponse;
 
     private double secondsTakenToRespondPrompt;
 
-    public PromptStats(final boolean slowPromptResponse, final double secondsTakenToRespondPrompt) {
-        this.slowPromptResponse = slowPromptResponse;
-        this.secondsTakenToRespondPrompt = secondsTakenToRespondPrompt;
+    public boolean isExecutedSuccessfully() {
+        return executedSuccessfully;
+    }
+
+    public void setExecutedSuccessfully(final boolean executedSuccessfully) {
+        this.executedSuccessfully = executedSuccessfully;
+    }
+
+    public String getReasonExecutionFailed() {
+        return reasonExecutionFailed;
+    }
+
+    public void setReasonExecutionFailed(final String reasonExecutionFailed) {
+        this.reasonExecutionFailed = reasonExecutionFailed;
     }
 
     public boolean isSlowPromptResponse() {

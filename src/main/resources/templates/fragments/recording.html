@@ -3,7 +3,7 @@
 
     <legend class="float-none w-auto px-3 text-primary fw-semibold">Recording section</legend>
 
-    <div id="recordingSection" class="mb-4">
+    <div id="recordingSection" class="mb-4 text-center">
         <div id="videoContainer" class="position-relative mb-2" style="max-height: 300px;">
             <!-- Placeholder image -->
             <img id="videoPlaceholder" th:src="@{/img/recording/camera-loading.gif}"
@@ -28,7 +28,7 @@
     </div>
 
     <!-- Playback Section -->
-    <div id="playbackSection" class="mb-4 border hidden">
+    <div id="playbackSection" class="mb-4 text-center border hidden">
         <h5>Preview Recorded Video</h5>
         <video id="playback" controls class="border rounded w-100" style="max-height: 300px;"></video>
     </div>

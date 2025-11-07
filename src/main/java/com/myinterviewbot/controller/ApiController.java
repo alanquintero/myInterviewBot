@@ -41,12 +41,12 @@ public class ApiController {
         if (systemRequirementsChecked != null && systemRequirementsChecked && isSlowPromptResponse != null) {
             LOGGER.info("SystemRequirements already checked");
             if (systemRequirements == null) {
-                systemRequirements = new SystemRequirements(isSlowPromptResponse, 0);
+                systemRequirements = new SystemRequirements(isSlowPromptResponse, false);
             }
             return systemRequirements;
         }
         final PromptResponse promptResponse = systemRequirementsService.executeInitialPrompt();
-        systemRequirements = new SystemRequirements(promptResponse.getPromptStats().isSlowPromptResponse(), promptResponse.getPromptStats().getSecondsTakenToRespondPrompt());
+        systemRequirements = new SystemRequirements(promptResponse.getPromptStats().isSlowPromptResponse(), promptResponse.getPromptStats().isExecutedSuccessfully());
         session.setAttribute("systemRequirementsChecked", true);
         session.setAttribute("isSlowPromptResponse", promptResponse.getPromptStats().isSlowPromptResponse());
         LOGGER.info("SystemRequirements check complete: {}", systemRequirements);
