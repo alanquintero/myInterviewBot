@@ -4,6 +4,7 @@
  */
 package com.myinterviewbot.builder;
 
+import com.myinterviewbot.model.PromptExecutionResult;
 import com.myinterviewbot.model.PromptStats;
 
 /**
@@ -43,8 +44,11 @@ public class PromptStatsBuilder {
         PromptStats stats = new PromptStats();
         stats.setExecutedSuccessfully(executedSuccessfully);
         stats.setSecondsTakenToRespondPrompt(secondsTakenToRespondPrompt);
-        if(!executedSuccessfully) {
+        if (!executedSuccessfully) {
             stats.setReasonExecutionFailed(reasonExecutionFailed);
+            if (!PromptExecutionResult.EMPTY_RESULT.equals(reasonExecutionFailed)) {
+                stats.setExceptionDetected(true);
+            }
         }
 
         // auto-compute derived flag

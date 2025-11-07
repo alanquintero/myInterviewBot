@@ -4,12 +4,13 @@
  */
 package com.myinterviewbot.model;
 
+
 /**
  * DTO class to store the system requirements.
  *
  * @author Alan Quintero
  */
-public class SystemRequirements {
+public class SystemRequirements extends PromptStats {
 
     private boolean aiProviderAvailable;
 
@@ -17,13 +18,8 @@ public class SystemRequirements {
 
     private boolean whisperServiceAvailable;
 
-    private boolean slowPromptResponse;
-
-    private boolean promptExecutedSuccessfully;
-
-    public SystemRequirements(final boolean slowPromptResponse, final boolean promptExecutedSuccessfully) {
-        this.slowPromptResponse = slowPromptResponse;
-        this.promptExecutedSuccessfully = promptExecutedSuccessfully;
+    public SystemRequirements(final boolean executedSuccessfully, final boolean slowPromptResponse, final boolean exceptionDetected) {
+        super(executedSuccessfully, slowPromptResponse, exceptionDetected);
     }
 
     public boolean isAiProviderAvailable() {
@@ -50,27 +46,8 @@ public class SystemRequirements {
         this.whisperServiceAvailable = whisperServiceAvailable;
     }
 
-    public boolean isSlowPromptResponse() {
-        return slowPromptResponse;
-    }
-
-    public void setSlowPromptResponse(final boolean slowPromptResponse) {
-        this.slowPromptResponse = slowPromptResponse;
-    }
-
-    public boolean isPromptExecutedSuccessfully() {
-        return promptExecutedSuccessfully;
-    }
-
-    public void setPromptExecutedSuccessfully(final boolean promptExecutedSuccessfully) {
-        this.promptExecutedSuccessfully = promptExecutedSuccessfully;
-    }
-
     @Override
     public String toString() {
-        return "SystemRequirements{" +
-                "slowPromptResponse=" + slowPromptResponse +
-                ", promptExecutedSuccessfully=" + promptExecutedSuccessfully +
-                '}';
+        return super.toString();
     }
 }

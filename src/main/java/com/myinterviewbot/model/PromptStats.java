@@ -13,11 +13,22 @@ public class PromptStats {
 
     private boolean executedSuccessfully;
 
-    private String reasonExecutionFailed;
-
     private boolean slowPromptResponse;
 
+    private boolean exceptionDetected;
+
+    private String reasonExecutionFailed;
+
     private double secondsTakenToRespondPrompt;
+
+    public PromptStats() {
+    }
+
+    public PromptStats(final boolean executedSuccessfully, final boolean slowPromptResponse, final boolean exceptionDetected) {
+        this.executedSuccessfully = executedSuccessfully;
+        this.slowPromptResponse = slowPromptResponse;
+        this.exceptionDetected = exceptionDetected;
+    }
 
     public boolean isExecutedSuccessfully() {
         return executedSuccessfully;
@@ -51,11 +62,20 @@ public class PromptStats {
         this.secondsTakenToRespondPrompt = secondsTakenToRespondPrompt;
     }
 
+    public boolean isExceptionDetected() {
+        return exceptionDetected;
+    }
+
+    public void setExceptionDetected(final boolean exceptionDetected) {
+        this.exceptionDetected = exceptionDetected;
+    }
+
     @Override
     public String toString() {
-        return "PromptStats{" +
+        return "{" +
                 "slowPromptResponse=" + slowPromptResponse +
-                ", secondsTakenToRespondPrompt=" + secondsTakenToRespondPrompt +
+                ", executedSuccessfully=" + executedSuccessfully +
+                ", exceptionDetected=" + exceptionDetected +
                 '}';
     }
 }

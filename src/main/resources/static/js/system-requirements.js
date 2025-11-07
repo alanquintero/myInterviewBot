@@ -17,12 +17,19 @@ export async function checkSystemRequirements() {
 
 export function checkSlowPromptResponse(systemRequirements) {
     console.log("slowPromptResponse: " + systemRequirements.slowPromptResponse);
-    const slowSystem = document.getElementById("slowSystem");
-    if (systemRequirements.slowPromptResponse) {
+    const systemMessage = document.getElementById("systemMessage");
+    if (!systemRequirements.executedSuccessfully && !systemRequirements.exceptionDetected) {
+        console.log("Prompt did not execute successfully.");
+        systemMessage.classList.add("alert-warning");
+        systemMessage.classList.remove("hidden");
+        systemMessage.innerText = "Something went wrong. Please try again.";
+    } else if (systemRequirements.slowPromptResponse || (!systemRequirements.executedSuccessfully && systemRequirements.exceptionDetected)) {
         console.log("Insufficient System Requirements detected");
-        slowSystem.classList.remove("hidden");
+        systemMessage.classList.add("alert-danger");
+        systemMessage.classList.remove("hidden");
+        systemMessage.innerText = "⚠️ System performance appears insufficient for local AI inference. Consider using a smaller model or switching to a faster system.";
     } else {
         console.log("System Requirements are met");
-        slowSystem.classList.add("hidden");
+        systemMessage.classList.add("hidden");
     }
 }

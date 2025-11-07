@@ -4,6 +4,7 @@
  */
 package com.myinterviewbot.controller;
 
+import com.myinterviewbot.model.PromptExecutionResult;
 import com.myinterviewbot.model.PromptResponse;
 import com.myinterviewbot.model.SystemRequirements;
 import com.myinterviewbot.service.SystemRequirementsService;
@@ -41,12 +42,19 @@ public class ApiController {
         if (systemRequirementsChecked != null && systemRequirementsChecked && isSlowPromptResponse != null) {
             LOGGER.info("SystemRequirements already checked");
             if (systemRequirements == null) {
-                systemRequirements = new SystemRequirements(isSlowPromptResponse, false);
+                systemRequirements = new SystemRequirements(isSlowPromptResponse, false, false);
             }
             return systemRequirements;
         }
         final PromptResponse promptResponse = systemRequirementsService.executeInitialPrompt();
-        systemRequirements = new SystemRequirements(promptResponse.getPromptStats().isSlowPromptResponse(), promptResponse.getPromptStats().isExecutedSuccessfully());
+        final boolean exceptionDetected;
+        if (promptResponse.getPromptStats().getReasonExecutionFailed() != null && !PromptExecutionResult.EMPTY_RESULT.equals(promptResponse.getPromptStats().getReasonExecutionFailed())) {
+            exceptionDetected = true;
+        } else {
+            exceptionDetected = false;
+        }
+
+        systemRequirements = new SystemRequirements(promptResponse.getPromptStats().isSlowPromptResponse(), promptResponse.getPromptStats().isExecutedSuccessfully(), exceptionDetected);
         session.setAttribute("systemRequirementsChecked", true);
         session.setAttribute("isSlowPromptResponse", promptResponse.getPromptStats().isSlowPromptResponse());
         LOGGER.info("SystemRequirements check complete: {}", systemRequirements);
