@@ -172,7 +172,8 @@ public class SystemChecker {
         }
 
         if (!gpuOk && !isMac && REQUIRE_GPU_WINDOWS_LINUX) {
-            LOGGER.warn("❌ No GPU meets minimum requirements (≥2GB VRAM, NVIDIA/AMD/Apple).");
+            gpuMessage = "❌ No GPU meets minimum requirements (≥2GB VRAM, NVIDIA/AMD/Apple).";
+            LOGGER.warn(gpuMessage);
             return false;
         }
 
