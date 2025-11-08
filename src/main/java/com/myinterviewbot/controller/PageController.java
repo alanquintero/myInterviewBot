@@ -29,7 +29,6 @@ public class PageController {
     @GetMapping("/")
     public String showMainPage(Model model) {
         LOGGER.info("at root /");
-        model.addAttribute("pageTitle", "Behavioral Interview");
         model.addAttribute("currentPage", "behavioralPage");
         return "layout";
     }
@@ -43,7 +42,6 @@ public class PageController {
     @GetMapping("/interview/resume")
     public String resume(Model model) {
         LOGGER.info("/interview/resume");
-        model.addAttribute("pageTitle", "Resume Interview");
         model.addAttribute("currentPage", "resumePage");
         return "layout";
     }

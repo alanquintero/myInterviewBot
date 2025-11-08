@@ -109,5 +109,14 @@
     <!-- Modals -->
 
     <script th:src="@{/js/main.js}" type="module"></script>
+    <script type="module">
+        import {checkSystemRequirements} from '/js/system-requirements.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (document.getElementById('inputProfession')) {
+                checkSystemRequirements();
+            }
+        });
+    </script>
 
 </div>

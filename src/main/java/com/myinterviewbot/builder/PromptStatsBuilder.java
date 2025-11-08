@@ -19,7 +19,7 @@ import com.myinterviewbot.model.PromptStats;
  */
 public class PromptStatsBuilder {
 
-    private static final int SLOW_RESPONSE_SECONDS_THRESHOLD = 90;
+    private static final int SLOW_RESPONSE_SECONDS_THRESHOLD = 80;
 
     private boolean executedSuccessfully;
     private String reasonExecutionFailed;
