@@ -59,6 +59,8 @@ public class SystemChecker {
 
     private String aiModelMessage = "";
 
+    private String ffmpegMessage = "";
+
     private String whisperProviderMessage = "";
 
     private final SystemInfo systemInfo;
@@ -81,6 +83,8 @@ public class SystemChecker {
         systemRequirements.setAiProviderAvailable(aiProviderOk);
         final boolean aiModelOk = checkAiModelInstalled();
         systemRequirements.setAiModelAvailable(aiModelOk);
+        final boolean ffmpegOk = checkFfmpegInstalled();
+        systemRequirements.setFfmpegAvailable(ffmpegOk);
         final boolean whisperOk = checkWhisperInstalled();
         systemRequirements.setWhisperServiceAvailable(whisperOk);
 
@@ -94,6 +98,7 @@ public class SystemChecker {
                 + "GPU: " + (gpuOk ? "✅ OK" : gpuMessage) + "\n"
                 + "AI Provider(" + aiProvider + "): " + (aiProviderOk ? "✅ OK" : aiProviderMessage) + "\n"
                 + "AI Model(" + aiModel + "): " + (aiModelOk ? "✅ OK" : aiModelMessage) + "\n"
+                + "FFmpeg: " + (ffmpegOk ? "✅ OK" : ffmpegMessage) + "\n"
                 + "Whisper(" + whisperProvider + "): " + (whisperOk ? "✅ OK" : whisperProviderMessage) + "\n"
                 + "</pre>";
         systemRequirements.setSystemRequirementsMessage(systemRequirementsMessage);
@@ -239,6 +244,25 @@ public class SystemChecker {
         } else {
             aiModelMessage = "❌ cannot verify " + aiModel + " model because " + aiProvider + " not supported yet.";
             LOGGER.warn(aiModelMessage);
+            return false;
+        }
+    }
+
+    // ---------------- FFmpeg ----------------
+    private boolean checkFfmpegInstalled() {
+        try {
+            String output = runCommand("ffmpeg -version");
+            if (output.toLowerCase().contains("ffmpeg") || output.toLowerCase().contains("version")) {
+                LOGGER.info("✅ ffmpeg detected.");
+                return true;
+            } else {
+                ffmpegMessage = "❌ FFmpeg not found.";
+                LOGGER.warn(ffmpegMessage);
+                return false;
+            }
+        } catch (Exception e) {
+            ffmpegMessage = "❌ FFmpeg not installed or not in PATH.";
+            LOGGER.warn(ffmpegMessage);
             return false;
         }
     }

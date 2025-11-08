@@ -20,6 +20,8 @@ public class SystemRequirements {
 
     private boolean gpuHasMinimumRequirements;
 
+    private boolean ffmpegAvailable;
+
     private boolean whisperServiceAvailable;
 
     private boolean aiProviderAvailable;
@@ -58,6 +60,14 @@ public class SystemRequirements {
 
     public void setGpuHasMinimumRequirements(final boolean gpuHasMinimumRequirements) {
         this.gpuHasMinimumRequirements = gpuHasMinimumRequirements;
+    }
+
+    public boolean isFfmpegAvailable() {
+        return ffmpegAvailable;
+    }
+
+    public void setFfmpegAvailable(final boolean ffmpegAvailable) {
+        this.ffmpegAvailable = ffmpegAvailable;
     }
 
     public boolean isWhisperServiceAvailable() {
