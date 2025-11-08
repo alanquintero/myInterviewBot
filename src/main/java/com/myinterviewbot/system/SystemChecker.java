@@ -5,6 +5,7 @@
 package com.myinterviewbot.system;
 
 import com.myinterviewbot.model.SystemRequirements;
+import com.myinterviewbot.service.SettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,7 @@ import oshi.hardware.CentralProcessor;
 import oshi.hardware.GlobalMemory;
 import oshi.hardware.GraphicsCard;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -218,6 +220,20 @@ public class SystemChecker {
             try {
                 String output = runCommand("ollama list");
                 String[] lines = output.split("\\r?\\n");
+
+                // Extract model list for settings
+                final List<String> models = new ArrayList<>();
+                for (int i = 1; i < lines.length; i++) {
+                    String line = lines[i].trim();
+                    if (line.isEmpty()) continue;
+
+                    // First column is model name
+                    String[] columns = line.split("\\s+");
+                    if (columns.length > 0) {
+                        models.add(columns[0]);
+                    }
+                }
+                SettingsService.getInstance().saveAiModels(models);
 
                 // Skip header line if present
                 for (int i = 1; i < lines.length; i++) {

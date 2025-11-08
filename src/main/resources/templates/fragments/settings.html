@@ -7,6 +7,31 @@
             <!-- All Settings -->
             <div id="settingsContainer" class="mb-4 text-center"></div>
 
+            <!-- Change Settings -->
+            <div id="changeSettingsSection" class="card shadow-sm mx-auto mb-4" style="max-width: 500px; display: none;">
+                <div class="card-body text-center">
+                    <h5 class="card-title mb-3">Change Settings</h5>
+
+                    <!-- AI Model Dropdown -->
+                    <div class="form-group mb-3">
+                        <label for="aiModelSelect" class="form-label">Select AI Model</label>
+                        <select id="aiModelSelect" class="form-select text-center"></select>
+                    </div>
+
+                    <!-- Future settings can be added here -->
+
+                    <div class="d-flex justify-content-center gap-2">
+                        <button id="saveSettingsBtn" class="btn btn-primary">Save</button>
+                        <button id="cancelSettingsBtn" class="btn btn-secondary">Cancel</button>
+                    </div>
+
+                    <!-- Feedback message -->
+                    <div id="changeSettingsMessage" class="mt-3" style="display: none;">
+                        <div class="alert" role="alert"></div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Clear all interviews -->
             <div class="card shadow-sm mx-auto" style="max-width: 500px;">
                 <div class="card-body text-center">
@@ -30,13 +55,12 @@
     <!-- Load script only for the settings fragment -->
     <script th:src="@{/js/settings.js}" type="module"></script>
     <script type="module">
-        import {loadSettings} from '/js/settings.js';
+        import { loadSettings, setupChangeSettingsSection } from '/js/settings.js';
 
         document.addEventListener('DOMContentLoaded', () => {
             if (document.getElementById('settingsContainer')) {
-                loadSettings();
+                loadSettings().then(setupChangeSettingsSection);
             }
         });
     </script>
-
 </div>

@@ -6,14 +6,14 @@ package com.myinterviewbot.controller;
 
 import com.myinterviewbot.model.Settings;
 import com.myinterviewbot.service.InterviewDataService;
+import com.myinterviewbot.service.SettingsService;
 import com.myinterviewbot.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * REST controller for handling settings requests.
@@ -26,20 +26,13 @@ public class SettingsController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SettingsController.class);
 
+    private final SettingsService settingsService;
     private final InterviewDataService interviewDataService;
 
     public SettingsController() {
+        this.settingsService = SettingsService.getInstance();
         this.interviewDataService = InterviewDataService.getInstance();
     }
-
-    @Value("${ai.provider}")
-    private String aiProvider;
-
-    @Value("${ai.model}")
-    private String aiModel;
-
-    @Value("${whisper.provider}")
-    private String whisperProvider;
 
     /**
      * Get all settings
@@ -47,7 +40,26 @@ public class SettingsController {
     @GetMapping("/all")
     public Settings getAllSettings() {
         LOGGER.info("Get All Settings");
-        return new Settings(aiProvider, aiModel, whisperProvider, Utils.getOperatingSystemName());
+        return settingsService.getSettings();
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<String> updateSettings(@RequestBody Settings updatedSettings) {
+        try {
+            final Settings settings = settingsService.getSettings();
+
+            // Update only known fields
+            if (updatedSettings.getSelectedAiModel() != null) {
+                settings.setSelectedAiModel(updatedSettings.getSelectedAiModel());
+            }
+
+            settingsService.saveSettings(settings);
+            return ResponseEntity.ok("Settings updated successfully.");
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to update settings.");
+        }
     }
 
     /**

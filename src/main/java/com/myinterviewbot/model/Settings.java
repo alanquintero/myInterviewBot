@@ -4,6 +4,8 @@
  */
 package com.myinterviewbot.model;
 
+import java.util.List;
+
 /**
  * DTO class to return current Settings.
  *
@@ -13,17 +15,15 @@ public class Settings {
 
     private String aiProvider;
 
-    private String aiModel;
+    private String selectedAiModel;
+
+    private List<String> aiModels;
 
     private String whisperProvider;
 
     private String operatingSystem;
 
-    public Settings(final String aiProvider, final String aiModel, final String whisperProvider, final String operatingSystem) {
-        this.aiProvider = aiProvider;
-        this.aiModel = aiModel;
-        this.whisperProvider = whisperProvider;
-        this.operatingSystem = operatingSystem;
+    public Settings() {
     }
 
     public String getAiProvider() {
@@ -34,12 +34,20 @@ public class Settings {
         this.aiProvider = aiProvider;
     }
 
-    public String getAiModel() {
-        return aiModel;
+    public String getSelectedAiModel() {
+        return selectedAiModel;
     }
 
-    public void setAiModel(final String aiModel) {
-        this.aiModel = aiModel;
+    public void setSelectedAiModel(final String selectedAiModel) {
+        this.selectedAiModel = selectedAiModel;
+    }
+
+    public List<String> getAiModels() {
+        return aiModels;
+    }
+
+    public void setAiModels(List<String> aiModels) {
+        this.aiModels = aiModels;
     }
 
     public String getWhisperProvider() {

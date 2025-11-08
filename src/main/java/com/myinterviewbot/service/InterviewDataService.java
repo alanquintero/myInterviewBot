@@ -37,6 +37,8 @@ import java.util.*;
  *
  * <p><b>Note:</b> This class is implemented as a singleton. Use {@link #getInstance()} to
  * obtain the single instance.</p>
+ *
+ * @author Alan Quintero
  */
 public class InterviewDataService {
 
