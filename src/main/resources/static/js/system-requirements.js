@@ -18,7 +18,7 @@ export async function checkSystemRequirements() {
 export function checkSlowPromptResponse(systemRequirements) {
     console.log("slowPromptResponse: " + systemRequirements.slowPromptResponse);
     const systemMessage = document.getElementById("systemMessage");
-    if (!systemRequirements.executedSuccessfully && !systemRequirements.exceptionDetected) {
+    if (!systemRequirements.executedSuccessfully && !systemRequirements.exceptionDetected && !systemRequirements.slowPromptResponse) {
         console.log("Prompt did not execute successfully.");
         systemMessage.classList.add("alert-warning");
         systemMessage.classList.remove("hidden");
