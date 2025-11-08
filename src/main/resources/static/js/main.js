@@ -7,7 +7,7 @@ const commonQuestionsBtn = document.getElementById("commonQuestionsBtn");
 
 /* Button section */
 const generateQuestionBtn = document.getElementById("generateQuestionBtn");
-const resetBtnTop = document.getElementById("resetBtnTop");
+const resetBtn = document.getElementById("resetBtn");
 const readyBtn = document.getElementById("readyBtn");
 
 /* Loading GIF */
@@ -47,9 +47,9 @@ const feedbackEl = document.getElementById("feedback");
 // Evaluation
 const evaluationContainer = document.getElementById("evaluation-result");
 
-/* Reset section */
-const resetSection = document.getElementById("resetSection");
-const resetBtnBottom = document.getElementById("resetBtnBottom");
+/* Start Over section */
+const startOverSection = document.getElementById("startOverSection");
+const startOverBtn = document.getElementById("startOverBtn");
 
 const MAX_RECORDING_TIME = 150; // in seconds (2 minutes 30 seconds)
 const RECORD_VIDEO_AGAIN_TXT = "Click to record again →";
@@ -136,18 +136,18 @@ readyBtn.addEventListener("click", async () => {
         showRecordingSection();
     }
     // Enable Reset button
-    resetBtnTop.disabled = false;
+    resetBtn.disabled = false;
 });
 
-// Click on Reset button top
-resetBtnTop.addEventListener("click", async () => {
-    console.log("Click on reset button top");
+// Click on Reset button
+resetBtn.addEventListener("click", async () => {
+    console.log("Click on reset button");
     reset();
 });
 
-// Click on Ready button down
-resetBtnBottom.addEventListener("click", async () => {
-    console.log("Click on reset button down");
+// Click on Start Over button
+startOverBtn.addEventListener("click", async () => {
+    console.log("Click on start over button");
     reset();
 });
 
@@ -333,7 +333,7 @@ async function sendVideo(blob) {
             checkSlowPromptResponse(feedback.promptStats)
 
             feedbackSection.classList.remove("hidden");
-            resetSection.classList.remove("hidden");
+            startOverSection.classList.remove("hidden");
 
             feedbackEl.innerText = feedback.promptResponse || "No feedback returned";
 
@@ -484,7 +484,7 @@ function hideElements() {
     recordingPlaybackContainer.classList.add("hidden");
     playbackSection.classList.add("hidden");
     generateFeedbackSection.classList.add("hidden");
-    resetSection.classList.add("hidden");
+    startOverSection.classList.add("hidden");
     transcriptSection.classList.add("hidden");
     transcriptFeedbackContainer.classList.add("hidden");
     feedbackSection.classList.add("hidden");
@@ -497,16 +497,16 @@ function setElementsDisabled(disabled) {
     inputQuestion.disabled = disabled;
     generateQuestionBtn.disabled = disabled;
     readyBtn.disabled = disabled;
-    resetBtnTop.disabled = disabled;
-    resetBtnBottom.disabled = disabled;
+    resetBtn.disabled = disabled;
+    startOverBtn.disabled = disabled;
     commonQuestionsBtn.disabled = disabled;
 }
 
 // Enables/disables reset buttons
 function setResetButtonsDisabled(disabled) {
     console.log("enable disable reset buttons; disabled: ", disabled);
-    resetBtnTop.disabled = disabled;
-    resetBtnBottom.disabled = disabled;
+    resetBtn.disabled = disabled;
+    startOverBtn.disabled = disabled;
 }
 
 // Inserts the clicked question into the inputQuestion field
