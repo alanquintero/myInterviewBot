@@ -8,6 +8,7 @@ import com.myinterviewbot.model.PromptExecutionResult;
 import com.myinterviewbot.model.PromptResponse;
 import com.myinterviewbot.model.SystemRequirements;
 import com.myinterviewbot.service.SystemRequirementsService;
+import com.myinterviewbot.system.SystemChecker;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,8 @@ public class ApiController {
     @GetMapping("/requirements")
     public SystemRequirements checkSystemRequirements(final HttpSession session) {
         LOGGER.info("Checking SystemRequirements");
+        SystemChecker systemChecker = new SystemChecker();
+        systemChecker.checkSystemRequirements();
         Boolean systemRequirementsChecked = (Boolean) session.getAttribute("systemRequirementsChecked");
         Boolean isSlowPromptResponse = (Boolean) session.getAttribute("isSlowPromptResponse");
         if (systemRequirementsChecked != null && systemRequirementsChecked && isSlowPromptResponse != null) {
