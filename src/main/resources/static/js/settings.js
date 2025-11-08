@@ -87,6 +87,7 @@ export async function setupChangeSettingsSection() {
         // App Settings
         // Populate Profession
         defaultProfession.value = settings.appSettings.defaultProfession ?? 'Software Engineer';
+        defaultProfession.placeholder = "e.g. " + defaultProfession.value;
         // Switches
         showCategorySwitch.checked = settings.appSettings.showQuestionCategory;
         showDifficultySwitch.checked = settings.appSettings.showQuestionDifficulty;
@@ -100,9 +101,9 @@ export async function setupChangeSettingsSection() {
                     selectedAiModel: aiModelSelect.value,
                 },
                 appSettings: {
-                    defaultProfession: defaultProfession.value,
+                    defaultProfession: defaultProfession.value ?? 'Software Engineer',
                     showQuestionCategory: showCategorySwitch.checked,
-                    showDifficultySwitch: showDifficultySwitch.checked,
+                    showQuestionDifficulty: showDifficultySwitch.checked,
                 }
             };
 
@@ -115,6 +116,10 @@ export async function setupChangeSettingsSection() {
 
                 if (response.ok) {
                     showMessage('Settings updated successfully.', 'success');
+
+                    if(!defaultProfession.value) {
+                        defaultProfession.value = 'Software Engineer';
+                    }
                 } else {
                     showMessage('Failed to update settings.', 'danger');
                 }

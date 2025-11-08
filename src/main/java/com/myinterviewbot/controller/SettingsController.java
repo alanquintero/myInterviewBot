@@ -4,6 +4,7 @@
  */
 package com.myinterviewbot.controller;
 
+import com.myinterviewbot.model.AppSettings;
 import com.myinterviewbot.model.Settings;
 import com.myinterviewbot.service.InterviewDataService;
 import com.myinterviewbot.service.SettingsService;
@@ -43,6 +44,15 @@ public class SettingsController {
         return settingsService.getSettings();
     }
 
+    /**
+     * Get all app settings
+     */
+    @GetMapping("/app/all")
+    public AppSettings getAllAppSettings() {
+        LOGGER.info("Get All App Settings");
+        return settingsService.getSettings().getAppSettings();
+    }
+
     @PostMapping("/update")
     public ResponseEntity<String> updateSettings(@RequestBody Settings updatedSettings) {
         try {
@@ -52,8 +62,11 @@ public class SettingsController {
             if (updatedSettings.getSelectedAiModel() != null) {
                 settings.setSelectedAiModel(updatedSettings.getSelectedAiModel());
             }
-            if (updatedSettings.getDefaultProfession() != null) {
+            if (updatedSettings.getDefaultProfession() != null && !updatedSettings.getDefaultProfession().isEmpty()) {
                 settings.setDefaultProfession(updatedSettings.getDefaultProfession());
+            } else {
+                // Setting value to default profession
+                settings.setDefaultProfession("Software Engineer");
             }
             settings.setShowQuestionCategory(updatedSettings.isShowQuestionCategory());
             settings.setShowQuestionDifficulty(updatedSettings.isShowQuestionDifficulty());

@@ -82,3 +82,45 @@ document.addEventListener('DOMContentLoaded', async () => {
         infoModal.show();
     });
 });
+
+export async function setupAppSettings() {
+    const professionInput = document.getElementById('inputProfession');
+    const inputProfessionLabel = document.getElementById('inputProfessionLabel');
+    const categorySection = document.querySelector('#categorySelect')?.closest('.mb-4');
+    const difficultySection = document.querySelector('#difficultySelect')?.closest('.mb-4');
+
+    try {
+        const response = await fetch('/settings/v1/app/all');
+        if (!response.ok) {
+            console.error('Failed to load app settings');
+            return;
+        }
+
+        const appSettings = await response.json();
+
+        // 1️⃣ Default Profession
+        if (appSettings.defaultProfession && professionInput) {
+            // Only set if input is empty, so user input isn’t overridden
+            if (!professionInput.value.trim()) {
+                professionInput.value = appSettings.defaultProfession;
+                professionInput.placeholder = "e.g. " + appSettings.defaultProfession;
+                inputProfessionLabel.textContent = "Profession (default: " + appSettings.defaultProfession + ")";
+            }
+        }
+
+        // 2️⃣ Show/Hide Question Category
+        if (categorySection) {
+            categorySection.style.display = appSettings.showQuestionCategory ? 'block' : 'none';
+        }
+
+        // 3️⃣ Show/Hide Question Difficulty
+        if (difficultySection) {
+            difficultySection.style.display = appSettings.showQuestionDifficulty ? 'block' : 'none';
+        }
+
+        console.log('App settings loaded:', appSettings);
+
+    } catch (err) {
+        console.error('Error loading app settings:', err);
+    }
+}

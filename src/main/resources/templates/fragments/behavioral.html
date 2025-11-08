@@ -3,7 +3,7 @@
     <div class="border rounded p-3 mb-1">
         <!-- Profession -->
         <div class="mb-3 d-flex justify-content-between align-items-center">
-            <label for="inputProfession" class="form-label mb-0 fw-bold">Profession (default: Software Engineer)</label>
+            <label id="inputProfessionLabel" for="inputProfession" class="form-label mb-0 fw-bold">Profession</label>
         </div>
         <input type="text" class="form-control" id="inputProfession" placeholder="e.g. Software Engineer">
         <br>
@@ -165,10 +165,12 @@
     <script th:src="@{/js/behavioral.js}" type="module"></script>
     <script th:src="@{/js/main.js}" type="module"></script>
     <script type="module">
+        import {setupAppSettings} from '/js/behavioral.js';
         import {checkSystemRequirements} from '/js/system-requirements.js';
 
         document.addEventListener('DOMContentLoaded', () => {
             if (document.getElementById('inputProfession')) {
+                setupAppSettings();
                 checkSystemRequirements();
             }
         });
