@@ -1,3 +1,5 @@
+import {appState} from "./globalState.js";
+
 document.addEventListener('DOMContentLoaded', async () => {
     const categorySelect = document.getElementById('categorySelect');
     const difficultySelect = document.getElementById('difficultySelect');
@@ -83,22 +85,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 });
 
-export async function setupAppSettings() {
+export async function setupSettings() {
     const professionInput = document.getElementById('inputProfession');
     const inputProfessionLabel = document.getElementById('inputProfessionLabel');
     const categorySection = document.querySelector('#categorySelect')?.closest('.mb-4');
     const difficultySection = document.querySelector('#difficultySelect')?.closest('.mb-4');
 
     try {
-        const response = await fetch('/settings/v1/app/all');
+        const response = await fetch('/settings/v1/all');
         if (!response.ok) {
             console.error('Failed to load app settings');
             return;
         }
 
-        const appSettings = await response.json();
+        const settings = await response.json();
 
-        // 1️⃣ Default Profession
+        const systemSettings = settings.systemSettings;
+        const appSettings = settings.appSettings;
+
+        // Recording mode
+        appState.recordingMode = systemSettings.recordingMode;
+        if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const hasCamera = devices.some(d => d.kind === 'videoinput');
+            if (!hasCamera) {
+                // Automatically force audio-only mode
+                appState.recordingMode = 'audio';
+            }
+        }
+
+        // Default Profession
         if (appSettings.defaultProfession && professionInput) {
             // Only set if input is empty, so user input isn’t overridden
             if (!professionInput.value.trim()) {
@@ -108,12 +124,12 @@ export async function setupAppSettings() {
             }
         }
 
-        // 2️⃣ Show/Hide Question Category
+        // Show/Hide Question Category
         if (categorySection) {
             categorySection.style.display = appSettings.showQuestionCategory ? 'block' : 'none';
         }
 
-        // 3️⃣ Show/Hide Question Difficulty
+        // Show/Hide Question Difficulty
         if (difficultySection) {
             difficultySection.style.display = appSettings.showQuestionDifficulty ? 'block' : 'none';
         }

@@ -165,12 +165,12 @@
     <script th:src="@{/js/behavioral.js}" type="module"></script>
     <script th:src="@{/js/main.js}" type="module"></script>
     <script type="module">
-        import {setupAppSettings} from '/js/behavioral.js';
+        import {setupSettings} from '/js/behavioral.js';
         import {checkSystemRequirements} from '/js/system-requirements.js';
 
         document.addEventListener('DOMContentLoaded', () => {
             if (document.getElementById('inputProfession')) {
-                setupAppSettings();
+                setupSettings();
                 checkSystemRequirements();
             }
         });

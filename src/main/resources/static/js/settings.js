@@ -1,3 +1,5 @@
+import {appState} from "./globalState.js";
+
 const clearBtn = document.getElementById('clearInterviewsBtn');
 const messageContainer = document.getElementById('clearMessage');
 const alertBox = messageContainer.querySelector('.alert');
@@ -147,6 +149,7 @@ export async function setupChangeSettingsSection() {
                     if (!defaultProfession.value) {
                         defaultProfession.value = 'Software Engineer';
                     }
+                    appState.recordingMode = recordingModeSelect.value;
                 } else {
                     showMessage('Failed to update settings.', 'danger');
                 }

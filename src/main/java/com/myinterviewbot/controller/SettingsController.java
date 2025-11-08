@@ -43,15 +43,6 @@ public class SettingsController {
         return settingsService.getSettings();
     }
 
-    /**
-     * Get all app settings
-     */
-    @GetMapping("/app/all")
-    public AppSettings getAllAppSettings() {
-        LOGGER.info("Get All App Settings");
-        return settingsService.getSettings().getAppSettings();
-    }
-
     @PostMapping("/update")
     public ResponseEntity<String> updateSettings(@RequestBody Settings updatedSettings) {
         try {

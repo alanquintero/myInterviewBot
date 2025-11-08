@@ -1,3 +1,4 @@
+import {appState} from './globalState.js';
 import {checkSlowPromptResponse} from './system-requirements.js';
 
 const PLEASE_TRY_AGAIN = "Something went wrong. Please try again.";
@@ -32,6 +33,7 @@ const recordingTimer = document.getElementById("recordingTimer");
 // Playback section
 const playbackSection = document.getElementById("playbackSection");
 const playbackEl = document.getElementById("playback");
+const playbackLabel = document.getElementById("playbackLabel");
 // Generate Feedback button
 const generateFeedbackSection = document.getElementById("generateFeedbackSection");
 const generateFeedbackBtn = document.getElementById("generateFeedbackBtn");
@@ -295,8 +297,19 @@ function showRecordingSection() {
 async function initCamera() {
     console.log("Init camera...");
     try {
-        videoPlaceholder.classList.add("hidden");
-        currentStream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
+        if(appState.recordingMode === 'audio') {
+            videoPlaceholder.classList.remove("hidden");
+            videoPlaceholder.src = "img/recording/audio.gif";
+            playbackLabel.innerText = "Preview Recorded Audio";
+        } else {
+            videoPlaceholder.classList.add("hidden");
+            videoPlaceholder.src = "/img/recording/camera-loading.gif";
+            playbackLabel.innerText = "Preview Recorded Video";
+        }
+        const constraints = appState.recordingMode === 'audio'
+            ? {audio: true}
+            : {audio: true, video: true};
+        currentStream = await navigator.mediaDevices.getUserMedia(constraints);
         videoEl.srcObject = currentStream;
         videoEl.play(); // start preview
         videoEl.classList.remove("hidden");
