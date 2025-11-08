@@ -5,22 +5,17 @@
 package com.myinterviewbot.controller;
 
 import com.myinterviewbot.model.*;
-import com.myinterviewbot.service.FfmpegService;
 import com.myinterviewbot.service.InterviewDataService;
 import com.myinterviewbot.service.PromptService;
-import com.myinterviewbot.service.WhisperService;
 import com.myinterviewbot.utils.Utils;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
 
 /**
- * REST controller for handling interview-related requests.
+ * REST controller for handling prompt-related requests.
  *
  * <p>This controller manages the workflow of uploading video answers,
  * extracting audio, transcribing them, and generating AI feedback using
@@ -29,20 +24,16 @@ import java.io.File;
  * @author Alan Quintero
  */
 @RestController
-@RequestMapping("/interview/v1")
-public class InterviewController {
+@RequestMapping("/prompt/v1")
+public class PromptController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InterviewController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PromptController.class);
 
     private final PromptService promptService;
-    private final WhisperService whisperService;
-    private final FfmpegService ffmpegService;
     private final InterviewDataService interviewDataService;
 
-    public InterviewController(final PromptService promptService, final WhisperService whisperService, final FfmpegService ffmpegService) {
+    public PromptController(final PromptService promptService) {
         this.promptService = promptService;
-        this.whisperService = whisperService;
-        this.ffmpegService = ffmpegService;
         this.interviewDataService = InterviewDataService.getInstance();
     }
 
@@ -51,50 +42,16 @@ public class InterviewController {
      *
      * <p>The question is generated dynamically using the {@link PromptService}.</p>
      *
-     * @param profession the profession for which to generate a question
+     * @param promptRequest the input needed to generate a question
      * @return a {@link QuestionResponse} containing the generated question
      */
-    @GetMapping("/question")
-    public PromptResponse getQuestion(@RequestParam("profession") final String profession, final HttpSession session) {
-        LOGGER.info("/question profession: {}", profession);
-        final PromptResponse promptResponse = promptService.generateQuestion(profession, session);
+    @PostMapping("/generateQuestion")
+    public PromptResponse generateQuestion(@RequestBody final PromptRequest promptRequest, final HttpSession session) {
+        LOGGER.info("/question input: {}", promptRequest);
+        final PromptResponse promptResponse = promptService.generateQuestion(promptRequest, session);
         promptResponse.setPromptResponse(new QuestionResponse(promptResponse.getPromptResponse().toString()));
         return promptResponse;
     }
-
-    /**
-     * Receives a candidate's video answer, processes it, and returns the transcript.
-     *
-     * <p>The process includes storing the video, extracting audio, transcribing
-     * it to text, and sending back the transcript.</p>
-     *
-     * @param file the uploaded video file from the candidate
-     * @return the transcript
-     */
-    @PostMapping(value = "/transcript", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Transcript getTranscript(@RequestParam("file") final MultipartFile file) {
-        LOGGER.info("/transcript file: {}", file);
-        // Save file locally
-        final File videoFile = Utils.saveVideo(file);
-        if (videoFile == null) {
-            return new Transcript();
-        }
-
-        // Extract audio
-        final File audioFile = ffmpegService.extractAudio(videoFile);
-        if (audioFile == null) {
-            return new Transcript();
-        }
-
-        // Transcribe audio
-        final String transcript = whisperService.transcribe(audioFile);
-        if (transcript == null) {
-            return new Transcript();
-        }
-
-        return new Transcript(transcript, videoFile.getName());
-    }
-
 
     /**
      * Receives a transcript, asks AI for feedback, and returns feedback.

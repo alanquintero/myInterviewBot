@@ -4,6 +4,8 @@ import {checkSlowPromptResponse} from './system-requirements.js';
 const inputProfession = document.getElementById("inputProfession");
 const inputQuestion = document.getElementById("inputQuestion");
 const commonQuestionsBtn = document.getElementById("commonQuestionsBtn");
+const categorySelect = document.getElementById("categorySelect");
+const difficultySelect = document.getElementById("difficultySelect");
 
 /* Button section */
 const generateQuestionBtn = document.getElementById("generateQuestionBtn");
@@ -90,22 +92,46 @@ function setProfessionIfBlank() {
 // Call API to generate a question
 async function generateQuestion(profession) {
     loading.classList.remove("hidden"); // show loading GIF
+
     try {
-        const res = await fetch(`/interview/v1/question?profession=${encodeURIComponent(profession)}`);
-        const data = await res.json();
+        const promptRequest = {
+            profession: profession,
+            category: categorySelect.value,
+            difficulty: difficultySelect.value
+        };
 
-        if (!data) {
-            alert('No question was generated. Please try again.');
-            return;
-        } else {
-            checkSlowPromptResponse(data.promptStats)
-        }
+        await fetch("/prompt/v1/generateQuestion", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(promptRequest)
+            }
+        ).then(response => {
+            if (!response.ok) {
+                // Response status is not in the range 200–299
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+            .then(data => {
+                if (!data) {
+                    alert('No question was generated. Please try again.');
+                    return;
+                } else {
+                    checkSlowPromptResponse(data.promptStats)
+                }
 
-        if (!data.promptResponse.question || data.promptResponse.question.trim() === '') {
-            alert('No question was generated. Please try again.');
-        } else {
-            inputQuestion.value = data.promptResponse.question;
-        }
+                if (!data.promptResponse.question || data.promptResponse.question.trim() === '') {
+                    alert('No question was generated. Please try again.');
+                } else {
+                    inputQuestion.value = data.promptResponse.question;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                alert("Something went wrong. Please try again.");
+            });
     } catch (err) {
         console.error(err);
     } finally {
@@ -310,7 +336,7 @@ async function sendVideo(blob) {
     stopCamera();
 
     try {
-        const res = await fetch("/interview/v1/transcript", {
+        const res = await fetch("/api/v1/transcript", {
             method: "POST",
             body: formData
         });
@@ -402,7 +428,7 @@ async function generateFeedback(transcript) {
     formData.append("question", inputQuestion.value)
 
     try {
-        const res = await fetch("/interview/v1/feedback", {
+        const res = await fetch("/prompt/v1/feedback", {
             method: "POST",
             body: formData
         });
@@ -422,7 +448,7 @@ async function generateEvaluation(transcript, feedback) {
     formData.append("question", inputQuestion.value)
 
     try {
-        const res = await fetch("/interview/v1/evaluation", {
+        const res = await fetch("/prompt/v1/evaluation", {
             method: "POST",
             body: formData,
         });

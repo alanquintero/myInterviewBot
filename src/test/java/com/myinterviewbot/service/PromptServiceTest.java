@@ -5,6 +5,7 @@
 package com.myinterviewbot.service;
 
 import com.myinterviewbot.model.Evaluation;
+import com.myinterviewbot.model.PromptRequest;
 import com.myinterviewbot.model.PromptResponse;
 import com.myinterviewbot.service.ai.model.AIService;
 import jakarta.servlet.http.HttpSession;
@@ -35,6 +36,8 @@ public class PromptServiceTest {
     void generateQuestion_firstQuestion() {
         // Given
         final String profession = "software engineer";
+        final PromptRequest input = new PromptRequest();
+        input.setProfession(profession);
         final String expectedQuestion = "Tell me about a time you faced a challenge.";
         final PromptResponse expectedPromptResponse = new PromptResponse(null, expectedQuestion);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
@@ -43,7 +46,7 @@ public class PromptServiceTest {
         when(session.getAttribute("firstQuestion")).thenReturn(true);
 
         // When
-        final PromptResponse promptResponse = promptService.generateQuestion(profession, session);
+        final PromptResponse promptResponse = promptService.generateQuestion(input, session);
 
         // Then
         assertNotNull(promptResponse);
@@ -57,6 +60,8 @@ public class PromptServiceTest {
     void generateQuestion_notTheFirstQuestion() {
         // Given
         final String profession = "software engineer";
+        final PromptRequest input = new PromptRequest();
+        input.setProfession(profession);
         final String expectedQuestion = "Tell me about a time you faced a challenge.";
         final PromptResponse expectedPromptResponse = new PromptResponse(null, expectedQuestion);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
@@ -65,7 +70,7 @@ public class PromptServiceTest {
         when(session.getAttribute("firstQuestion")).thenReturn(false);
 
         // When
-        final PromptResponse promptResponse = promptService.generateQuestion(profession, session);
+        final PromptResponse promptResponse = promptService.generateQuestion(input, session);
 
         // Then
         assertNotNull(promptResponse);
@@ -79,6 +84,8 @@ public class PromptServiceTest {
     void generateQuestion_notTheFirstQuestionButChangedProfession() {
         // Given
         final String profession = "vet";
+        final PromptRequest input = new PromptRequest();
+        input.setProfession(profession);
         final String expectedQuestion = "Tell me about a time you faced a challenge.";
         final PromptResponse expectedPromptResponse = new PromptResponse(null, expectedQuestion);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
@@ -87,7 +94,7 @@ public class PromptServiceTest {
         when(session.getAttribute("firstQuestion")).thenReturn(false);
 
         // When
-        final PromptResponse promptResponse = promptService.generateQuestion(profession, session);
+        final PromptResponse promptResponse = promptService.generateQuestion(input, session);
 
         // Then
         assertNotNull(promptResponse);
@@ -101,6 +108,8 @@ public class PromptServiceTest {
     void generateQuestion_questionHasMoreWordsThanWanted() {
         // Given
         final String profession = "software engineer";
+        final PromptRequest input = new PromptRequest();
+        input.setProfession(profession);
         final String expectedQuestion = "Tell me about a time you faced a challenge Tell me about a time you faced a challenge Tell me about a time you faced a challenge Tell me about a time you faced a challenge.";
         final PromptResponse expectedPromptResponse = new PromptResponse(null, expectedQuestion);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
@@ -109,7 +118,7 @@ public class PromptServiceTest {
         when(session.getAttribute("firstQuestion")).thenReturn(true);
 
         // When
-        final PromptResponse promptResponse = promptService.generateQuestion(profession, session);
+        final PromptResponse promptResponse = promptService.generateQuestion(input, session);
 
         // Then
         assertNotNull(promptResponse);

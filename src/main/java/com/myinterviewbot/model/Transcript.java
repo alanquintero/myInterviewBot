@@ -40,4 +40,12 @@ public class Transcript {
     public void setFileName(final String fileName) {
         this.fileName = fileName;
     }
+
+    @Override
+    public String toString() {
+        return "Transcript{" +
+                "transcript='" + transcript + '\'' +
+                ", fileName='" + fileName + '\'' +
+                '}';
+    }
 }

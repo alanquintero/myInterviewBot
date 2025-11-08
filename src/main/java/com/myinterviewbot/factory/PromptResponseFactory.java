@@ -5,6 +5,7 @@
 package com.myinterviewbot.factory;
 
 import com.myinterviewbot.builder.PromptStatsBuilder;
+import com.myinterviewbot.model.PromptExecutionResult;
 import com.myinterviewbot.model.PromptResponse;
 import com.myinterviewbot.model.PromptStats;
 
@@ -37,5 +38,14 @@ public class PromptResponseFactory {
                 .build();
 
         return new PromptResponse(stats, response);
+    }
+
+    public static PromptResponse createEmptyResponse() {
+        final PromptStats stats = new PromptStatsBuilder()
+                .executedSuccessfully(false)
+                .reasonExecutionFailed(PromptExecutionResult.INPUT_PARAMETERS_NOT_PRESENT)
+                .build();
+
+        return new PromptResponse(stats, "");
     }
 }

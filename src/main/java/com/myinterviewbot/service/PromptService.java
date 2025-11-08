@@ -5,12 +5,8 @@
 package com.myinterviewbot.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.myinterviewbot.builder.PromptStatsBuilder;
 import com.myinterviewbot.factory.PromptResponseFactory;
-import com.myinterviewbot.model.Evaluation;
-import com.myinterviewbot.model.PromptExecutionResult;
-import com.myinterviewbot.model.PromptResponse;
-import com.myinterviewbot.model.PromptStats;
+import com.myinterviewbot.model.*;
 import com.myinterviewbot.service.ai.model.AIService;
 import com.myinterviewbot.utils.Utils;
 import jakarta.servlet.http.HttpSession;
@@ -39,11 +35,28 @@ public class PromptService {
     @Autowired
     private AIService aiService;
 
-    public PromptResponse generateQuestion(final String profession, final HttpSession session) {
-        LOGGER.info("Generating question for profession: {}", profession);
+    public PromptResponse generateQuestion(final PromptRequest promptRequest, final HttpSession session) {
+        LOGGER.info("Generating question using next input: {}", promptRequest);
+
+        if (promptRequest.getProfession() == null || promptRequest.getProfession().isEmpty()) {
+            return PromptResponseFactory.createEmptyResponse();
+        }
+        final String difficulty;
+        if (promptRequest.getDifficulty() != null && !promptRequest.getDifficulty().isEmpty()) {
+            difficulty = promptRequest.getDifficulty();
+        } else {
+            difficulty = "";
+        }
+        final String category;
+        if (promptRequest.getCategory() != null && !promptRequest.getCategory().isEmpty()) {
+            category = " focused on " + promptRequest.getCategory() + ". ";
+        } else {
+            category = ". ";
+        }
 
         String lastProfession = (String) session.getAttribute("currentProfession");
         Boolean firstQuestion = (Boolean) session.getAttribute("firstQuestion");
+        final String profession = promptRequest.getProfession();
 
         // If profession changed, reset session info
         if (lastProfession == null || !lastProfession.equals(profession)) {
@@ -55,10 +68,11 @@ public class PromptService {
         final String restriction = "The question must be less than " + QUESTION_MAX_NUMBER_OF_WORDS + " words. Generate ONLY the behavioral interview question — do not include any explanations or introductions.";
         String prompt;
         if (firstQuestion == null || firstQuestion) {
-            prompt = "You are a concise behavioral interview coach. Generate a single, realistic behavioral interview question for a " + profession + ". " + restriction;
+            prompt = "You are a concise behavioral interview coach. Generate a single, realistic, "
+                    + difficulty + " behavioral interview question for a " + profession + category + restriction;
             session.setAttribute("firstQuestion", false);
         } else {
-            prompt = "Give me another behavioral interview question for a " + profession + ". " + restriction;
+            prompt = "Give me another " + difficulty + " behavioral interview question for a " + profession + category + restriction;
         }
 
         /*
@@ -81,11 +95,11 @@ public class PromptService {
                     case 1 ->
                             "Please provide the next behavioral interview question in " + QUESTION_MAX_NUMBER_OF_WORDS + " words or less: " + question;
                     case 2 ->
-                            "Give me a totally different behavioral interview question for a " + profession + ". Remember that the question must be less than 15 words. Only output the question.";
+                            "Give me a totally different " + difficulty + " behavioral interview question for a " + profession + category + " Remember that the question must be less than 15 words. Only output the question.";
                     case 3 ->
-                            "Give me a the most common behavioral interview question for a " + profession + ". " + restriction;
+                            "Give me a the most common " + difficulty + " behavioral interview question for a " + profession + category + restriction;
                     default ->
-                            "Give me a generic behavioral interview question for a " + profession + ". " + restriction;
+                            "Give me a generic " + difficulty + "behavioral interview question for a " + profession + category + restriction;
                 };
 
                 // Extracting the question because AI sometimes gives an explanation of what it did to shorten the question.

@@ -40,6 +40,10 @@ export async function checkSystemRequirements() {
 }
 
 export function checkSlowPromptResponse(promptResponse) {
+    if(!promptResponse) {
+        console.log("promptResponse is null!");
+        return;
+    }
     console.log("slowPromptResponse: " + promptResponse.slowPromptResponse);
     const promptMessage = document.getElementById("promptMessage");
     if (!promptResponse.executedSuccessfully && !promptResponse.exceptionDetected && !promptResponse.slowPromptResponse) {
