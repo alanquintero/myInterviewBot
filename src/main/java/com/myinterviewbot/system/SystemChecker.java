@@ -181,7 +181,7 @@ public class SystemChecker {
         return true;
     }
 
-    // ---------------- AiProvider ----------------
+    // ---------------- AI Provider ----------------
     private boolean checkAiProviderInstalled() {
         if ("ollama".equalsIgnoreCase(aiProvider)) {
             try {

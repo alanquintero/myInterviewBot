@@ -67,6 +67,10 @@ public class PromptService {
         */
         PromptResponse promptResponse = aiService.executePrompt(prompt);
         String question = promptResponse.getPromptResponse().toString();
+        if (question.isBlank()) {
+            return promptResponse;
+        }
+
         int words = Utils.countWords(question);
         if (words > QUESTION_MAX_NUMBER_OF_WORDS) {
             LOGGER.warn("⚠︎⚠︎⚠︎ Question has more than " + QUESTION_MAX_NUMBER_OF_WORDS + " words, asking model to generate another question...");
@@ -115,6 +119,9 @@ public class PromptService {
 
         PromptResponse promptResponse = aiService.executePrompt(prompt);
         String feedback = promptResponse.getPromptResponse().toString();
+        if (feedback.isBlank()) {
+            return promptResponse;
+        }
 
         /*
             Sometimes the model response with a very long feedback, the next code will try to avoid returning a long feedback by asking the model to generate another feedback.
@@ -130,6 +137,7 @@ public class PromptService {
 
                 promptResponse = aiService.executePrompt(prompt);
                 feedback = promptResponse.getPromptResponse().toString();
+
                 words = Utils.countWords(feedback);
                 if (words <= FEEDBACK_MAX_NUMBER_OF_WORDS) {
                     break;
@@ -168,12 +176,8 @@ public class PromptService {
                 + " Candidate Response: " + transcript;
 
         PromptResponse promptResponse = aiService.executePrompt(prompt);
-
-        if (promptResponse.getPromptResponse() == null) {
-            LOGGER.warn("PromptResponse is null");
-            return PromptResponseFactory.createFailedResponse(null, PromptExecutionResult.EXCEPTION + ": PromptResponse is null", 1);
-        }
         String evaluationTxt = promptResponse.getPromptResponse().toString();
+
         if (evaluationTxt == null || evaluationTxt.isEmpty()) {
             LOGGER.warn("Evaluation text is null");
             promptResponse.setPromptResponse(null);

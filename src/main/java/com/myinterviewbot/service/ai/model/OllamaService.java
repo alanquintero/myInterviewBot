@@ -126,7 +126,7 @@ public class OllamaService implements AIService {
             if (rawResult.isEmpty() || exitValue != 0) {
                 if (exitValue != 0) {
                     LOGGER.error("Ollama process exited with non-zero code: {}", exitValue);
-                    return PromptResponseFactory.createFailedResponse(null, PromptExecutionResult.EXCEPTION + " -> Ollama exit code: " + exitValue, duration);
+                    return PromptResponseFactory.createFailedResponse("", PromptExecutionResult.EXCEPTION + " -> Ollama exit code: " + exitValue, duration);
                 } else {
                     LOGGER.warn("Ollama returned empty output.");
                     return PromptResponseFactory.createFailedResponse("", PromptExecutionResult.EMPTY_RESULT, duration);
@@ -152,10 +152,10 @@ public class OllamaService implements AIService {
             // Re-assert the interrupt flag
             Thread.currentThread().interrupt();
             LOGGER.error("Ollama process execution was interrupted", e);
-            return PromptResponseFactory.createFailedResponse(null, PromptExecutionResult.EXCEPTION + ": " + e.getClass().getSimpleName(), ((System.currentTimeMillis() - startTime)));
+            return PromptResponseFactory.createFailedResponse("", PromptExecutionResult.EXCEPTION + ": " + e.getClass().getSimpleName(), ((System.currentTimeMillis() - startTime)));
         } catch (Exception e) {
             LOGGER.error("Error running Ollama", e);
-            return PromptResponseFactory.createFailedResponse(null, PromptExecutionResult.EXCEPTION + ": " + e.getClass().getSimpleName(), ((System.currentTimeMillis() - startTime)));
+            return PromptResponseFactory.createFailedResponse("", PromptExecutionResult.EXCEPTION + ": " + e.getClass().getSimpleName(), ((System.currentTimeMillis() - startTime)));
         } finally {
             // Ensure the ExecutorService is always shut down
             if (executor != null) {
