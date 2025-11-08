@@ -91,18 +91,34 @@ public class SystemChecker {
         boolean isMac = os.contains("mac");
 
         List<GraphicsCard> gpus = systemInfo.getHardware().getGraphicsCards();
-        boolean gpuDetected = !gpus.isEmpty();
 
-        if (!gpuDetected && REQUIRE_GPU_WINDOWS_LINUX && !isMac) {
-            System.out.println("❌ Dedicated GPU not detected — performance will be very slow.");
-            return false;
+        if (gpus.isEmpty()) {
+            if (!isMac && REQUIRE_GPU_WINDOWS_LINUX) {
+                System.out.println("❌ Dedicated GPU not detected — performance will be very slow.");
+                return false;
+            } else {
+                System.out.println("⚠️ No GPU detected (may be OK on Mac).");
+                return true; // Mac can be OK without discrete GPU
+            }
         }
 
-        if (gpuDetected) {
-            System.out.println("Detected GPU(s):");
-            gpus.forEach(gpu -> System.out.println(" - " + gpu.getName()));
-        } else {
-            System.out.println("⚠️ No GPU detected (may be OK on Mac).");
+        boolean gpuOk = false;
+        System.out.println("Detected GPU(s):");
+        for (GraphicsCard gpu : gpus) {
+            long vramMB = gpu.getVRam() / (1024 * 1024);
+            System.out.println(" - " + gpu.getName() + " (" + vramMB + " MB VRAM)");
+
+            if (vramMB >= 2048 &&
+                    (gpu.getName().toLowerCase().contains("nvidia") ||
+                            gpu.getName().toLowerCase().contains("amd") ||
+                            gpu.getName().toLowerCase().contains("apple"))) {
+                gpuOk = true;
+            }
+        }
+
+        if (!gpuOk && !isMac && REQUIRE_GPU_WINDOWS_LINUX) {
+            System.out.println("❌ No GPU meets minimum requirements (≥2GB VRAM, NVIDIA/AMD/Apple).");
+            return false;
         }
 
         return true;
@@ -150,6 +166,7 @@ public class SystemChecker {
 
         if (os.contains("win")) {
             builder = new ProcessBuilder("cmd.exe", "/c", command);
+            builder.environment().put("PYTHONIOENCODING", "UTF-8");
         } else {
             builder = new ProcessBuilder("bash", "-c", command);
         }
