@@ -4,10 +4,7 @@
  */
 package com.myinterviewbot.controller;
 
-import com.myinterviewbot.model.PromptExecutionResult;
-import com.myinterviewbot.model.PromptResponse;
 import com.myinterviewbot.model.SystemRequirements;
-import com.myinterviewbot.service.SystemRequirementsService;
 import com.myinterviewbot.system.SystemChecker;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
@@ -29,38 +26,18 @@ public class ApiController {
 
     private static SystemRequirements systemRequirements = null;
 
-    private final SystemRequirementsService systemRequirementsService;
+    private final SystemChecker systemChecker;
 
-    public ApiController(final SystemRequirementsService systemRequirementsService) {
-        this.systemRequirementsService = systemRequirementsService;
+    public ApiController(final SystemChecker systemChecker) {
+        this.systemChecker = systemChecker;
     }
 
     @GetMapping("/requirements")
     public SystemRequirements checkSystemRequirements(final HttpSession session) {
         LOGGER.info("Checking SystemRequirements");
-        SystemChecker systemChecker = new SystemChecker();
-        systemChecker.checkSystemRequirements();
-        Boolean systemRequirementsChecked = (Boolean) session.getAttribute("systemRequirementsChecked");
-        Boolean isSlowPromptResponse = (Boolean) session.getAttribute("isSlowPromptResponse");
-        if (systemRequirementsChecked != null && systemRequirementsChecked && isSlowPromptResponse != null) {
-            LOGGER.info("SystemRequirements already checked");
-            if (systemRequirements == null) {
-                systemRequirements = new SystemRequirements(true, isSlowPromptResponse, false);
-            }
-            return systemRequirements;
+        if (systemRequirements == null) {
+            systemRequirements = systemChecker.checkSystemRequirements();
         }
-        final PromptResponse promptResponse = systemRequirementsService.executeInitialPrompt();
-        final boolean exceptionDetected;
-        if (promptResponse.getPromptStats().getReasonExecutionFailed() != null && !PromptExecutionResult.EMPTY_RESULT.equals(promptResponse.getPromptStats().getReasonExecutionFailed())) {
-            exceptionDetected = true;
-        } else {
-            exceptionDetected = false;
-        }
-
-        systemRequirements = new SystemRequirements(promptResponse.getPromptStats().isSlowPromptResponse(), promptResponse.getPromptStats().isExecutedSuccessfully(), exceptionDetected);
-        session.setAttribute("systemRequirementsChecked", true);
-        session.setAttribute("isSlowPromptResponse", promptResponse.getPromptStats().isSlowPromptResponse());
-        LOGGER.info("SystemRequirements check complete: {}", systemRequirements);
         return systemRequirements;
     }
 }

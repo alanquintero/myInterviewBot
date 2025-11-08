@@ -1,5 +1,14 @@
+/**
+ * Copyright 2025 Alan Quintero
+ * Source: https://github.com/alanquintero/myInterviewBot
+ */
 package com.myinterviewbot.system;
 
+import com.myinterviewbot.model.SystemRequirements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.GlobalMemory;
@@ -18,38 +27,79 @@ import java.util.Locale;
  *   <li>GPU availability (required on Windows/Linux)</li>
  *   <li>Ollama and Whisper installation</li>
  * </ul>
+ *
+ * @author Alan Quintero
  */
+@Service
 public class SystemChecker {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SystemChecker.class);
 
     private static final double MIN_CPU_SPEED_GHZ = 2.0;
     private static final int MIN_CPU_CORES = 4;
     private static final long MIN_RAM_MB = 8000;
     private static final boolean REQUIRE_GPU_WINDOWS_LINUX = true;
 
+    @Value("${ai.provider}")
+    private String aiProvider;
+
+    @Value("${ai.model}")
+    private String aiModel;
+
+    @Value("${whisper.provider}")
+    private String whisperProvider;
+
+    private String cpuMessage = "";
+
+    private String ramMessage = "";
+
+    private String gpuMessage = "";
+
+    private String aiProviderMessage = "";
+
+    private String aiModelMessage = "";
+
+    private String whisperProviderMessage = "";
+
     private final SystemInfo systemInfo;
+
+    private final SystemRequirements systemRequirements;
 
     public SystemChecker() {
         systemInfo = new SystemInfo();
+        systemRequirements = new SystemRequirements();
     }
 
-    public boolean checkSystemRequirements() {
-        boolean cpuOk = checkCPU();
-        boolean ramOk = checkRAM();
-        boolean gpuOk = checkGPU();
-        boolean ollamaOk = checkOllamaInstalled();
-        boolean whisperOk = checkWhisperInstalled();
+    public SystemRequirements checkSystemRequirements() {
+        final boolean cpuOk = checkCPU();
+        systemRequirements.setCpuHasMinimumRequirements(cpuOk);
+        final boolean ramOk = checkRAM();
+        systemRequirements.setRamHasMinimumRequirements(ramOk);
+        final boolean gpuOk = checkGPU();
+        systemRequirements.setGpuHasMinimumRequirements(gpuOk);
+        final boolean aiProviderOk = checkAiProviderInstalled();
+        systemRequirements.setAiProviderAvailable(aiProviderOk);
+        final boolean aiModelOk = checkAiModelInstalled();
+        systemRequirements.setAiModelAvailable(aiModelOk);
+        final boolean whisperOk = checkWhisperInstalled();
+        systemRequirements.setWhisperServiceAvailable(whisperOk);
 
-        boolean allOk = cpuOk && ramOk && gpuOk && ollamaOk && whisperOk;
+        final boolean allOk = cpuOk && ramOk && gpuOk && aiProviderOk && aiModelOk && whisperOk;
+        systemRequirements.setAreAllSystemRequirementsMet(allOk);
+        LOGGER.info("AreAllSystemRequirementsMet: {}", allOk);
 
-        System.out.println("\n=== System Check Summary ===");
-        System.out.println("CPU: " + (cpuOk ? "✅ OK" : "❌ FAIL"));
-        System.out.println("RAM: " + (ramOk ? "✅ OK" : "❌ FAIL"));
-        System.out.println("GPU: " + (gpuOk ? "✅ OK" : "❌ FAIL"));
-        System.out.println("Ollama: " + (ollamaOk ? "✅ OK" : "❌ FAIL"));
-        System.out.println("Whisper: " + (whisperOk ? "✅ OK" : "❌ FAIL"));
-        System.out.println("============================");
+        final String systemRequirementsMessage = "<pre>"
+                + "CPU: " + (cpuOk ? "✅ OK" : cpuMessage) + "\n"
+                + "RAM: " + (ramOk ? "✅ OK" : ramMessage) + "\n"
+                + "GPU: " + (gpuOk ? "✅ OK" : gpuMessage) + "\n"
+                + "AI Provider(" + aiProvider + "): " + (aiProviderOk ? "✅ OK" : aiProviderMessage) + "\n"
+                + "AI Model(" + aiModel + "): " + (aiModelOk ? "✅ OK" : aiModelMessage) + "\n"
+                + "Whisper(" + whisperProvider + "): " + (whisperOk ? "✅ OK" : whisperProviderMessage) + "\n"
+                + "</pre>";
+        systemRequirements.setSystemRequirementsMessage(systemRequirementsMessage);
+        LOGGER.info(systemRequirementsMessage);
 
-        return allOk;
+        return systemRequirements;
     }
 
     // ---------------- CPU ----------------
@@ -58,15 +108,18 @@ public class SystemChecker {
         int cores = processor.getLogicalProcessorCount();
         double speedGhz = processor.getMaxFreq() / 1_000_000_000.0;
 
-        System.out.println("Detected CPU cores: " + cores);
+        LOGGER.info("Detected CPU cores: {}", cores);
         System.out.printf(Locale.US, "Detected CPU speed: %.2f GHz%n", speedGhz);
 
         if (cores < MIN_CPU_CORES) {
-            System.out.println("❌ Minimum " + MIN_CPU_CORES + " CPU cores required.");
+            cpuMessage = "❌ Minimum " + MIN_CPU_CORES + " CPU cores required.";
+            LOGGER.warn(cpuMessage);
             return false;
         }
         if (speedGhz < MIN_CPU_SPEED_GHZ) {
-            System.out.println("❌ CPU speed below minimum threshold (" + MIN_CPU_SPEED_GHZ + " GHz).");
+            final String cpuSpeedMessage = "❌ CPU speed below minimum threshold (" + MIN_CPU_SPEED_GHZ + " GHz).";
+            cpuMessage += "\n" + cpuSpeedMessage;
+            LOGGER.warn(cpuSpeedMessage);
             return false;
         }
         return true;
@@ -76,10 +129,11 @@ public class SystemChecker {
     private boolean checkRAM() {
         GlobalMemory memory = systemInfo.getHardware().getMemory();
         long ramMb = memory.getTotal() / (1024 * 1024);
-        System.out.println("Detected RAM: " + ramMb + " MB");
+        LOGGER.info("Detected RAM: {} MB", ramMb);
 
         if (ramMb < MIN_RAM_MB) {
-            System.out.println("❌ Minimum " + MIN_RAM_MB + " MB RAM required.");
+            ramMessage = "❌ Minimum " + MIN_RAM_MB + " MB RAM required.";
+            LOGGER.warn(ramMessage);
             return false;
         }
         return true;
@@ -94,19 +148,20 @@ public class SystemChecker {
 
         if (gpus.isEmpty()) {
             if (!isMac && REQUIRE_GPU_WINDOWS_LINUX) {
-                System.out.println("❌ Dedicated GPU not detected — performance will be very slow.");
+                gpuMessage = "❌ Dedicated GPU not detected — performance will be very slow.";
+                LOGGER.warn(gpuMessage);
                 return false;
             } else {
-                System.out.println("⚠️ No GPU detected (may be OK on Mac).");
+                LOGGER.warn("⚠️ No GPU detected (may be OK on Mac).");
                 return true; // Mac can be OK without discrete GPU
             }
         }
 
         boolean gpuOk = false;
-        System.out.println("Detected GPU(s):");
+        LOGGER.info("Detected GPU(s):");
         for (GraphicsCard gpu : gpus) {
             long vramMB = gpu.getVRam() / (1024 * 1024);
-            System.out.println(" - " + gpu.getName() + " (" + vramMB + " MB VRAM)");
+            LOGGER.info(" - {} ({} MB VRAM)", gpu.getName(), vramMB);
 
             if (vramMB >= 2048 &&
                     (gpu.getName().toLowerCase().contains("nvidia") ||
@@ -117,44 +172,96 @@ public class SystemChecker {
         }
 
         if (!gpuOk && !isMac && REQUIRE_GPU_WINDOWS_LINUX) {
-            System.out.println("❌ No GPU meets minimum requirements (≥2GB VRAM, NVIDIA/AMD/Apple).");
+            LOGGER.warn("❌ No GPU meets minimum requirements (≥2GB VRAM, NVIDIA/AMD/Apple).");
             return false;
         }
 
         return true;
     }
 
-    // ---------------- Ollama ----------------
-    private boolean checkOllamaInstalled() {
-        try {
-            String output = runCommand("ollama --version");
-            boolean installed = output.toLowerCase().contains("ollama");
-            if (installed) {
-                System.out.println("✅ Ollama detected: " + output.trim());
-                return true;
-            } else {
-                System.out.println("❌ Ollama not found.");
+    // ---------------- AiProvider ----------------
+    private boolean checkAiProviderInstalled() {
+        if ("ollama".equalsIgnoreCase(aiProvider)) {
+            try {
+                String output = runCommand("ollama --version");
+                boolean installed = output.toLowerCase().contains("ollama");
+                if (installed) {
+                    LOGGER.info("✅ Ollama detected: {}", output.trim());
+                    return true;
+                } else {
+                    aiProviderMessage = "❌ Ollama not found.";
+                    LOGGER.warn(aiProviderMessage);
+                    return false;
+                }
+            } catch (Exception e) {
+                aiProviderMessage = "❌ Ollama not installed or not in PATH.";
+                LOGGER.warn(aiProviderMessage);
                 return false;
             }
-        } catch (Exception e) {
-            System.out.println("❌ Ollama not installed or not in PATH.");
+        } else {
+            aiProviderMessage = "❌ " + aiProvider + " not supported yet.";
+            LOGGER.warn(aiProviderMessage);
+            return false;
+        }
+    }
+
+    // ---------------- AI model ----------------
+    public boolean checkAiModelInstalled() {
+        if ("ollama".equalsIgnoreCase(aiProvider)) {
+            try {
+                String output = runCommand("ollama list");
+                String[] lines = output.split("\\r?\\n");
+
+                // Skip header line if present
+                for (int i = 1; i < lines.length; i++) {
+                    String line = lines[i].trim();
+                    if (line.isEmpty()) continue;
+
+                    // The model name is the first column
+                    String[] columns = line.split("\\s+");
+                    if (columns.length > 0 && columns[0].equalsIgnoreCase(aiModel)) {
+                        LOGGER.info("✅ Ollama model detected: {}", aiModel);
+                        return true;
+                    }
+                }
+
+                aiModelMessage = "❌ Ollama model not found: " + aiModel;
+                LOGGER.warn(aiModelMessage);
+                return false;
+
+            } catch (Exception e) {
+                aiModelMessage = "❌ Failed to check Ollama models";
+                LOGGER.warn(aiModelMessage + ": {}", e.getMessage());
+                return false;
+            }
+        } else {
+            aiModelMessage = "❌ cannot verify " + aiModel + " model because " + aiProvider + " not supported yet.";
+            LOGGER.warn(aiModelMessage);
             return false;
         }
     }
 
     // ---------------- Whisper ----------------
     private boolean checkWhisperInstalled() {
-        try {
-            String output = runCommand("whisper --help");
-            if (output.toLowerCase().contains("usage") || output.toLowerCase().contains("options")) {
-                System.out.println("✅ Whisper detected.");
-                return true;
-            } else {
-                System.out.println("❌ Whisper not found.");
+        if ("openai-whisper".equalsIgnoreCase(whisperProvider)) {
+            try {
+                String output = runCommand("whisper --help");
+                if (output.toLowerCase().contains("usage") || output.toLowerCase().contains("options")) {
+                    LOGGER.info("✅ Whisper detected.");
+                    return true;
+                } else {
+                    whisperProviderMessage = "❌ Whisper not found.";
+                    LOGGER.warn(whisperProviderMessage);
+                    return false;
+                }
+            } catch (Exception e) {
+                whisperProviderMessage = "❌ Whisper not installed or not in PATH.";
+                LOGGER.warn(whisperProviderMessage);
                 return false;
             }
-        } catch (Exception e) {
-            System.out.println("❌ Whisper not installed or not in PATH.");
+        } else {
+            whisperProviderMessage = "❌ " + whisperProvider + " not supported yet.";
+            LOGGER.warn(whisperProviderMessage);
             return false;
         }
     }

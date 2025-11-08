@@ -1,8 +1,32 @@
 <div th:fragment="topSection" xmlns:th="http://www.thymeleaf.org">
 
-    <div id="systemMessage" class="alert hidden" role="alert">
-        ⚠️ System performance appears insufficient for local AI inference. Consider using a smaller model or
-        switching to a faster system.
+    <div id="systemMessage" class="alert alert-danger hidden" role="alert">
+        <span>
+        ⚠️ Your system does not meet all the minimum requirements to run this application efficiently.
+        <a href="#" id="systemDetailsLink" data-bs-toggle="modal" data-bs-target="#systemDetailsModal">
+            Click here for more details
+        </a>.
+    </span>
+    </div>
+
+    <div id="promptMessage" class="alert alert-dismissible hidden" role="alert"></div>
+
+    <!-- System Details Modal -->
+    <div class="modal fade" id="systemDetailsModal" tabindex="-1" aria-labelledby="systemDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="systemDetailsModalLabel">System Requirements Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="systemDetailsContent">
+                    <!-- Dynamic content will go here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script th:src="@{/js/system-requirements.js}" type="module"></script>
