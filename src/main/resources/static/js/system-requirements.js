@@ -29,13 +29,26 @@ export async function checkSystemRequirements() {
         console.log("Camera available:", result.hasCamera);
         console.log("Microphone available:", result.hasMicrophone);
 
-        if (!result.hasCamera || !result.hasMicrophone) {
-            document.getElementById("mediaDevicesMessage").innerHTML = `
-            <div class="alert alert-warning">
-                ⚠️ Your system does not have a ${!result.hasCamera ? 'camera' : ''}${!result.hasCamera && !result.hasMicrophone ? ' or ' : ''}${!result.hasMicrophone ? 'microphone' : ''}.
-            </div>`;
-            document.getElementById("mediaDevicesMessage").classList.remove("hidden");
+        const mediaMessage = document.getElementById("mediaDevicesMessage");
+
+        if (!result.hasCamera && result.hasMicrophone) {
+            mediaMessage.className = "alert alert-warning alert-dismissible fade show";
+            mediaMessage.innerHTML = `
+    ⚠️ Your system does not have a camera. Using microphone only.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  `;
+            mediaMessage.classList.remove("d-none");
+        } else if (!result.hasCamera && !result.hasMicrophone) {
+            mediaMessage.className = "alert alert-danger alert-dismissible fade show";
+            mediaMessage.innerHTML = `
+    ⚠️ Your system does not have a camera or microphone. The app might not work properly.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  `;
+            mediaMessage.classList.remove("d-none");
+        } else {
+            mediaMessage.classList.add("d-none"); // hide it if everything is fine
         }
+
     });
 }
 
@@ -47,20 +60,32 @@ export function checkSlowPromptResponse(promptResponse) {
     const promptStats = promptResponse.promptStats;
     console.log("slowPromptResponse: " + promptStats.slowPromptResponse);
     const promptMessage = document.getElementById("promptMessage");
+
+    // Reset base alert classes
+    promptMessage.className = "alert alert-dismissible fade show d-none";
+
     if (!promptStats.executedSuccessfully && !promptStats.exceptionDetected && !promptStats.slowPromptResponse) {
         console.log("Prompt did not execute successfully.");
+        promptMessage.classList.remove("d-none");
         promptMessage.classList.add("alert-warning");
-        promptMessage.classList.remove("hidden");
-        promptMessage.innerText = "Something went wrong. Please try again.";
+        promptMessage.innerHTML = `
+        Something went wrong. Please try again.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
     } else if (promptStats.slowPromptResponse || (!promptStats.executedSuccessfully && promptStats.exceptionDetected)) {
         console.log("Slow prompt execution detected");
+        promptMessage.classList.remove("d-none");
         promptMessage.classList.add("alert-danger");
-        promptMessage.classList.remove("hidden");
-        promptMessage.innerText = "⚠️ System performance appears insufficient for local AI inference. Consider using a smaller model or switching to a faster system.";
+        promptMessage.innerHTML = `
+        ⚠️ System performance appears insufficient for local AI inference.
+        Consider using a smaller model or switching to a faster system.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
     } else {
-        console.log("Prompt execution is good!");
-        promptMessage.classList.add("hidden");
+        // Hide alert if everything is fine
+        promptMessage.classList.add("d-none");
     }
+
 }
 
 async function checkMediaDevices() {

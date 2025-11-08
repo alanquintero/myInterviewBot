@@ -2,17 +2,17 @@
 
     <div id="systemMessage" class="alert alert-danger hidden" role="alert">
         <span>
-        ⚠️ Your system does not meet all the minimum requirements to run this application efficiently.
+        ⚠️ Your system does not meet the minimum requirements to run this application efficiently. Some features may not work properly.
         <a href="#" id="systemDetailsLink" data-bs-toggle="modal" data-bs-target="#systemDetailsModal">
             Click here for more details
         </a>.
     </span>
     </div>
 
-    <div id="mediaDevicesMessage" class="alert hidden" role="alert"></div>
+    <div id="mediaDevicesMessage" class="alert alert-dismissible d-none" role="alert">
+    </div>
 
-    <div id="promptMessage" class="alert alert-dismissible hidden" role="alert">
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div id="promptMessage" class="alert alert-dismissible fade show d-none" role="alert">
     </div>
 
     <!-- System Details Modal -->
