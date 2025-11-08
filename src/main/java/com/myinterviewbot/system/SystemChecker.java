@@ -99,6 +99,7 @@ public class SystemChecker {
         systemRequirements.setSystemRequirementsMessage(systemRequirementsMessage);
         LOGGER.info(systemRequirementsMessage);
 
+        LOGGER.info("System Requirements completed");
         return systemRequirements;
     }
 
