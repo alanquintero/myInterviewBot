@@ -7,6 +7,7 @@ package com.myinterviewbot.service;
 import com.myinterviewbot.model.Evaluation;
 import com.myinterviewbot.model.PromptRequest;
 import com.myinterviewbot.model.PromptResponse;
+import com.myinterviewbot.model.Transcript;
 import com.myinterviewbot.service.ai.model.AIService;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
@@ -131,14 +132,18 @@ public class PromptServiceTest {
     void generateFeedback() {
         // Given
         final String profession = "software engineer";
-        final String transcript = "";
         final String question = "Tell me about a time you faced a challenge.";
+        final Transcript transcript = new Transcript("transcript", "");
+        final PromptRequest input = new PromptRequest();
+        input.setProfession(profession);
+        input.setQuestion(question);
+        input.setTranscript(transcript);
         final String expectedFeedback = "Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience.";
         final PromptResponse expectedPromptResponse = new PromptResponse(null, expectedFeedback);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
 
         // When
-        final PromptResponse promptResponse = promptService.generateFeedback(profession, transcript, question);
+        final PromptResponse promptResponse = promptService.generateFeedback(input);
 
         // Then
         assertNotNull(promptResponse);
@@ -151,14 +156,19 @@ public class PromptServiceTest {
     void generateFeedback_feedbackHasMoreWordsThanWanted() {
         // Given
         final String profession = "software engineer";
-        final String transcript = "A challenge I faced was when my team’s project was falling behind schedule due to unclear requirements. I took the initiative to organize a quick sync with stakeholders to clarify expectations and re-prioritize tasks. After aligning everyone, we adjusted the sprint goals and completed the project on time. It taught me how important proactive communication is when things start to go off track.";
+        final String transcriptTxt = "A challenge I faced was when my team’s project was falling behind schedule due to unclear requirements. I took the initiative to organize a quick sync with stakeholders to clarify expectations and re-prioritize tasks. After aligning everyone, we adjusted the sprint goals and completed the project on time. It taught me how important proactive communication is when things start to go off track.";
         final String question = "Tell me about a time you faced a challenge.";
+        final Transcript transcript = new Transcript(transcriptTxt, "");
+        final PromptRequest input = new PromptRequest();
+        input.setProfession(profession);
+        input.setQuestion(question);
+        input.setTranscript(transcript);
         final String expectedFeedback = "Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience. Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience. Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience. Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience.";
         final PromptResponse expectedPromptResponse = new PromptResponse(null, expectedFeedback);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
 
         // When
-        final PromptResponse promptResponse = promptService.generateFeedback(profession, transcript, question);
+        final PromptResponse promptResponse = promptService.generateFeedback(input);
 
         // Then
         assertNotNull(promptResponse);

@@ -37,10 +37,11 @@ public class PromptService {
 
     public PromptResponse generateQuestion(final PromptRequest promptRequest, final HttpSession session) {
         LOGGER.info("Generating question using next input: {}", promptRequest);
-
         if (promptRequest.getProfession() == null || promptRequest.getProfession().isEmpty()) {
+            LOGGER.warn("Profession is null or empty");
             return PromptResponseFactory.createEmptyResponse();
         }
+
         final String difficulty;
         if (promptRequest.getDifficulty() != null && !promptRequest.getDifficulty().isEmpty()) {
             difficulty = promptRequest.getDifficulty();
@@ -124,12 +125,20 @@ public class PromptService {
         return promptResponse;
     }
 
-    public PromptResponse generateFeedback(final String transcript, final String profession, final String question) {
+    public PromptResponse generateFeedback(final PromptRequest promptRequest) {
+        if (promptRequest.getProfession() == null || promptRequest.getProfession().isEmpty()
+                || promptRequest.getQuestion() == null || promptRequest.getQuestion().isEmpty()
+                || promptRequest.getTranscript() == null || promptRequest.getTranscript().getTranscript() == null
+                || promptRequest.getTranscript().getTranscript().isEmpty()) {
+            LOGGER.warn("Some inputs are null or empty");
+            return PromptResponseFactory.createEmptyResponse();
+        }
+
         String prompt = "You are a technical hiring manager. Evaluate the following interview answer, focusing on clarity, structure, relevance, and communication style. "
                 + "Provide actionable feedback in 3–4 concise sentences, output only the feedback, no extra commentary. "
-                + "Candidate profession: " + profession + ". "
-                + "Question: " + question + ". "
-                + "Candidate answer: " + transcript;
+                + "Candidate profession: " + promptRequest.getProfession() + ". "
+                + "Question: " + promptRequest.getQuestion() + ". "
+                + "Candidate answer: " + promptRequest.getTranscript().getTranscript();
 
         PromptResponse promptResponse = aiService.executePrompt(prompt);
         String feedback = promptResponse.getPromptResponse().toString();

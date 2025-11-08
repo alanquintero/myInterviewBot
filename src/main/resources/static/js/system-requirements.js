@@ -40,18 +40,19 @@ export async function checkSystemRequirements() {
 }
 
 export function checkSlowPromptResponse(promptResponse) {
-    if(!promptResponse) {
+    if (!promptResponse || !promptResponse.promptStats) {
         console.log("promptResponse is null!");
         return;
     }
-    console.log("slowPromptResponse: " + promptResponse.slowPromptResponse);
+    const promptStats = promptResponse.promptStats;
+    console.log("slowPromptResponse: " + promptStats.slowPromptResponse);
     const promptMessage = document.getElementById("promptMessage");
-    if (!promptResponse.executedSuccessfully && !promptResponse.exceptionDetected && !promptResponse.slowPromptResponse) {
+    if (!promptStats.executedSuccessfully && !promptStats.exceptionDetected && !promptStats.slowPromptResponse) {
         console.log("Prompt did not execute successfully.");
         promptMessage.classList.add("alert-warning");
         promptMessage.classList.remove("hidden");
         promptMessage.innerText = "Something went wrong. Please try again.";
-    } else if (promptResponse.slowPromptResponse || (!promptResponse.executedSuccessfully && promptResponse.exceptionDetected)) {
+    } else if (promptStats.slowPromptResponse || (!promptStats.executedSuccessfully && promptStats.exceptionDetected)) {
         console.log("Slow prompt execution detected");
         promptMessage.classList.add("alert-danger");
         promptMessage.classList.remove("hidden");

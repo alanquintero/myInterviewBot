@@ -56,14 +56,13 @@ public class PromptController {
     /**
      * Receives a transcript, asks AI for feedback, and returns feedback.
      *
-     * @param profession the candidate's profession
-     * @param question   the question asked to the candidate
+     * @param promptRequest the input needed to generate a question
      * @return AI-generated feedback on the candidate's answer
      */
     @PostMapping(value = "/feedback")
-    public PromptResponse getFeedback(@RequestParam("transcript") final String transcript, @RequestParam("profession") final String profession, @RequestParam("question") final String question) {
-        LOGGER.info("/feedback transcript: {}, profession: {}; question: {}", transcript, profession, question);
-        return promptService.generateFeedback(transcript, profession, question);
+    public PromptResponse getFeedback(@RequestBody final PromptRequest promptRequest) {
+        LOGGER.info("/feedback input: {}", promptRequest);
+        return promptService.generateFeedback(promptRequest);
     }
 
     /**

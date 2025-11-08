@@ -1,5 +1,7 @@
 import {checkSlowPromptResponse} from './system-requirements.js';
 
+const PLEASE_TRY_AGAIN = "Something went wrong. Please try again.";
+
 /* Behavioral section *//**/
 const inputProfession = document.getElementById("inputProfession");
 const inputQuestion = document.getElementById("inputQuestion");
@@ -130,7 +132,7 @@ async function generateQuestion(profession) {
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
-                alert("Something went wrong. Please try again.");
+                alert(PLEASE_TRY_AGAIN);
             });
     } catch (err) {
         console.error(err);
@@ -154,7 +156,7 @@ readyBtn.addEventListener("click", async () => {
         await generateQuestion(profession);
 
         if (!inputQuestion.value || inputQuestion.value.trim() === '') {
-            alert('Something went wrong. Please try again.');
+            alert(PLEASE_TRY_AGAIN);
         } else {
             showRecordingSection();
         }
@@ -356,8 +358,8 @@ async function sendVideo(blob) {
             transcriptEl.innerText = transcript.transcript || "";
             loadingFeedbackText.innerText = "Loading feedback...";
 
-            const feedback = await generateFeedback(transcript.transcript);
-            checkSlowPromptResponse(feedback.promptStats)
+            const feedback = await generateFeedback(transcript);
+            checkSlowPromptResponse(feedback)
 
             feedbackSection.classList.remove("hidden");
 
@@ -422,21 +424,34 @@ async function sendVideo(blob) {
 
 // Call API to generate feedback
 async function generateFeedback(transcript) {
-    const formData = new FormData();
-    formData.append("transcript", transcript);
-    formData.append("profession", inputProfession.value)
-    formData.append("question", inputQuestion.value)
+    const promptRequest = {
+        transcript: transcript,
+        profession: inputProfession.value,
+        question: inputQuestion.value,
+    };
 
-    try {
-        const res = await fetch("/prompt/v1/feedback", {
-            method: "POST",
-            body: formData
+    return await fetch("/prompt/v1/feedback", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(promptRequest)
+    }).then(response => {
+        if (!response.ok) {
+            // Response status is not in the range 200–299
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+        .then(data => {
+            console.log('Data received:', data);
+            return data;
+        })
+        .catch(error => {
+            console.error('Error generating feedback:', error);
+            alert(PLEASE_TRY_AGAIN);
+            return null;
         });
-        return await res.json();
-    } catch (err) {
-        console.error(err);
-    }
-    return null;
 }
 
 // Call API to generate evaluation
