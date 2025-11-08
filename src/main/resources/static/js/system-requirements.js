@@ -8,7 +8,7 @@ export async function checkSystemRequirements() {
         if (!data) {
             alert('Something went wrong. Please reload the page.');
         } else {
-            if(!data.areAllSystemRequirementsMet) {
+            if (!data.areAllSystemRequirementsMet) {
                 console.log("System requirements are not met");
                 systemMessage.classList.remove("hidden");
                 const contentDiv = document.getElementById('systemDetailsContent');
@@ -23,6 +23,20 @@ export async function checkSystemRequirements() {
     } catch (err) {
         console.error(err);
     }
+
+    // Check Video and Mic
+    checkMediaDevices().then(result => {
+        console.log("Camera available:", result.hasCamera);
+        console.log("Microphone available:", result.hasMicrophone);
+
+        if (!result.hasCamera || !result.hasMicrophone) {
+            document.getElementById("mediaDevicesMessage").innerHTML = `
+            <div class="alert alert-warning">
+                ⚠️ Your system does not have a ${!result.hasCamera ? 'camera' : ''}${!result.hasCamera && !result.hasMicrophone ? ' or ' : ''}${!result.hasMicrophone ? 'microphone' : ''}.
+            </div>`;
+            document.getElementById("mediaDevicesMessage").classList.remove("hidden");
+        }
+    });
 }
 
 export function checkSlowPromptResponse(promptResponse) {
@@ -41,5 +55,23 @@ export function checkSlowPromptResponse(promptResponse) {
     } else {
         console.log("Prompt execution is good!");
         promptMessage.classList.add("hidden");
+    }
+}
+
+async function checkMediaDevices() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+        console.warn("MediaDevices API not supported.");
+        return {hasCamera: false, hasMicrophone: false};
+    }
+
+    try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const hasCamera = devices.some(device => device.kind === "videoinput");
+        const hasMicrophone = devices.some(device => device.kind === "audioinput");
+
+        return {hasCamera, hasMicrophone};
+    } catch (err) {
+        console.error("Error checking media devices:", err);
+        return {hasCamera: false, hasMicrophone: false};
     }
 }

@@ -246,7 +246,6 @@ function showRecordingSection() {
     // Playback should not be visible until there is a recorded video
     playbackSection.classList.add("hidden");
     recordingPlaybackContainer.classList.remove("hidden");
-    recordBtn.disabled = false;
     videoPlaceholder.classList.remove("hidden");
 
     // Add fade-in effect
@@ -267,8 +266,10 @@ async function initCamera() {
         videoEl.srcObject = currentStream;
         videoEl.play(); // start preview
         videoEl.classList.remove("hidden");
+        recordBtn.disabled = false;
     } catch (err) {
         console.error("Could not access camera/microphone:", err);
+        recordBtn.disabled = true;
         alert("Please allow camera and microphone access.");
     }
 }
@@ -333,7 +334,6 @@ async function sendVideo(blob) {
             checkSlowPromptResponse(feedback.promptStats)
 
             feedbackSection.classList.remove("hidden");
-            startOverSection.classList.remove("hidden");
 
             feedbackEl.innerText = feedback.promptResponse || "No feedback returned";
 
@@ -383,6 +383,7 @@ async function sendVideo(blob) {
                 evaluationContainer.innerHTML =
                     "<p style='color: gray;'>No evaluation available yet.</p>";
             }
+            startOverSection.classList.remove("hidden");
         }
     } catch (err) {
         console.error(err);
