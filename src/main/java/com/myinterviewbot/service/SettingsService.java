@@ -31,6 +31,7 @@ public class SettingsService {
     private Settings settings;
     private final ObjectMapper objectMapper;
     private File storageFile;
+    private String aiModelFromConfig;
 
     private SettingsService() {
         this.settings = new Settings();
@@ -46,6 +47,7 @@ public class SettingsService {
 
     public void initData(final String aiProvider, final String aiModel, final String whisperProvider) throws IOException {
         LOGGER.info("initData");
+        aiModelFromConfig = aiModel;
         // Ensure base upload directory exists
         final File uploadsDir = new File("uploads/settings");
         if (!uploadsDir.exists() && !uploadsDir.mkdirs()) {
@@ -76,6 +78,13 @@ public class SettingsService {
 
     public void saveAiModels(final List<String> aiModels) {
         settings.setAiModels(aiModels);
+
+        // check if selected AI Model is in the list
+        if (!aiModels.contains(settings.getSelectedAiModel())) {
+            LOGGER.warn("Selected AI Model {} does not exist. Selected AI Model {} from config.", settings.getSelectedAiModel(), aiModelFromConfig);
+            settings.setSelectedAiModel(aiModelFromConfig);
+        }
+
         saveSettings(settings);
     }
 

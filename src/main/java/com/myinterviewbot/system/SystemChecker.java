@@ -45,11 +45,10 @@ public class SystemChecker {
     @Value("${ai.provider}")
     private String aiProvider;
 
-    @Value("${ai.model}")
-    private String aiModel;
-
     @Value("${whisper.provider}")
     private String whisperProvider;
+
+    private String aiModel;
 
     private String cpuMessage = "";
 
@@ -75,6 +74,8 @@ public class SystemChecker {
     }
 
     public SystemRequirements checkSystemRequirements() {
+        aiModel = SettingsService.getInstance().getSettings().getSelectedAiModel();
+
         final boolean cpuOk = checkCPU();
         systemRequirements.setCpuHasMinimumRequirements(cpuOk);
         final boolean ramOk = checkRAM();

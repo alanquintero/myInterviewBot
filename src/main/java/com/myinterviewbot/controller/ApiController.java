@@ -46,9 +46,11 @@ public class ApiController {
 
     @GetMapping("/requirements")
     public SystemRequirements checkSystemRequirements(final HttpSession session) {
-        LOGGER.info("Checking SystemRequirements");
         if (systemRequirements == null) {
+            LOGGER.info("Checking System Requirements...");
             systemRequirements = systemChecker.checkSystemRequirements();
+        } else {
+            LOGGER.info("System Requirements already checked.");
         }
         return systemRequirements;
     }

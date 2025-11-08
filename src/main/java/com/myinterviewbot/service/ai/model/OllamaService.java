@@ -7,9 +7,9 @@ package com.myinterviewbot.service.ai.model;
 import com.myinterviewbot.factory.PromptResponseFactory;
 import com.myinterviewbot.model.PromptExecutionResult;
 import com.myinterviewbot.model.PromptResponse;
+import com.myinterviewbot.service.SettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -29,9 +29,6 @@ public class OllamaService implements AIService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OllamaService.class);
 
-    @Value("${ai.model}")
-    private String aiModel;
-
     /**
      * Calls the Ollama AI model with a given prompt and returns the response.
      * The prompt is written directly to the process's standard input (STDIN)
@@ -42,6 +39,7 @@ public class OllamaService implements AIService {
      */
     @Override
     public PromptResponse executePrompt(final String prompt) {
+        final String aiModel = SettingsService.getInstance().getSettings().getSelectedAiModel();
         LOGGER.info("Running Ollama with model: {}", aiModel);
         LOGGER.info("Calling Ollama with the prompt: {}", prompt);
 
