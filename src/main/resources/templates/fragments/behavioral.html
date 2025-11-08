@@ -1,54 +1,42 @@
 <div th:fragment="behavioralSection" xmlns:th="http://www.thymeleaf.org">
 
-    <!-- Profession -->
-    <div class="mb-3 d-flex justify-content-between align-items-center">
-        <label for="inputProfession" class="form-label mb-0 fw-bold">Profession</label>
-    </div>
-    <input type="text" class="form-control" id="inputProfession" placeholder="e.g. Software Engineer">
-    <br>
-
-    <!-- Category -->
-    <div class="mb-4">
-        <label for="categorySelect" class="form-label fw-bold">Category (optional)</label>
-        <div class="d-flex align-items-center gap-2">
-            <select id="categorySelect" class="form-select w-auto">
-                <option value="" selected disabled>Select category</option>
-                <!-- Dynamically loaded with JS -->
-            </select>
-            <button id="categoryInfoBtn" class="btn btn-outline-info btn-sm" disabled>
-                <i class="bi bi-info-circle"></i> Info
-            </button>
+    <div class="border rounded p-3 mb-1">
+        <!-- Profession -->
+        <div class="mb-3 d-flex justify-content-between align-items-center">
+            <label for="inputProfession" class="form-label mb-0 fw-bold">Profession (default: Software Engineer)</label>
         </div>
-    </div>
+        <input type="text" class="form-control" id="inputProfession" placeholder="e.g. Software Engineer">
+        <br>
 
-    <!-- Difficulty -->
-    <div class="mb-4">
-        <label for="difficultySelect" class="form-label fw-bold">Difficulty (optional)</label>
-        <div class="d-flex align-items-center gap-2">
-            <select id="difficultySelect" class="form-select w-auto">
-                <option value="" selected disabled>Select difficulty</option>
-                <!-- Dynamically loaded with JS -->
-            </select>
-            <button id="difficultyInfoBtn" class="btn btn-outline-info btn-sm" disabled>
-                <i class="bi bi-info-circle"></i> Info
-            </button>
+        <!-- Category -->
+        <div class="mb-4">
+            <label for="categorySelect" class="form-label fw-bold">Category (optional)</label>
+            <div class="d-flex align-items-center gap-2">
+                <select id="categorySelect" class="form-select w-auto">
+                    <option value="" selected disabled>Select category</option>
+                    <!-- Dynamically loaded with JS -->
+                </select>
+                <button id="categoryInfoBtn" class="btn btn-outline-info btn-sm" disabled>
+                    <i class="bi bi-info-circle"></i> Info
+                </button>
+            </div>
         </div>
-    </div>
 
-    <!-- Question -->
-    <div class="mb-3 d-flex justify-content-between align-items-center">
-        <label for="inputQuestion" class="form-label mb-0 fw-bold">Question</label>
-        <button id="commonQuestionsBtn" type="button" class="btn btn-outline-info btn-sm"
-                data-bs-toggle="modal"
-                data-bs-target="#commonQuestionsModal">
-            <i class="bi bi-info-circle"></i> Common Questions
-        </button>
-    </div>
-    <textarea class="form-control" id="inputQuestion" rows="3"
-              placeholder="e.g. Tell me about a time you faced a challenge at work."></textarea>
+        <!-- Difficulty -->
+        <div class="mb-4">
+            <label for="difficultySelect" class="form-label fw-bold">Difficulty (optional)</label>
+            <div class="d-flex align-items-center gap-2">
+                <select id="difficultySelect" class="form-select w-auto">
+                    <option value="" selected disabled>Select difficulty</option>
+                    <!-- Dynamically loaded with JS -->
+                </select>
+                <button id="difficultyInfoBtn" class="btn btn-outline-info btn-sm" disabled>
+                    <i class="bi bi-info-circle"></i> Info
+                </button>
+            </div>
+        </div>
 
-    <!-- Buttons section -->
-    <div id="buttonsSection" class="input-group mb-3">
+        <!-- Generate AI Question -->
         <button id="generateQuestionBtn"
                 class="btn btn-primary mb-3 d-flex align-items-center justify-content-center"
                 title="AI generates a Question">
@@ -56,19 +44,36 @@
             <img th:src="@{/img/button/ai-stars.png}" alt="AI Icon"
                  style="width: 20px; height: 20px; margin-right: 8px;">
         </button>
-        <button type="button" class="btn btn-info mb-3 d-flex align-items-center justify-content-center"
-                data-bs-toggle="modal" data-bs-target="#infoModal">Info
-        </button>
-        <button id="resetBtn"
-                class="btn btn-warning mb-3 d-flex align-items-center justify-content-center"
-                title="Reset the question">
-            Reset
-        </button>
-        <button id="readyBtn"
-                class="btn btn-success mb-3 d-flex align-items-center justify-content-center"
-                title="Click me when you are ready to answer the question">
-            Ready!
-        </button>
+        <hr>
+
+        <!-- Question -->
+        <div class="mb-3 d-flex justify-content-between align-items-center">
+            <label for="inputQuestion" class="form-label mb-0 fw-bold">Question</label>
+            <button id="commonQuestionsBtn" type="button" class="btn btn-outline-info btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#commonQuestionsModal">
+                <i class="bi bi-info-circle"></i> Common Questions
+            </button>
+        </div>
+        <textarea class="form-control" id="inputQuestion" rows="3"
+                  placeholder="e.g. Tell me about a time you faced a challenge at work."></textarea>
+
+        <!-- Buttons section -->
+        <div id="buttonsSection" class="input-group mb-3">
+            <button type="button" class="btn btn-info mb-3 d-flex align-items-center justify-content-center"
+                    data-bs-toggle="modal" data-bs-target="#infoModal">Info
+            </button>
+            <button id="resetBtn"
+                    class="btn btn-warning mb-3 d-flex align-items-center justify-content-center"
+                    title="Reset the question">
+                Reset
+            </button>
+            <button id="readyBtn"
+                    class="btn btn-success mb-3 d-flex align-items-center justify-content-center"
+                    title="Click me when you are ready to answer the question">
+                Ready!
+            </button>
+        </div>
     </div>
 
     <!-- Loading GIF -->
@@ -157,7 +162,7 @@
     </div>
     <!-- Modals -->
 
-    <script th:src="@{/js/behavior.js}" type="module"></script>
+    <script th:src="@{/js/behavioral.js}" type="module"></script>
     <script th:src="@{/js/main.js}" type="module"></script>
     <script type="module">
         import {checkSystemRequirements} from '/js/system-requirements.js';
