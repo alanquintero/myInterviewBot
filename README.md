@@ -33,6 +33,13 @@ Make sure you have the following installed before running the app:
 | **FFmpeg**         | Required by Whisper for audio processing                                       | macOS: `brew install ffmpeg` <br> Ubuntu: `sudo apt install ffmpeg` | ~200 MB              |
 | **Whisper**        | Speech-to-text transcription                                                   | `pip install -U openai-whisper`                                     | ~1.5 GB              |
 
+💡 Recommended Setup
+For the best experience, use a Mac with Apple Silicon (M1/M2/M3) or a machine with a dedicated GPU.
+These devices handle local LLM inference and Whisper audio processing much faster and more efficiently.
+
+The app is also optimized for Google Chrome, which provides the most reliable camera, microphone, and recording support
+compared to other browsers.
+
 ---
 
 ## ⚙️ Installation & Setup
@@ -158,6 +165,20 @@ ollama list
 7. Visit the **My Interviews** page anytime to view all your past practice sessions.
    ![My Interviews](docs/my-interviews.gif)
 
+8. Settings: You can customize the app from the Settings page, where you can:
+    - Select the AI model to use
+    - Choose between audio-only or video + audio recording
+    - Set your default profession
+    - Toggle visibility for question category and difficulty
+      ![Settings](docs/settings.gif)
+
+9. System Checks: The app automatically checks your system hardware (camera, microphone, and processing capability).
+   ![Warning](docs/warnings.png)
+
+10. If your device doesn’t meet the minimum requirements, you’ll see a system alert warning that performance might be
+    limited.
+    ![Warning-details](docs/warning-details.png)
+
 ---
 
 ## 🧭 Roadmap / Future Development
@@ -170,8 +191,6 @@ ollama list
 - [ ] 📄 Resume Interview Mode — tailor questions based on uploaded resume
 - [ ] 💻 Technical Interview Mode — technical questions
 - [ ] 🤝 Mock Interview Mode – A session to practice common questions asked in job interviews
-- [ ] 🔁 Continuous Interview Mode - Seamlessly move from feedback to the next question to simulate a complete interview
-  session
 - [ ] 📊 Progress Analytics — graphs for improvement over time
 - [ ] 🤖 Add more AI providers (e.g., OpenAI GPT-4, Claude, Gemini)
 - [ ] 🗣️ Text-to-Speech for AI questions and feedback
