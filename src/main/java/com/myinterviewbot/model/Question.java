@@ -17,6 +17,13 @@ public class Question {
 
     private String difficulty;
 
+    public Question() {
+    }
+
+    public Question(final String question) {
+        this.question = question;
+    }
+
     public Question(final String question, final String category, final String difficulty) {
         this.question = question;
         this.category = category;
@@ -45,5 +52,14 @@ public class Question {
 
     public void setDifficulty(final String difficulty) {
         this.difficulty = difficulty;
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "question='" + question + '\'' +
+                ", category='" + category + '\'' +
+                ", difficulty='" + difficulty + '\'' +
+                '}';
     }
 }

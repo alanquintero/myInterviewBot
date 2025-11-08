@@ -96,10 +96,14 @@ async function generateQuestion(profession) {
     loading.classList.remove("hidden"); // show loading GIF
 
     try {
+        const question = {
+            category: categorySelect.value,
+            difficulty: difficultySelect.value,
+        }
+
         const promptRequest = {
             profession: profession,
-            category: categorySelect.value,
-            difficulty: difficultySelect.value
+            question: question,
         };
 
         await fetch("/prompt/v1/generateQuestion", {
@@ -426,10 +430,14 @@ async function sendVideo(blob) {
 
 // Call API to generate feedback
 async function generateFeedback(transcript) {
+    const question = {
+        question: inputQuestion.value,
+    }
+
     const promptRequest = {
         transcript: transcript,
         profession: inputProfession.value,
-        question: inputQuestion.value,
+        question: question,
     };
 
     return await fetch("/prompt/v1/feedback", {
@@ -458,11 +466,17 @@ async function generateFeedback(transcript) {
 
 // Call API to generate evaluation
 async function generateEvaluation(transcript, feedback) {
+    const question = {
+        question: inputQuestion.value,
+        category: categorySelect.value,
+        difficulty: difficultySelect.value,
+    }
+
     const promptRequest = {
         transcript: transcript,
         feedback: feedback,
         profession: inputProfession.value,
-        question: inputQuestion.value,
+        question: question,
     };
 
     return await fetch("/prompt/v1/evaluation", {

@@ -4,10 +4,7 @@
  */
 package com.myinterviewbot.service;
 
-import com.myinterviewbot.model.Evaluation;
-import com.myinterviewbot.model.PromptRequest;
-import com.myinterviewbot.model.PromptResponse;
-import com.myinterviewbot.model.Transcript;
+import com.myinterviewbot.model.*;
 import com.myinterviewbot.service.ai.model.AIService;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +36,7 @@ public class PromptServiceTest {
         final String profession = "software engineer";
         final PromptRequest input = new PromptRequest();
         input.setProfession(profession);
+        input.setQuestion(new Question());
         final String expectedQuestion = "Tell me about a time you faced a challenge.";
         final PromptResponse expectedPromptResponse = new PromptResponse(null, expectedQuestion);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
@@ -63,6 +61,7 @@ public class PromptServiceTest {
         final String profession = "software engineer";
         final PromptRequest input = new PromptRequest();
         input.setProfession(profession);
+        input.setQuestion(new Question());
         final String expectedQuestion = "Tell me about a time you faced a challenge.";
         final PromptResponse expectedPromptResponse = new PromptResponse(null, expectedQuestion);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
@@ -87,6 +86,7 @@ public class PromptServiceTest {
         final String profession = "vet";
         final PromptRequest input = new PromptRequest();
         input.setProfession(profession);
+        input.setQuestion(new Question());
         final String expectedQuestion = "Tell me about a time you faced a challenge.";
         final PromptResponse expectedPromptResponse = new PromptResponse(null, expectedQuestion);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
@@ -111,6 +111,7 @@ public class PromptServiceTest {
         final String profession = "software engineer";
         final PromptRequest input = new PromptRequest();
         input.setProfession(profession);
+        input.setQuestion(new Question());
         final String expectedQuestion = "Tell me about a time you faced a challenge Tell me about a time you faced a challenge Tell me about a time you faced a challenge Tell me about a time you faced a challenge.";
         final PromptResponse expectedPromptResponse = new PromptResponse(null, expectedQuestion);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
@@ -136,7 +137,7 @@ public class PromptServiceTest {
         final Transcript transcript = new Transcript("transcript", "");
         final PromptRequest input = new PromptRequest();
         input.setProfession(profession);
-        input.setQuestion(question);
+        input.setQuestion(new Question(question));
         input.setTranscript(transcript);
         final String expectedFeedback = "Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience.";
         final PromptResponse expectedPromptResponse = new PromptResponse(null, expectedFeedback);
@@ -161,7 +162,7 @@ public class PromptServiceTest {
         final Transcript transcript = new Transcript(transcriptTxt, "");
         final PromptRequest input = new PromptRequest();
         input.setProfession(profession);
-        input.setQuestion(question);
+        input.setQuestion(new Question(question));
         input.setTranscript(transcript);
         final String expectedFeedback = "Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience. Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience. Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience. Good example of problem-solving and teamwork. Could be improved by including a measurable result or what was learned from the experience.";
         final PromptResponse expectedPromptResponse = new PromptResponse(null, expectedFeedback);
@@ -185,7 +186,7 @@ public class PromptServiceTest {
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
         final PromptRequest input = new PromptRequest();
         input.setProfession("profession");
-        input.setQuestion("question");
+        input.setQuestion(new Question("question"));
         input.setTranscript(new Transcript("transcript", ""));
 
         // When
@@ -216,7 +217,7 @@ public class PromptServiceTest {
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
         final PromptRequest input = new PromptRequest();
         input.setProfession("profession");
-        input.setQuestion("question");
+        input.setQuestion(new Question("question"));
         input.setTranscript(new Transcript("transcript", ""));
 
         // When

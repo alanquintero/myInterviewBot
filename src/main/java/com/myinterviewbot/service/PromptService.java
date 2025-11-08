@@ -37,20 +37,21 @@ public class PromptService {
 
     public PromptResponse generateQuestion(final PromptRequest promptRequest, final HttpSession session) {
         LOGGER.info("Generating question using next input: {}", promptRequest);
-        if (promptRequest.getProfession() == null || promptRequest.getProfession().isEmpty()) {
-            LOGGER.warn("Profession is null or empty");
+        if (promptRequest.getProfession() == null || promptRequest.getProfession().isEmpty() || promptRequest.getQuestion() == null) {
+            LOGGER.warn("Some inputs are null or empty");
             return PromptResponseFactory.createEmptyResponse();
         }
 
+        final Question question = promptRequest.getQuestion();
         final String difficulty;
-        if (promptRequest.getDifficulty() != null && !promptRequest.getDifficulty().isEmpty()) {
-            difficulty = promptRequest.getDifficulty();
+        if (question.getDifficulty() != null && !question.getDifficulty().isEmpty()) {
+            difficulty = question.getDifficulty();
         } else {
             difficulty = "";
         }
         final String category;
-        if (promptRequest.getCategory() != null && !promptRequest.getCategory().isEmpty()) {
-            category = " focused on " + promptRequest.getCategory() + ". ";
+        if (question.getCategory() != null && !question.getCategory().isEmpty()) {
+            category = " focused on " + question.getCategory() + ". ";
         } else {
             category = ". ";
         }
@@ -81,12 +82,12 @@ public class PromptService {
             This process will be repeated a maximum of three time, hope the model can generate a good question.
         */
         PromptResponse promptResponse = aiService.executePrompt(prompt);
-        String question = promptResponse.getPromptResponse().toString();
-        if (question.isBlank()) {
+        String questionResponse = promptResponse.getPromptResponse().toString();
+        if (questionResponse.isBlank()) {
             return promptResponse;
         }
 
-        int words = Utils.countWords(question);
+        int words = Utils.countWords(questionResponse);
         if (words > QUESTION_MAX_NUMBER_OF_WORDS) {
             LOGGER.warn("⚠︎⚠︎⚠︎ Question has more than " + QUESTION_MAX_NUMBER_OF_WORDS + " words, asking model to generate another question...");
             int requestNewAnswer = 0;
@@ -105,8 +106,8 @@ public class PromptService {
 
                 // Extracting the question because AI sometimes gives an explanation of what it did to shorten the question.
                 promptResponse = aiService.executePrompt(prompt);
-                question = Utils.extractQuestion(promptResponse.getPromptResponse().toString());
-                words = Utils.countWords(question);
+                questionResponse = Utils.extractQuestion(promptResponse.getPromptResponse().toString());
+                words = Utils.countWords(questionResponse);
                 if (words <= QUESTION_MAX_NUMBER_OF_WORDS) {
                     break;
                 } else {
@@ -114,20 +115,20 @@ public class PromptService {
                 }
             }
         }
-        words = Utils.countWords(question);
+        words = Utils.countWords(questionResponse);
         if (words > QUESTION_MAX_NUMBER_OF_WORDS) {
             LOGGER.warn("⚠︎⚠︎⚠︎ The question has more than " + QUESTION_MAX_NUMBER_OF_WORDS + " words!");
         } else {
             LOGGER.info("Number of words in the question: {}", words);
         }
 
-        promptResponse.setPromptResponse(Utils.removeQuotes(question));
+        promptResponse.setPromptResponse(Utils.removeQuotes(questionResponse));
         return promptResponse;
     }
 
     public PromptResponse generateFeedback(final PromptRequest promptRequest) {
         if (promptRequest.getProfession() == null || promptRequest.getProfession().isEmpty()
-                || promptRequest.getQuestion() == null || promptRequest.getQuestion().isEmpty()
+                || promptRequest.getQuestion() == null || promptRequest.getQuestion().getQuestion() == null || promptRequest.getQuestion().getQuestion().isEmpty()
                 || promptRequest.getTranscript() == null || promptRequest.getTranscript().getTranscript() == null
                 || promptRequest.getTranscript().getTranscript().isEmpty()) {
             LOGGER.warn("Some inputs are null or empty");
@@ -137,7 +138,7 @@ public class PromptService {
         String prompt = "You are a technical hiring manager. Evaluate the following interview answer, focusing on clarity, structure, relevance, and communication style. "
                 + "Provide actionable feedback in 3–4 concise sentences, output only the feedback, no extra commentary. "
                 + "Candidate profession: " + promptRequest.getProfession() + ". "
-                + "Question: " + promptRequest.getQuestion() + ". "
+                + "Question: " + promptRequest.getQuestion().getQuestion() + ". "
                 + "Candidate answer: " + promptRequest.getTranscript().getTranscript();
 
         PromptResponse promptResponse = aiService.executePrompt(prompt);
@@ -182,7 +183,7 @@ public class PromptService {
 
     public PromptResponse generateEvaluation(final PromptRequest promptRequest) {
         if (promptRequest.getProfession() == null || promptRequest.getProfession().isEmpty()
-                || promptRequest.getQuestion() == null || promptRequest.getQuestion().isEmpty()
+                || promptRequest.getQuestion() == null || promptRequest.getQuestion().getQuestion() == null || promptRequest.getQuestion().getQuestion().isEmpty()
                 || promptRequest.getTranscript() == null || promptRequest.getTranscript().getTranscript() == null
                 || promptRequest.getTranscript().getTranscript().isEmpty()) {
             LOGGER.warn("Some inputs are null or empty");
@@ -191,7 +192,7 @@ public class PromptService {
 
         final String jsonParameters = "{clarityScore:  int, clarityFeedback: string, structureScore: int, structureFeedback: string, relevanceScore: int, relevanceFeedback: string, communicationScore: int, communicationFeedback: string, depthScore: int, depthFeedback: string}";
 
-        final String prompt = "You are a technical hiring manager. Evaluate the following " + promptRequest.getProfession() + " candidate's response to a behavioral interview question: " + promptRequest.getQuestion()
+        final String prompt = "You are a technical hiring manager. Evaluate the following " + promptRequest.getProfession() + " candidate's response to a behavioral interview question: " + promptRequest.getQuestion().getQuestion()
                 + " Parameters to evaluate (score each from 1 to 10, 10 = excellent): "
                 + " 1. Clarity: How understandable the answer is, considering content and depth. Minimal answers get low scores. "
                 + " 2. Structure: Logical flow of the answer; use of STAR or other coherent structure. Single sentences or unorganized responses score low. "

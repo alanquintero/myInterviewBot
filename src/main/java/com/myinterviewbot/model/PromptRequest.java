@@ -12,9 +12,7 @@ package com.myinterviewbot.model;
 public class PromptRequest {
 
     private String profession;
-    private String category;
-    private String difficulty;
-    private String question;
+    private Question question;
     private Transcript transcript;
     private String feedback;
 
@@ -26,27 +24,11 @@ public class PromptRequest {
         this.profession = profession;
     }
 
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(final String category) {
-        this.category = category;
-    }
-
-    public String getDifficulty() {
-        return difficulty;
-    }
-
-    public void setDifficulty(final String difficulty) {
-        this.difficulty = difficulty;
-    }
-
-    public String getQuestion() {
+    public Question getQuestion() {
         return question;
     }
 
-    public void setQuestion(final String question) {
+    public void setQuestion(final Question question) {
         this.question = question;
     }
 
@@ -68,11 +50,9 @@ public class PromptRequest {
 
     @Override
     public String toString() {
-        return "InterviewInputParams{" +
+        return "PromptRequest{" +
                 "profession='" + profession + '\'' +
-                ", category='" + category + '\'' +
-                ", difficulty='" + difficulty + '\'' +
-                ", question='" + question + '\'' +
+                ", question=" + question +
                 ", transcript=" + transcript +
                 ", feedback='" + feedback + '\'' +
                 '}';

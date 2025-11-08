@@ -61,7 +61,11 @@ export async function loadInterviews(page = 1) {
             card.innerHTML = `
                 <p><strong>Date:</strong> ${formattedTime}</p>
                 <p><strong>Profession:</strong> ${interview.profession}</p>
-                <p><strong>Question:</strong> ${interview.question}</p>
+                
+                ${interview.question?.question ? `<p><strong>Question:</strong> ${interview.question.question}</p>` : ''}
+                ${interview.question?.category ? `<p><strong>Category:</strong> ${interview.question.category}</p>` : ''}
+                ${interview.question?.difficulty ? `<p><strong>Difficulty:</strong> ${interview.question.difficulty}</p>` : ''}
+                
                 <p><strong>Answer:</strong> ${interview.answer}</p>
                 <p><strong>Feedback:</strong> ${interview.feedback}</p>
             

@@ -11,7 +11,6 @@ import com.myinterviewbot.utils.Utils;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -84,7 +83,7 @@ public class PromptController {
         // Saves the interview entry
         final long timestamp = Utils.getTimestamp(promptRequest.getTranscript().getFileName());
         final String videoUrl = Utils.getVideoUrl(promptRequest.getTranscript().getFileName());
-        interviewDataService.addInterview(timestamp, new InterviewEntry(timestamp, InterviewType.BEHAVIORAL, promptRequest.getProfession(), new Question(promptRequest.getQuestion(), promptRequest.getCategory(), promptRequest.getDifficulty()), promptRequest.getTranscript().getTranscript(), promptRequest.getFeedback(), videoUrl, evaluation));
+        interviewDataService.addInterview(timestamp, new InterviewEntry(timestamp, InterviewType.BEHAVIORAL, promptRequest.getProfession(), promptRequest.getQuestion(), promptRequest.getTranscript().getTranscript(), promptRequest.getFeedback(), videoUrl, evaluation));
 
         return promptResponse;
     }
