@@ -52,6 +52,11 @@ public class SettingsController {
             if (updatedSettings.getSelectedAiModel() != null) {
                 settings.setSelectedAiModel(updatedSettings.getSelectedAiModel());
             }
+            if (updatedSettings.getDefaultProfession() != null) {
+                settings.setDefaultProfession(updatedSettings.getDefaultProfession());
+            }
+            settings.setShowQuestionCategory(updatedSettings.isShowQuestionCategory());
+            settings.setShowQuestionDifficulty(updatedSettings.isShowQuestionDifficulty());
 
             settingsService.saveSettings(settings);
             return ResponseEntity.ok("Settings updated successfully.");

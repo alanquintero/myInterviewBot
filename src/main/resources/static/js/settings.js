@@ -42,10 +42,10 @@ export async function loadSettings() {
             <div class="card p-3 mt-3 shadow-sm">
             <label>System settings</label>
                 <ul class="list-group list-group-flush text-start">
-                    <li class="list-group-item"><strong>AI provider:</strong> ${settings.aiProvider}</li>
-                    <li class="list-group-item"><strong>AI model:</strong> ${settings.selectedAiModel || 'N/A'}</li>
-                    <li class="list-group-item"><strong>Whisper provider:</strong> ${settings.whisperProvider}</li>
-                    <li class="list-group-item"><strong>Operating System:</strong> ${settings.operatingSystem}</li>
+                    <li class="list-group-item"><strong>AI provider:</strong> ${settings.systemSettings.aiProvider}</li>
+                    <li class="list-group-item"><strong>AI model:</strong> ${settings.systemSettings.selectedAiModel || 'N/A'}</li>
+                    <li class="list-group-item"><strong>Whisper provider:</strong> ${settings.systemSettings.whisperProvider}</li>
+                    <li class="list-group-item"><strong>Operating System:</strong> ${settings.systemSettings.operatingSystem}</li>
                 </ul>
             </div>
         `;
@@ -57,7 +57,13 @@ export async function loadSettings() {
 
 export async function setupChangeSettingsSection() {
     const section = document.getElementById('changeSettingsSection');
+    // System settings
     const aiModelSelect = document.getElementById('aiModelSelect');
+    // App settings
+    const defaultProfession = document.getElementById('defaultProfession');
+    const showCategorySwitch = document.getElementById('showCategorySwitch');
+    const showDifficultySwitch = document.getElementById('showDifficultySwitch');
+
     const messageContainer = document.getElementById('changeSettingsMessage');
     const alertBox = messageContainer.querySelector('.alert');
     const saveBtn = document.getElementById('saveSettingsBtn');
@@ -67,29 +73,43 @@ export async function setupChangeSettingsSection() {
         const response = await fetch('/settings/v1/all');
         const settings = await response.json();
 
-        if (!settings.aiModels || settings.aiModels.length === 0) {
+        if (!settings.systemSettings.aiModels || settings.systemSettings.aiModels.length === 0) {
             section.style.display = 'none';
             return;
         }
 
+        // System Settings
         // Populate AI model dropdown
-        aiModelSelect.innerHTML = settings.aiModels
-            .map(model => `<option value="${model}" ${model === settings.selectedAiModel ? 'selected' : ''}>${model}</option>`)
+        aiModelSelect.innerHTML = settings.systemSettings.aiModels
+            .map(model => `<option value="${model}" ${model === settings.systemSettings.selectedAiModel ? 'selected' : ''}>${model}</option>`)
             .join('');
+
+        // App Settings
+        // Populate Profession
+        defaultProfession.value = settings.appSettings.defaultProfession ?? 'Software Engineer';
+        // Switches
+        showCategorySwitch.checked = settings.appSettings.showQuestionCategory;
+        showDifficultySwitch.checked = settings.appSettings.showQuestionDifficulty;
 
         section.style.display = 'block';
 
         // Save button logic
         saveBtn.addEventListener('click', async () => {
             const updatedSettings = {
-                selectedAiModel: aiModelSelect.value,
-                // Add more fields here later when you expand settings
+                systemSettings: {
+                    selectedAiModel: aiModelSelect.value,
+                },
+                appSettings: {
+                    defaultProfession: defaultProfession.value,
+                    showQuestionCategory: showCategorySwitch.checked,
+                    showDifficultySwitch: showDifficultySwitch.checked,
+                }
             };
 
             try {
                 const response = await fetch('/settings/v1/update', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(updatedSettings),
                 });
 
@@ -106,7 +126,11 @@ export async function setupChangeSettingsSection() {
 
         // Cancel button logic
         cancelBtn.addEventListener('click', () => {
-            aiModelSelect.value = settings.selectedAiModel;
+            aiModelSelect.value = settings.systemSettings.selectedAiModel;
+            defaultProfession.value = settings.appSettings.defaultProfession ?? 'Software Engineer';
+            showCategorySwitch.checked = settings.appSettings.showQuestionCategory;
+            showDifficultySwitch.checked = settings.appSettings.showQuestionDifficulty;
+
             showMessage('Changes canceled.', 'secondary');
         });
 
