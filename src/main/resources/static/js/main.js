@@ -189,6 +189,8 @@ function reset() {
     transcriptEl.innerText = "";
     feedbackEl.innerText = "";
     evaluationContainer.innerHTML = "";
+    categorySelect.value = "";
+    difficultySelect.value = "";
     recordedChunks = [];
     timerInterval = null;
     mediaRecorder = null;
@@ -542,6 +544,8 @@ function setElementsDisabled(disabled) {
     resetBtn.disabled = disabled;
     startOverBtn.disabled = disabled;
     commonQuestionsBtn.disabled = disabled;
+    categorySelect.disabled = disabled;
+    difficultySelect.disabled = disabled;
 }
 
 // Enables/disables reset buttons
