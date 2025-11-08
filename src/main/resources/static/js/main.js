@@ -330,6 +330,7 @@ async function sendVideo(blob) {
             loadingFeedbackText.innerText = "Loading feedback...";
 
             const feedback = await generateFeedback(transcript.transcript);
+            checkSlowPromptResponse(feedback.promptStats)
 
             feedbackSection.classList.remove("hidden");
             resetSection.classList.remove("hidden");
@@ -338,6 +339,7 @@ async function sendVideo(blob) {
 
             loadingFeedbackText.innerText = "Loading evaluation...";
             const evaluationResponse = await generateEvaluation(transcript, feedback.promptResponse);
+            checkSlowPromptResponse(evaluationResponse.promptStats)
 
             // Evaluation
             if (evaluationResponse?.promptResponse) {

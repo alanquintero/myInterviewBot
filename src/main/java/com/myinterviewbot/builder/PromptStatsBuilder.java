@@ -6,6 +6,8 @@ package com.myinterviewbot.builder;
 
 import com.myinterviewbot.model.PromptExecutionResult;
 import com.myinterviewbot.model.PromptStats;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Builder class for creating instances of {@link PromptStats}.
@@ -18,6 +20,8 @@ import com.myinterviewbot.model.PromptStats;
  * @author Alan Quintero
  */
 public class PromptStatsBuilder {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PromptStatsBuilder.class);
 
     private static final int SLOW_RESPONSE_SECONDS_THRESHOLD = 80;
 
@@ -42,17 +46,22 @@ public class PromptStatsBuilder {
 
     public PromptStats build() {
         PromptStats stats = new PromptStats();
+        LOGGER.warn("setExecutedSuccessfully({})", executedSuccessfully);
+        LOGGER.warn("setSecondsTakenToRespondPrompt({})", secondsTakenToRespondPrompt);
         stats.setExecutedSuccessfully(executedSuccessfully);
         stats.setSecondsTakenToRespondPrompt(secondsTakenToRespondPrompt);
         if (!executedSuccessfully) {
             stats.setReasonExecutionFailed(reasonExecutionFailed);
+            LOGGER.warn("setReasonExecutionFailed({})", reasonExecutionFailed);
             if (!PromptExecutionResult.EMPTY_RESULT.equals(reasonExecutionFailed)) {
                 stats.setExceptionDetected(true);
+                LOGGER.warn("setExceptionDetected(true)");
             }
         }
 
         // auto-compute derived flag
         stats.setSlowPromptResponse(secondsTakenToRespondPrompt >= SLOW_RESPONSE_SECONDS_THRESHOLD);
+        LOGGER.warn("setSlowPromptResponse({})", stats.isSlowPromptResponse());
         return stats;
     }
 }

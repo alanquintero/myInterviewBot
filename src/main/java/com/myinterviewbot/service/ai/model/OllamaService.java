@@ -126,11 +126,11 @@ public class OllamaService implements AIService {
             if (rawResult.isEmpty() || exitValue != 0) {
                 if (exitValue != 0) {
                     LOGGER.error("Ollama process exited with non-zero code: {}", exitValue);
+                    return PromptResponseFactory.createFailedResponse(null, PromptExecutionResult.EXCEPTION + " -> Ollama exit code: " + exitValue, duration);
                 } else {
                     LOGGER.warn("Ollama returned empty output.");
+                    return PromptResponseFactory.createFailedResponse("", PromptExecutionResult.EMPTY_RESULT, duration);
                 }
-
-                return PromptResponseFactory.createFailedResponse("", PromptExecutionResult.EMPTY_RESULT, duration);
             }
 
             /*
