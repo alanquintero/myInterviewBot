@@ -2,7 +2,7 @@
  * Copyright 2025 Alan Quintero
  * Source: https://github.com/alanquintero/myInterviewBot
  */
-package com.myinterviewbot.model;
+package com.myinterviewbot.model.settings;
 
 import java.util.List;
 
@@ -60,6 +60,14 @@ public class Settings {
 
     public void setShowQuestionDifficulty(final boolean showQuestionDifficulty) {
         this.appSettings.setShowQuestionDifficulty(showQuestionDifficulty);
+    }
+
+    public String getRecordingMode() {
+        return systemSettings.getRecordingMode();
+    }
+
+    public void setRecordingMode(final String recordingMode) {
+        this.systemSettings.setRecordingMode(recordingMode);
     }
 
     public String getAiProvider() {

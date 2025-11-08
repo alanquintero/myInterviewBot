@@ -2,7 +2,7 @@
  * Copyright 2025 Alan Quintero
  * Source: https://github.com/alanquintero/myInterviewBot
  */
-package com.myinterviewbot.model;
+package com.myinterviewbot.model.settings;
 
 /**
  * DTO class to return current App Settings.

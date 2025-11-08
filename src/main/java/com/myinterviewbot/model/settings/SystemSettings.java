@@ -2,7 +2,7 @@
  * Copyright 2025 Alan Quintero
  * Source: https://github.com/alanquintero/myInterviewBot
  */
-package com.myinterviewbot.model;
+package com.myinterviewbot.model.settings;
 
 import java.util.List;
 
@@ -22,6 +22,8 @@ public class SystemSettings {
     private String whisperProvider;
 
     private String operatingSystem;
+
+    private String recordingMode = "video";
 
     public SystemSettings() {
     }
@@ -66,4 +68,11 @@ public class SystemSettings {
         this.operatingSystem = operatingSystem;
     }
 
+    public String getRecordingMode() {
+        return recordingMode;
+    }
+
+    public void setRecordingMode(final String recordingMode) {
+        this.recordingMode = recordingMode;
+    }
 }

@@ -5,7 +5,7 @@
 package com.myinterviewbot.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.myinterviewbot.model.Settings;
+import com.myinterviewbot.model.settings.Settings;
 import com.myinterviewbot.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

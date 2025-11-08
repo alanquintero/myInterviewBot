@@ -40,7 +40,9 @@ export async function loadSettings() {
 
         settingsContainer.innerHTML = `
             <div class="card p-3 mt-3 shadow-sm">
-            <label>System settings</label>
+                <h4 class="card-title text-center mb-4 text-primary fw-semibold">
+                    System Information
+                </h4>
                 <ul class="list-group list-group-flush text-start">
                     <li class="list-group-item"><strong>AI provider:</strong> ${settings.systemSettings.aiProvider}</li>
                     <li class="list-group-item"><strong>AI model:</strong> ${settings.systemSettings.selectedAiModel || 'N/A'}</li>
@@ -60,6 +62,8 @@ export async function setupChangeSettingsSection() {
     // System settings
     const aiModelSelect = document.getElementById('aiModelSelect');
     // App settings
+    const recordingHint = document.getElementById('recordingHint');
+    const recordingModeSelect = document.getElementById('recordingModeSelect');
     const defaultProfession = document.getElementById('defaultProfession');
     const showCategorySwitch = document.getElementById('showCategorySwitch');
     const showDifficultySwitch = document.getElementById('showDifficultySwitch');
@@ -78,13 +82,35 @@ export async function setupChangeSettingsSection() {
             return;
         }
 
-        // System Settings
+        // ******* System Settings *******
         // Populate AI model dropdown
         aiModelSelect.innerHTML = settings.systemSettings.aiModels
             .map(model => `<option value="${model}" ${model === settings.systemSettings.selectedAiModel ? 'selected' : ''}>${model}</option>`)
             .join('');
 
-        // App Settings
+        // Load recording mode
+        if (recordingModeSelect && settings.systemSettings?.recordingMode) {
+            recordingModeSelect.value = settings.systemSettings.recordingMode;
+        }
+
+        // Check for camera availability
+        if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const hasCamera = devices.some(d => d.kind === 'videoinput');
+
+            if (!hasCamera) {
+                // Automatically force audio-only mode
+                recordingModeSelect.value = 'audio';
+                recordingModeSelect.disabled = true;
+                recordingHint.textContent = 'Camera not detected. Using Microphone only.';
+            } else {
+                recordingHint.textContent = '';
+            }
+        }
+
+
+        // ******* App Settings *******
+
         // Populate Profession
         defaultProfession.value = settings.appSettings.defaultProfession ?? 'Software Engineer';
         defaultProfession.placeholder = "e.g. " + defaultProfession.value;
@@ -99,6 +125,7 @@ export async function setupChangeSettingsSection() {
             const updatedSettings = {
                 systemSettings: {
                     selectedAiModel: aiModelSelect.value,
+                    recordingMode: recordingModeSelect.value,
                 },
                 appSettings: {
                     defaultProfession: defaultProfession.value ?? 'Software Engineer',
@@ -117,7 +144,7 @@ export async function setupChangeSettingsSection() {
                 if (response.ok) {
                     showMessage('Settings updated successfully.', 'success');
 
-                    if(!defaultProfession.value) {
+                    if (!defaultProfession.value) {
                         defaultProfession.value = 'Software Engineer';
                     }
                 } else {

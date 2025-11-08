@@ -4,14 +4,13 @@
  */
 package com.myinterviewbot.controller;
 
-import com.myinterviewbot.model.AppSettings;
-import com.myinterviewbot.model.Settings;
+import com.myinterviewbot.model.settings.AppSettings;
+import com.myinterviewbot.model.settings.Settings;
 import com.myinterviewbot.service.InterviewDataService;
 import com.myinterviewbot.service.SettingsService;
 import com.myinterviewbot.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +60,11 @@ public class SettingsController {
             // Update only known fields
             if (updatedSettings.getSelectedAiModel() != null) {
                 settings.setSelectedAiModel(updatedSettings.getSelectedAiModel());
+            }
+            if (updatedSettings.getRecordingMode() != null && !updatedSettings.getRecordingMode().isEmpty()) {
+                settings.setRecordingMode(updatedSettings.getRecordingMode());
+            } else {
+                settings.setRecordingMode("video");
             }
             if (updatedSettings.getDefaultProfession() != null && !updatedSettings.getDefaultProfession().isEmpty()) {
                 settings.setDefaultProfession(updatedSettings.getDefaultProfession());

@@ -8,43 +8,92 @@
             <div id="settingsContainer" class="mb-4 text-center"></div>
 
             <!-- Change Settings -->
-            <div id="changeSettingsSection" class="card shadow-sm mx-auto mb-4"
-                 style="max-width: 1000px; display: none;">
-                <div class="card-body text-center">
-                    <h5 class="card-title mb-3">Change Settings</h5>
-                    <hr>
+            <div id="changeSettingsSection"
+                 class="card shadow-lg mx-auto mb-5 border-0"
+                 style="max-width: 900px; display: none; background: #fdfdfd;">
+                <div class="card-body">
+                    <h4 class="card-title text-center mb-4 text-primary fw-semibold">
+                        <i class="bi bi-gear-fill me-2"></i>Change Settings
+                    </h4>
 
-                    <!-- AI Model Dropdown -->
-                    <label class="fw-bold">System settings</label>
-                    <div class="form-group mb-3">
-                        <label for="aiModelSelect" class="form-label">Select AI Model</label>
-                        <select id="aiModelSelect" class="form-select text-center"></select>
+                    <!-- Subtle divider -->
+                    <hr class="mb-4">
+
+                    <div class="row g-4 px-2 text-start">
+
+                        <!-- ******* System Settings ******* -->
+                        <div class="col-12 col-md-6">
+                            <div class="p-3 rounded-3 border bg-light">
+                                <h6 class="fw-bold mb-3 text-secondary">
+                                    <i class="bi bi-cpu me-1"></i> System Settings
+                                </h6>
+
+                                <!-- AI Model Dropdown -->
+                                <div class="form-group mb-3">
+                                    <label for="aiModelSelect" class="form-label">AI Model</label>
+                                    <select id="aiModelSelect" class="form-select text-center"></select>
+                                </div>
+
+                                <!-- Recording Mode -->
+                                <div class="form-group mb-3">
+                                    <label for="recordingModeSelect" class="form-label">Recording Mode</label>
+                                    <select id="recordingModeSelect" class="form-select text-center">
+                                        <option value="video">Camera + Microphone</option>
+                                        <option value="audio">Microphone Only</option>
+                                    </select>
+                                    <small id="recordingHint" class="text-muted d-block mt-2"></small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ******* App Settings ******* -->
+                        <div class="col-12 col-md-6">
+                            <div class="p-3 rounded-3 border bg-light">
+                                <h6 class="fw-bold mb-3 text-secondary">
+                                    <i class="bi bi-app-indicator me-1"></i> App Settings
+                                </h6>
+
+                                <!-- Default Profession -->
+                                <div class="form-group mb-3">
+                                    <label for="defaultProfession" class="form-label">Default Profession</label>
+                                    <input id="defaultProfession" type="text" class="form-control text-center"
+                                           placeholder="e.g. Software Engineer">
+                                </div>
+
+                                <!-- Question Category -->
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="showCategorySwitch">
+                                    <label class="form-check-label" for="showCategorySwitch">
+                                        Show Question Category
+                                    </label>
+                                </div>
+
+                                <!-- Question Difficulty -->
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="showDifficultySwitch">
+                                    <label class="form-check-label" for="showDifficultySwitch">
+                                        Show Question Difficulty
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <hr>
 
-                    <label class="fw-bold">App settings</label>
-                    <div class="form-group mb-3">
-                        <label for="defaultProfession" class="form-label">Default Profession</label>
-                        <input id="defaultProfession" type="text" class="form-control text-center">
-                    </div>
+                    <!-- Divider before buttons -->
+                    <hr class="mt-4 mb-3">
 
-                    <div class="form-check form-switch text-start mb-3">
-                        <input class="form-check-input" type="checkbox" id="showCategorySwitch">
-                        <label class="form-check-label" for="showCategorySwitch">Show Question Category</label>
-                    </div>
-
-                    <div class="form-check form-switch text-start mb-3">
-                        <input class="form-check-input" type="checkbox" id="showDifficultySwitch">
-                        <label class="form-check-label" for="showDifficultySwitch">Show Question Difficulty</label>
-                    </div>
-
-                    <div class="d-flex justify-content-center gap-2">
-                        <button id="saveSettingsBtn" class="btn btn-primary">Save</button>
-                        <button id="cancelSettingsBtn" class="btn btn-secondary">Cancel</button>
+                    <!-- Buttons -->
+                    <div class="d-flex justify-content-center gap-3">
+                        <button id="saveSettingsBtn" class="btn btn-primary px-4">
+                            <i class="bi bi-save me-1"></i> Save
+                        </button>
+                        <button id="cancelSettingsBtn" class="btn btn-outline-secondary px-4">
+                            <i class="bi bi-x-circle me-1"></i> Cancel
+                        </button>
                     </div>
 
                     <!-- Feedback message -->
-                    <div id="changeSettingsMessage" class="mt-3" style="display: none;">
+                    <div id="changeSettingsMessage" class="mt-4 text-center" style="display: none;">
                         <div class="alert" role="alert"></div>
                     </div>
                 </div>

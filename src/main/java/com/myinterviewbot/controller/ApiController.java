@@ -10,7 +10,6 @@ import com.myinterviewbot.service.FfmpegService;
 import com.myinterviewbot.service.WhisperService;
 import com.myinterviewbot.system.SystemChecker;
 import com.myinterviewbot.utils.Utils;
-import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -45,7 +44,7 @@ public class ApiController {
     }
 
     @GetMapping("/requirements")
-    public SystemRequirements checkSystemRequirements(final HttpSession session) {
+    public SystemRequirements checkSystemRequirements() {
         if (systemRequirements == null) {
             LOGGER.info("Checking System Requirements...");
             systemRequirements = systemChecker.checkSystemRequirements();
