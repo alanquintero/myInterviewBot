@@ -1,6 +1,5 @@
 export async function checkSystemRequirements() {
     console.log("checking System Requirements...");
-    const slowSystem = document.getElementById("slowSystem");
     try {
         const response = await fetch('/api/v1/requirements');
         let data = await response.json();
@@ -20,7 +19,7 @@ export function checkSlowPromptResponse(systemRequirements) {
     const systemMessage = document.getElementById("systemMessage");
     if (!systemRequirements.executedSuccessfully && !systemRequirements.exceptionDetected && !systemRequirements.slowPromptResponse) {
         console.log("Prompt did not execute successfully.");
-        systemMessage.classList.add("alert-warning");
+        systemMessage.classList.add("alert-warning alert-dismissible");
         systemMessage.classList.remove("hidden");
         systemMessage.innerText = "Something went wrong. Please try again.";
     } else if (systemRequirements.slowPromptResponse || (!systemRequirements.executedSuccessfully && systemRequirements.exceptionDetected)) {

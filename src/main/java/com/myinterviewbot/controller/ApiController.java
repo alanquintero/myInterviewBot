@@ -42,7 +42,7 @@ public class ApiController {
         if (systemRequirementsChecked != null && systemRequirementsChecked && isSlowPromptResponse != null) {
             LOGGER.info("SystemRequirements already checked");
             if (systemRequirements == null) {
-                systemRequirements = new SystemRequirements(isSlowPromptResponse, false, false);
+                systemRequirements = new SystemRequirements(true, isSlowPromptResponse, false);
             }
             return systemRequirements;
         }

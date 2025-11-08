@@ -5,8 +5,12 @@
 package com.myinterviewbot.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.myinterviewbot.builder.PromptStatsBuilder;
+import com.myinterviewbot.factory.PromptResponseFactory;
 import com.myinterviewbot.model.Evaluation;
+import com.myinterviewbot.model.PromptExecutionResult;
 import com.myinterviewbot.model.PromptResponse;
+import com.myinterviewbot.model.PromptStats;
 import com.myinterviewbot.service.ai.model.AIService;
 import com.myinterviewbot.utils.Utils;
 import jakarta.servlet.http.HttpSession;
@@ -165,6 +169,10 @@ public class PromptService {
 
         PromptResponse promptResponse = aiService.executePrompt(prompt);
 
+        if (promptResponse.getPromptResponse() == null) {
+            LOGGER.warn("PromptResponse is null");
+            return PromptResponseFactory.createFailedResponse(null, PromptExecutionResult.EXCEPTION + ": PromptResponse is null", 1);
+        }
         String evaluationTxt = promptResponse.getPromptResponse().toString();
         if (evaluationTxt == null || evaluationTxt.isEmpty()) {
             LOGGER.warn("Evaluation text is null");
