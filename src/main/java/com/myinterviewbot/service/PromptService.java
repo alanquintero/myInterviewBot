@@ -180,10 +180,18 @@ public class PromptService {
         return promptResponse;
     }
 
-    public PromptResponse generateEvaluation(final String transcript, final String profession, final String question) {
+    public PromptResponse generateEvaluation(final PromptRequest promptRequest) {
+        if (promptRequest.getProfession() == null || promptRequest.getProfession().isEmpty()
+                || promptRequest.getQuestion() == null || promptRequest.getQuestion().isEmpty()
+                || promptRequest.getTranscript() == null || promptRequest.getTranscript().getTranscript() == null
+                || promptRequest.getTranscript().getTranscript().isEmpty()) {
+            LOGGER.warn("Some inputs are null or empty");
+            return PromptResponseFactory.createEmptyResponse();
+        }
+
         final String jsonParameters = "{clarityScore:  int, clarityFeedback: string, structureScore: int, structureFeedback: string, relevanceScore: int, relevanceFeedback: string, communicationScore: int, communicationFeedback: string, depthScore: int, depthFeedback: string}";
 
-        final String prompt = "You are a technical hiring manager. Evaluate the following " + profession + " candidate's response to a behavioral interview question: " + question
+        final String prompt = "You are a technical hiring manager. Evaluate the following " + promptRequest.getProfession() + " candidate's response to a behavioral interview question: " + promptRequest.getQuestion()
                 + " Parameters to evaluate (score each from 1 to 10, 10 = excellent): "
                 + " 1. Clarity: How understandable the answer is, considering content and depth. Minimal answers get low scores. "
                 + " 2. Structure: Logical flow of the answer; use of STAR or other coherent structure. Single sentences or unorganized responses score low. "
@@ -196,7 +204,7 @@ public class PromptService {
                 + "- Be very strict: If the candidate provides a minimal answer, off-topic, irrelevant answer, does not directly address the question, does not contain examples or meaningful details, lacks detail and examples, or even if grammar and vocabulary are correct, give low scores (1-2). "
                 + "- Output only in JSON format, create a JSON using the next parameters: " + jsonParameters
                 + " - Include all JSON parameters, even if one of them is missing or not applicable. "
-                + " Candidate Response: " + transcript;
+                + " Candidate Response: " + promptRequest.getTranscript().getTranscript();
 
         PromptResponse promptResponse = aiService.executePrompt(prompt);
         String evaluationTxt = promptResponse.getPromptResponse().toString();

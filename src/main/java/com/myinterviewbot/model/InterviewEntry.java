@@ -14,7 +14,7 @@ public class InterviewEntry {
     private long timestamp;
     private InterviewType interviewType;
     private String profession;
-    private String question;
+    private Question question;
     private String answer;
     private String feedback;
     private String videoUrl;
@@ -23,7 +23,7 @@ public class InterviewEntry {
     public InterviewEntry() {
     }
 
-    public InterviewEntry(final long timestamp, final InterviewType interviewType, final String profession, final String question, final String answer, final String feedback, final String videoUrl, final Evaluation evaluation) {
+    public InterviewEntry(final long timestamp, final InterviewType interviewType, final String profession, final Question question, final String answer, final String feedback, final String videoUrl, final Evaluation evaluation) {
         this.timestamp = timestamp;
         this.interviewType = interviewType;
         this.profession = profession;
@@ -34,7 +34,6 @@ public class InterviewEntry {
         this.evaluation = evaluation;
     }
 
-    // Getters and Setters
     public long getTimestamp() {
         return timestamp;
     }
@@ -47,7 +46,7 @@ public class InterviewEntry {
         return interviewType;
     }
 
-    public void setInterviewType(InterviewType interviewType) {
+    public void setInterviewType(final InterviewType interviewType) {
         this.interviewType = interviewType;
     }
 
@@ -59,11 +58,11 @@ public class InterviewEntry {
         this.profession = profession;
     }
 
-    public String getQuestion() {
+    public Question getQuestion() {
         return question;
     }
 
-    public void setQuestion(final String question) {
+    public void setQuestion(final Question question) {
         this.question = question;
     }
 

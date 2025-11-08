@@ -183,9 +183,13 @@ public class PromptServiceTest {
         final String evaluationResponse = "{ \"clarityScore\": 1,\"clarityFeedback\": \"good\",\"structureScore\": 5,\"structureFeedback\": \"nice\",\"relevanceScore\": 2,\"relevanceFeedback\": \"ok then\",\"communicationScore\": 3,\"communicationFeedback\": \"excellent\",\"depthScore\": 4,\"depthFeedback\": \"ok\"}";
         final PromptResponse expectedPromptResponse = new PromptResponse(null, evaluationResponse);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
+        final PromptRequest input = new PromptRequest();
+        input.setProfession("profession");
+        input.setQuestion("question");
+        input.setTranscript(new Transcript("transcript", ""));
 
         // When
-        final PromptResponse promptResponse = promptService.generateEvaluation("transcript", "profession", "question");
+        final PromptResponse promptResponse = promptService.generateEvaluation(input);
 
         // Then
         assertNotNull(promptResponse);
@@ -210,9 +214,13 @@ public class PromptServiceTest {
         final String evaluationResponse = "{\"error\": \"oh no\"}";
         final PromptResponse expectedPromptResponse = new PromptResponse(null, evaluationResponse);
         when(aiService.executePrompt(anyString())).thenReturn(expectedPromptResponse);
+        final PromptRequest input = new PromptRequest();
+        input.setProfession("profession");
+        input.setQuestion("question");
+        input.setTranscript(new Transcript("transcript", ""));
 
         // When
-        final PromptResponse promptResponse = promptService.generateEvaluation("transcript", "profession", "question");
+        final PromptResponse promptResponse = promptService.generateEvaluation(input);
 
         // Then
         assertNotNull(promptResponse);

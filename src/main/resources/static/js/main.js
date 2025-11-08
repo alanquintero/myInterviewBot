@@ -458,22 +458,35 @@ async function generateFeedback(transcript) {
 
 // Call API to generate evaluation
 async function generateEvaluation(transcript, feedback) {
-    const formData = new FormData();
-    formData.append("transcript", new Blob([JSON.stringify(transcript)], {type: "application/json"}));
-    formData.append("feedback", feedback);
-    formData.append("profession", inputProfession.value)
-    formData.append("question", inputQuestion.value)
+    const promptRequest = {
+        transcript: transcript,
+        feedback: feedback,
+        profession: inputProfession.value,
+        question: inputQuestion.value,
+    };
 
-    try {
-        const res = await fetch("/prompt/v1/evaluation", {
-            method: "POST",
-            body: formData,
+    return await fetch("/prompt/v1/evaluation", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(promptRequest)
+    }).then(response => {
+        if (!response.ok) {
+            // Response status is not in the range 200–299
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+        .then(data => {
+            console.log('Data received:', data);
+            return data;
+        })
+        .catch(error => {
+            console.error('Error generating evaluation:', error);
+            alert(PLEASE_TRY_AGAIN);
+            return null;
         });
-        return await res.json();
-    } catch (err) {
-        console.error(err);
-    }
-    return null;
 }
 
 // Show UI elements for when Recording is active

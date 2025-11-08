@@ -70,24 +70,21 @@ public class PromptController {
      *
      * <p>The process includes storing the interview entry.</p>
      *
-     * @param transcript the candidate's transcript
-     * @param feedback   the AI generated feedback
-     * @param profession the candidate's profession
-     * @param question   the question asked to the candidate
+     * @param promptRequest the input needed to generate a question
      * @return AI-generated evaluation on the candidate's answer
      */
-    @PostMapping(value = "/evaluation", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public PromptResponse getEvaluation(@RequestPart("transcript") final Transcript transcript, @RequestParam("feedback") final String feedback, @RequestParam("profession") final String profession, @RequestParam("question") final String question) {
-        LOGGER.info("/evaluation transcript: {}, profession: {}; question: {}", transcript, profession, question);
+    @PostMapping(value = "/evaluation")
+    public PromptResponse getEvaluation(@RequestBody final PromptRequest promptRequest) {
+        LOGGER.info("/evaluation input: {}", promptRequest);
 
         // Generating AI evaluation
-        final PromptResponse promptResponse = promptService.generateEvaluation(transcript.getTranscript(), profession, question);
+        final PromptResponse promptResponse = promptService.generateEvaluation(promptRequest);
         final Evaluation evaluation = (Evaluation) promptResponse.getPromptResponse();
 
         // Saves the interview entry
-        final long timestamp = Utils.getTimestamp(transcript.getFileName());
-        final String videoUrl = Utils.getVideoUrl(transcript.getFileName());
-        interviewDataService.addInterview(timestamp, new InterviewEntry(timestamp, InterviewType.BEHAVIORAL, profession, question, transcript.getTranscript(), feedback, videoUrl, evaluation));
+        final long timestamp = Utils.getTimestamp(promptRequest.getTranscript().getFileName());
+        final String videoUrl = Utils.getVideoUrl(promptRequest.getTranscript().getFileName());
+        interviewDataService.addInterview(timestamp, new InterviewEntry(timestamp, InterviewType.BEHAVIORAL, promptRequest.getProfession(), new Question(promptRequest.getQuestion(), promptRequest.getCategory(), promptRequest.getDifficulty()), promptRequest.getTranscript().getTranscript(), promptRequest.getFeedback(), videoUrl, evaluation));
 
         return promptResponse;
     }
