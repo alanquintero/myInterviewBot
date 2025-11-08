@@ -59,10 +59,10 @@ public class SettingsService {
         // Create empty JSON file if it doesn't exist
         if (!storageFile.exists()) {
             try {
-                settings.setAiProvider(aiProvider);
-                settings.setSelectedAiModel(aiModel);
-                settings.setWhisperProvider(whisperProvider);
-                settings.setOperatingSystem(Utils.getOperatingSystemName());
+                settings.getSystemSettings().setAiProvider(aiProvider);
+                settings.getSystemSettings().setSelectedAiModel(aiModel);
+                settings.getSystemSettings().setWhisperProvider(whisperProvider);
+                settings.getSystemSettings().setOperatingSystem(Utils.getOperatingSystemName());
                 objectMapper.writerWithDefaultPrettyPrinter().writeValue(storageFile, settings);
             } catch (IOException e) {
                 throw new IOException("Failed to create interviews.json");
@@ -77,12 +77,12 @@ public class SettingsService {
     }
 
     public void saveAiModels(final List<String> aiModels) {
-        settings.setAiModels(aiModels);
+        settings.getSystemSettings().setAiModels(aiModels);
 
         // check if selected AI Model is in the list
-        if (!aiModels.contains(settings.getSelectedAiModel())) {
-            LOGGER.warn("Selected AI Model {} does not exist. Selected AI Model {} from config.", settings.getSelectedAiModel(), aiModelFromConfig);
-            settings.setSelectedAiModel(aiModelFromConfig);
+        if (!aiModels.contains(settings.getSystemSettings().getSelectedAiModel())) {
+            LOGGER.warn("Selected AI Model {} does not exist. Selected AI Model {} from config.", settings.getSystemSettings().getSelectedAiModel(), aiModelFromConfig);
+            settings.getSystemSettings().setSelectedAiModel(aiModelFromConfig);
         }
 
         saveSettings(settings);

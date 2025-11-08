@@ -39,7 +39,7 @@ public class OllamaService implements AIService {
      */
     @Override
     public PromptResponse executePrompt(final String prompt) {
-        final String aiModel = SettingsService.getInstance().getSettings().getSelectedAiModel();
+        final String aiModel = SettingsService.getInstance().getSettings().getSystemSettings().getSelectedAiModel();
         LOGGER.info("Running Ollama with model: {}", aiModel);
         LOGGER.info("Calling Ollama with the prompt: {}", prompt);
 

@@ -74,7 +74,7 @@ public class SystemChecker {
     }
 
     public SystemRequirements checkSystemRequirements() {
-        aiModel = SettingsService.getInstance().getSettings().getSelectedAiModel();
+        aiModel = SettingsService.getInstance().getSettings().getSystemSettings().getSelectedAiModel();
 
         final boolean cpuOk = checkCPU();
         systemRequirements.setCpuHasMinimumRequirements(cpuOk);

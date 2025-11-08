@@ -4,7 +4,6 @@
  */
 package com.myinterviewbot.controller;
 
-import com.myinterviewbot.model.settings.AppSettings;
 import com.myinterviewbot.model.settings.Settings;
 import com.myinterviewbot.service.InterviewDataService;
 import com.myinterviewbot.service.SettingsService;
@@ -49,22 +48,22 @@ public class SettingsController {
             final Settings settings = settingsService.getSettings();
 
             // Update only known fields
-            if (updatedSettings.getSelectedAiModel() != null) {
-                settings.setSelectedAiModel(updatedSettings.getSelectedAiModel());
+            if (updatedSettings.getSystemSettings().getSelectedAiModel() != null) {
+                settings.getSystemSettings().setSelectedAiModel(updatedSettings.getSystemSettings().getSelectedAiModel());
             }
-            if (updatedSettings.getRecordingMode() != null && !updatedSettings.getRecordingMode().isEmpty()) {
-                settings.setRecordingMode(updatedSettings.getRecordingMode());
+            if (updatedSettings.getSystemSettings().getRecordingMode() != null && !updatedSettings.getSystemSettings().getRecordingMode().isEmpty()) {
+                settings.getSystemSettings().setRecordingMode(updatedSettings.getSystemSettings().getRecordingMode());
             } else {
-                settings.setRecordingMode("video");
+                settings.getSystemSettings().setRecordingMode("video");
             }
-            if (updatedSettings.getDefaultProfession() != null && !updatedSettings.getDefaultProfession().isEmpty()) {
-                settings.setDefaultProfession(updatedSettings.getDefaultProfession());
+            if (updatedSettings.getAppSettings().getDefaultProfession() != null && !updatedSettings.getAppSettings().getDefaultProfession().isEmpty()) {
+                settings.getAppSettings().setDefaultProfession(updatedSettings.getAppSettings().getDefaultProfession());
             } else {
                 // Setting value to default profession
-                settings.setDefaultProfession("Software Engineer");
+                settings.getAppSettings().setDefaultProfession("Software Engineer");
             }
-            settings.setShowQuestionCategory(updatedSettings.isShowQuestionCategory());
-            settings.setShowQuestionDifficulty(updatedSettings.isShowQuestionDifficulty());
+            settings.getAppSettings().setShowQuestionCategory(updatedSettings.getAppSettings().isShowQuestionCategory());
+            settings.getAppSettings().setShowQuestionDifficulty(updatedSettings.getAppSettings().isShowQuestionDifficulty());
 
             settingsService.saveSettings(settings);
             return ResponseEntity.ok("Settings updated successfully.");

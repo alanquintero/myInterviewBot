@@ -4,8 +4,6 @@
  */
 package com.myinterviewbot.model.settings;
 
-import java.util.List;
-
 /**
  * DTO class to return current All Settings.
  *
@@ -36,77 +34,5 @@ public class Settings {
 
     public void setSystemSettings(final SystemSettings systemSettings) {
         this.systemSettings = systemSettings;
-    }
-
-    public String getDefaultProfession() {
-        return this.appSettings.getDefaultProfession();
-    }
-
-    public void setDefaultProfession(final String defaultProfession) {
-        this.appSettings.setDefaultProfession(defaultProfession);
-    }
-
-    public boolean isShowQuestionCategory() {
-        return this.appSettings.isShowQuestionCategory();
-    }
-
-    public void setShowQuestionCategory(final boolean showQuestionCategory) {
-        this.appSettings.setShowQuestionCategory(showQuestionCategory);
-    }
-
-    public boolean isShowQuestionDifficulty() {
-        return appSettings.isShowQuestionDifficulty();
-    }
-
-    public void setShowQuestionDifficulty(final boolean showQuestionDifficulty) {
-        this.appSettings.setShowQuestionDifficulty(showQuestionDifficulty);
-    }
-
-    public String getRecordingMode() {
-        return systemSettings.getRecordingMode();
-    }
-
-    public void setRecordingMode(final String recordingMode) {
-        this.systemSettings.setRecordingMode(recordingMode);
-    }
-
-    public String getAiProvider() {
-        return systemSettings.getAiProvider();
-    }
-
-    public void setAiProvider(final String aiProvider) {
-        this.systemSettings.setAiProvider(aiProvider);
-    }
-
-    public String getSelectedAiModel() {
-        return systemSettings.getSelectedAiModel();
-    }
-
-    public void setSelectedAiModel(final String selectedAiModel) {
-        this.systemSettings.setSelectedAiModel(selectedAiModel);
-    }
-
-    public List<String> getAiModels() {
-        return systemSettings.getAiModels();
-    }
-
-    public void setAiModels(List<String> aiModels) {
-        this.systemSettings.setAiModels(aiModels);
-    }
-
-    public String getWhisperProvider() {
-        return systemSettings.getWhisperProvider();
-    }
-
-    public void setWhisperProvider(final String whisperProvider) {
-        this.systemSettings.setWhisperProvider(whisperProvider);
-    }
-
-    public String getOperatingSystem() {
-        return systemSettings.getOperatingSystem();
-    }
-
-    public void setOperatingSystem(final String operatingSystem) {
-        this.systemSettings.setOperatingSystem(operatingSystem);
     }
 }
