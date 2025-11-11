@@ -45,7 +45,7 @@ public class PromptService {
         final Question question = promptRequest.getQuestion();
         final String difficulty;
         if (question.getDifficulty() != null && !question.getDifficulty().isEmpty()) {
-            difficulty = question.getDifficulty();
+            difficulty = " with difficulty level as " + question.getDifficulty() + ",";
         } else {
             difficulty = "";
         }
@@ -70,11 +70,10 @@ public class PromptService {
         final String restriction = "The question must be less than " + QUESTION_MAX_NUMBER_OF_WORDS + " words. Generate ONLY the behavioral interview question — do not include any explanations or introductions.";
         String prompt;
         if (firstQuestion == null || firstQuestion) {
-            prompt = "You are a concise behavioral interview coach. Generate a single, realistic, "
-                    + difficulty + " behavioral interview question for a " + profession + category + restriction;
+            prompt = "You are a concise behavioral interview coach. Generate a single, realistic, behavioral interview question for a " + profession + difficulty + category + restriction;
             session.setAttribute("firstQuestion", false);
         } else {
-            prompt = "Give me another " + difficulty + " behavioral interview question for a " + profession + category + restriction;
+            prompt = "Give me another behavioral interview question for a " + profession + difficulty + category + restriction;
         }
 
         /*
@@ -97,11 +96,11 @@ public class PromptService {
                     case 1 ->
                             "Please provide the next behavioral interview question in " + QUESTION_MAX_NUMBER_OF_WORDS + " words or less: " + question;
                     case 2 ->
-                            "Give me a totally different " + difficulty + " behavioral interview question for a " + profession + category + " Remember that the question must be less than 15 words. Only output the question.";
+                            "Give me a totally different behavioral interview question for a " + profession + difficulty + category + " Remember that the question must be less than 15 words. Only output the question.";
                     case 3 ->
-                            "Give me a the most common " + difficulty + " behavioral interview question for a " + profession + category + restriction;
+                            "Give me a the most common behavioral interview question for a " + profession + difficulty + category + restriction;
                     default ->
-                            "Give me a generic " + difficulty + "behavioral interview question for a " + profession + category + restriction;
+                            "Give me a generic behavioral interview question for a " + profession + difficulty + category + restriction;
                 };
 
                 // Extracting the question because AI sometimes gives an explanation of what it did to shorten the question.
