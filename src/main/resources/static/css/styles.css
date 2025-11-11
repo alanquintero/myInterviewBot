@@ -29,6 +29,7 @@ textarea {
 /* Hide elements by default */
 .hidden {
     display: none;
+!important;
 }
 
 /* Logo */

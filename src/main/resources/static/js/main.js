@@ -53,8 +53,9 @@ const feedbackEl = document.getElementById("feedback");
 // Evaluation
 const evaluationContainer = document.getElementById("evaluation-result");
 
-/* Start Over section */
-const startOverSection = document.getElementById("startOverSection");
+/* Navigation section */
+const navigationSection = document.getElementById("navigationSection");
+const nextQuestionBtn = document.getElementById("nextQuestionBtn");
 const startOverBtn = document.getElementById("startOverBtn");
 
 const MAX_RECORDING_TIME = 150; // in seconds (2 minutes 30 seconds)
@@ -179,6 +180,31 @@ resetBtn.addEventListener("click", async () => {
     reset();
 });
 
+// Click on Generate Next Question
+nextQuestionBtn.addEventListener("click", async () => {
+    console.log("Click on generate next question button");
+    hideElements();
+    stopCamera();
+    // Disable elements while loading
+    setElementsDisabled(true);
+    transcriptEl.innerText = "";
+    feedbackEl.innerText = "";
+    evaluationContainer.innerHTML = "";
+    recordedChunks = [];
+    timerInterval = null;
+    mediaRecorder = null;
+    currentStream = null;
+    isRecording = false;
+
+    setProfessionIfBlank();
+    const profession = inputProfession.value;
+    console.log("Profession: ", profession);
+
+    await generateQuestion(profession);
+    // Enable elements
+    setElementsDisabled(false);
+});
+
 // Click on Start Over button
 startOverBtn.addEventListener("click", async () => {
     console.log("Click on start over button");
@@ -297,7 +323,7 @@ function showRecordingSection() {
 async function initCamera() {
     console.log("Init camera...");
     try {
-        if(appState.recordingMode === 'audio') {
+        if (appState.recordingMode === 'audio') {
             videoPlaceholder.classList.remove("hidden");
             videoPlaceholder.src = "img/recording/audio.gif";
             playbackLabel.innerText = "Preview Recorded Audio";
@@ -430,7 +456,7 @@ async function sendVideo(blob) {
                 evaluationContainer.innerHTML =
                     "<p style='color: gray;'>No evaluation available yet.</p>";
             }
-            startOverSection.classList.remove("hidden");
+            navigationSection.classList.remove("d-none");
         }
     } catch (err) {
         console.error(err);
@@ -568,7 +594,7 @@ function hideElements() {
     recordingPlaybackContainer.classList.add("hidden");
     playbackSection.classList.add("hidden");
     generateFeedbackSection.classList.add("hidden");
-    startOverSection.classList.add("hidden");
+    navigationSection.classList.add("d-none");
     transcriptSection.classList.add("hidden");
     transcriptFeedbackContainer.classList.add("hidden");
     feedbackSection.classList.add("hidden");

@@ -28,8 +28,15 @@
         <div id="evaluation-result"></div>
     </fieldset>
 
-    <!-- Start over section -->
-    <div id="startOverSection" class="mb-4 hidden">
+    <!-- navigation Section -->
+    <div id="navigationSection" class="d-flex justify-content-between mb-4 d-none">
+        <button id="nextQuestionBtn"
+                class="btn btn-primary mb-3 d-flex align-items-center justify-content-center">
+            Generate Next Question
+            <img th:src="@{/img/button/ai-stars.png}" alt="AI Icon"
+                 style="width: 20px; height: 20px; margin-right: 8px;">
+        </button>
+
         <button id="startOverBtn"
                 class="btn btn-success mb-3 d-flex align-items-center justify-content-center">
             Start Over
