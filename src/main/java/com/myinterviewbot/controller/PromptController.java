@@ -5,6 +5,8 @@
 package com.myinterviewbot.controller;
 
 import com.myinterviewbot.model.*;
+import com.myinterviewbot.model.behavior.BehaviorCategory;
+import com.myinterviewbot.model.difficulty.QuestionDifficultyLevel;
 import com.myinterviewbot.service.InterviewDataService;
 import com.myinterviewbot.service.PromptService;
 import com.myinterviewbot.utils.Utils;
@@ -83,6 +85,14 @@ public class PromptController {
         // Saves the interview entry
         final long timestamp = Utils.getTimestamp(promptRequest.getTranscript().getFileName());
         final String videoUrl = Utils.getVideoUrl(promptRequest.getTranscript().getFileName());
+        // Save the display name for the question options
+        if (promptRequest.getQuestion().getCategory() != null) {
+            promptRequest.getQuestion().setCategory(BehaviorCategory.getDisplayNameFromName(promptRequest.getQuestion().getCategory()));
+        }
+        if (promptRequest.getQuestion().getDifficulty() != null) {
+            promptRequest.getQuestion().setDifficulty(QuestionDifficultyLevel.getDisplayNameFromName(promptRequest.getQuestion().getDifficulty()));
+        }
+
         interviewDataService.addInterview(timestamp, new InterviewEntry(timestamp, InterviewType.BEHAVIORAL, promptRequest.getProfession(), promptRequest.getQuestion(), promptRequest.getTranscript().getTranscript(), promptRequest.getFeedback(), videoUrl, evaluation));
 
         return promptResponse;

@@ -98,4 +98,16 @@ public enum BehaviorCategory {
     public String getExample() {
         return example;
     }
+
+    public static String getDisplayNameFromName(final String name) {
+        if (name != null) {
+            try {
+                final BehaviorCategory category = BehaviorCategory.valueOf(name);
+                return category.getDisplayName();
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
+        }
+        return null;
+    }
 }

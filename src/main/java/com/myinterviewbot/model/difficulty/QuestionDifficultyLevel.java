@@ -35,4 +35,16 @@ public enum QuestionDifficultyLevel {
     public String getExample() {
         return example;
     }
+
+    public static String getDisplayNameFromName(final String name) {
+        if (name != null) {
+            try {
+                final QuestionDifficultyLevel difficulty = QuestionDifficultyLevel.valueOf(name);
+                return difficulty.getDisplayName();
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
+        }
+        return null;
+    }
 }

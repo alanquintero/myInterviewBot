@@ -30,7 +30,7 @@ public class QuestionDifficultyLevelDto {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -38,7 +38,7 @@ public class QuestionDifficultyLevelDto {
         return displayName;
     }
 
-    public void setDisplayName(String displayName) {
+    public void setDisplayName(final String displayName) {
         this.displayName = displayName;
     }
 
@@ -46,7 +46,7 @@ public class QuestionDifficultyLevelDto {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -54,7 +54,7 @@ public class QuestionDifficultyLevelDto {
         return example;
     }
 
-    public void setExample(String example) {
+    public void setExample(final String example) {
         this.example = example;
     }
 }
