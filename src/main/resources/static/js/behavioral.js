@@ -3,6 +3,7 @@ import {appState} from "./globalState.js";
 document.addEventListener('DOMContentLoaded', async () => {
     const categorySelect = document.getElementById('categorySelect');
     const difficultySelect = document.getElementById('difficultySelect');
+    const savedQuestionSelect = document.getElementById('savedQuestionSelect');
     const categoryInfoBtn = document.getElementById('categoryInfoBtn');
     const difficultyInfoBtn = document.getElementById('difficultyInfoBtn');
     const infoModal = new bootstrap.Modal(document.getElementById('infoQuestionModal'));
@@ -14,7 +15,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     let difficultyLevels = [];
 
     console.log("Loading questions info...");
-
     try {
         const res = await fetch('/question/v1/behavior/info');
         const data = await res.json();
@@ -53,6 +53,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (e) {
         console.error('Failed to fetch behavior info:', e);
     }
+
+    console.log("Loading saved questions...");
+    let questions = [];
+    try {
+        const res = await fetch('/question/v1/all');
+        const data = await res.json();
+
+        questions = data || [];
+
+        // --- Saved Questions dropdown ---
+        // Add default "None" option
+        const defaultQuestionOpt = document.createElement('option');
+        defaultQuestionOpt.value = "";
+        defaultQuestionOpt.textContent = "— None —";
+        savedQuestionSelect.appendChild(defaultQuestionOpt);
+
+        questions.forEach(question => {
+            const opt = document.createElement('option');
+            opt.value = question;
+            opt.textContent = question;
+            savedQuestionSelect.appendChild(opt);
+        });
+        console.log("Saved Question dropdown loaded");
+    } catch (e) {
+        console.error('Failed to fetch saved questions:', e);
+    }
+
 
     // --- Category info button logic ---
     categorySelect.addEventListener('change', () => {

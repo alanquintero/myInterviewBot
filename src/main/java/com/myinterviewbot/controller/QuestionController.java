@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -64,6 +65,17 @@ public class QuestionController {
         map.put("difficultyLevels", difficultyLevels);
 
         return ResponseEntity.ok(map);
+    }
+
+    /**
+     * Get all questions
+     */
+    @GetMapping("/all")
+    public Set<String> getAllQuestions() {
+        LOGGER.info("Get All Questions");
+        final Set<String> questions = questionService.getQuestions();
+        LOGGER.info("Questions: {}", questions.size());
+        return questions;
     }
 
     /**

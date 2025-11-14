@@ -77,6 +77,10 @@ public class QuestionService {
         }
     }
 
+    public Set<String> getQuestions() {
+        return questions;
+    }
+
     public boolean saveQuestion(final Question question) {
         try {
             questions.add(question.getQuestion());
