@@ -5,6 +5,7 @@
 package com.myinterviewbot.config;
 
 import com.myinterviewbot.service.InterviewDataService;
+import com.myinterviewbot.service.QuestionService;
 import com.myinterviewbot.service.SettingsService;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ public class InitDataService {
     private static final Logger LOGGER = LoggerFactory.getLogger(InitDataService.class);
 
     private final SettingsService settingsService;
+    private final QuestionService questionService;
     private final InterviewDataService interviewDataService;
 
     @Value("${ai.provider}")
@@ -38,6 +40,7 @@ public class InitDataService {
 
     public InitDataService() {
         settingsService = SettingsService.getInstance();
+        questionService = QuestionService.getInstance();
         interviewDataService = InterviewDataService.getInstance();
     }
 
@@ -45,6 +48,7 @@ public class InitDataService {
     public void init() throws IOException {
         LOGGER.info("Initializing data...");
         settingsService.initData(aiProvider, aiModel, whisperProvider);
+        questionService.initData();
         interviewDataService.initData();
     }
 }

@@ -65,7 +65,7 @@ public class SettingsService {
                 settings.getSystemSettings().setOperatingSystem(Utils.getOperatingSystemName());
                 objectMapper.writerWithDefaultPrettyPrinter().writeValue(storageFile, settings);
             } catch (IOException e) {
-                throw new IOException("Failed to create interviews.json");
+                throw new IOException("Failed to create settings.json");
             }
         }
 

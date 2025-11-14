@@ -3,12 +3,13 @@ import {checkSlowPromptResponse} from './system-requirements.js';
 
 const PLEASE_TRY_AGAIN = "Something went wrong. Please try again.";
 
-/* Behavioral section *//**/
+/* Behavioral section */
 const inputProfession = document.getElementById("inputProfession");
 const inputQuestion = document.getElementById("inputQuestion");
 const commonQuestionsBtn = document.getElementById("commonQuestionsBtn");
 const categorySelect = document.getElementById("categorySelect");
 const difficultySelect = document.getElementById("difficultySelect");
+const saveQuestionBtn = document.getElementById("saveQuestionBtn");
 
 /* Button section */
 const generateQuestionBtn = document.getElementById("generateQuestionBtn");
@@ -67,6 +68,46 @@ let mediaRecorder;
 let currentStream = null;
 let recordedChunks = [];
 let isRecording = false;
+
+// Save question
+saveQuestionBtn.addEventListener("click", async () => {
+    console.log("Save Question");
+
+    if (!inputQuestion.value || inputQuestion.value.trim() === '') {
+        console.error("Please enter a valid input question");
+        alert('There is no question to be saved');
+        return;
+    }
+
+    // Disable elements while saving question
+    setElementsDisabled(true);
+
+    try {
+        const question = {
+            question: inputQuestion.value,
+        }
+
+        await fetch("/question/v1/save", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(question)
+            }
+        ).then(response => {
+            if (!response.ok) {
+                // Response status is not in the range 200–299
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            alert('Question saved successfully!');
+        })
+    } catch (err) {
+        console.error(err);
+    } finally {
+        // Enable elements
+        setElementsDisabled(false);
+    }
+});
 
 // Request a generated question
 generateQuestionBtn.addEventListener("click", async () => {
@@ -612,6 +653,7 @@ function setElementsDisabled(disabled) {
     commonQuestionsBtn.disabled = disabled;
     categorySelect.disabled = disabled;
     difficultySelect.disabled = disabled;
+    saveQuestionBtn.disabled = disabled;
 }
 
 // Enables/disables reset buttons
