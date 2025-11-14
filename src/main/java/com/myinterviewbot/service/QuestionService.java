@@ -91,4 +91,15 @@ public class QuestionService {
         }
         return false;
     }
+
+    public boolean deleteQuestion(final Question question) {
+        try {
+            questions.remove(question.getQuestion());
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(storageFile, questions);
+            return true;
+        } catch (Exception e) {
+            LOGGER.error("Failed to save questions.json", e);
+        }
+        return false;
+    }
 }

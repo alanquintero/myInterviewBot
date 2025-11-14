@@ -94,4 +94,21 @@ public class QuestionController {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Question not saved.");
         }
     }
+
+    /**
+     * Deleted the given question.
+     *
+     * @param question the question to be removed
+     * @return the HTTP response
+     */
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteQuestion(@RequestBody final Question question) {
+        LOGGER.info("Delete question {}", question);
+        final boolean questionDeleted = questionService.deleteQuestion(question);
+        if (questionDeleted) {
+            return ResponseEntity.ok("Question deleted");
+        } else {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Question not deleted.");
+        }
+    }
 }

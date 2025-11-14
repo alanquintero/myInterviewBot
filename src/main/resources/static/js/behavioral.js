@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const infoDescription = document.getElementById('infoQuestionDescription');
     const infoExample = document.getElementById('infoQuestionExample');
     const inputQuestion = document.getElementById("inputQuestion");
+    const deleteQuestionBtn = document.getElementById('deleteQuestionBtn');
 
     let categories = [];
     let difficultyLevels = [];
@@ -116,6 +117,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         let selectedQuestion = selectedOption ? selectedOption.text : '';
         if (selectedQuestion === "— None —") {
             selectedQuestion = '';
+            deleteQuestionBtn.classList.add("d-none");
+        } else {
+            deleteQuestionBtn.classList.remove("d-none");
         }
         inputQuestion.value = selectedQuestion;
     });

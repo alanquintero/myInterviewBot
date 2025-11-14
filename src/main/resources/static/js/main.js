@@ -11,6 +11,7 @@ const categorySelect = document.getElementById("categorySelect");
 const difficultySelect = document.getElementById("difficultySelect");
 const savedQuestionSelect = document.getElementById("savedQuestionSelect");
 const saveQuestionBtn = document.getElementById("saveQuestionBtn");
+const deleteQuestionBtn = document.getElementById("deleteQuestionBtn");
 
 /* Button section */
 const generateQuestionBtn = document.getElementById("generateQuestionBtn");
@@ -101,6 +102,59 @@ saveQuestionBtn.addEventListener("click", async () => {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             alert('Question saved successfully!');
+            const newOption = document.createElement('option');
+            newOption.value = inputQuestion.value;
+            newOption.textContent = inputQuestion.value;
+
+            // Add it to the dropdown
+            savedQuestionSelect.appendChild(newOption);
+        })
+    } catch (err) {
+        console.error(err);
+    } finally {
+        // Enable elements
+        setElementsDisabled(false);
+    }
+});
+
+// Delete question
+deleteQuestionBtn.addEventListener("click", async () => {
+    console.log("Delete Question");
+
+    const selectedValue = savedQuestionSelect.value;
+
+    if (!selectedValue) {
+        console.error("There is no question to be deleted");
+        alert('There is no question to be deleted');
+        return;
+    }
+
+    // Disable elements while deleting the question
+    setElementsDisabled(true);
+
+    try {
+        const question = {
+            question: inputQuestion.value,
+        }
+
+        await fetch("/question/v1/delete", {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(question)
+            }
+        ).then(response => {
+            if (!response.ok) {
+                // Response status is not in the range 200–299
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            alert('Question delete successfully!');
+            const selectedOption = savedQuestionSelect.querySelector(`option[value="${selectedValue}"]`);
+            if (selectedOption) {
+                selectedOption.remove();
+            }
+            savedQuestionSelect.selectedIndex = 0;
         })
     } catch (err) {
         console.error(err);
@@ -658,6 +712,7 @@ function setElementsDisabled(disabled) {
     difficultySelect.disabled = disabled;
     savedQuestionSelect.disabled = disabled;
     saveQuestionBtn.disabled = disabled;
+    deleteQuestionBtn.disabled = disabled;
 }
 
 // Enables/disables reset buttons
