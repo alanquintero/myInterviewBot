@@ -9,6 +9,7 @@ const inputQuestion = document.getElementById("inputQuestion");
 const commonQuestionsBtn = document.getElementById("commonQuestionsBtn");
 const categorySelect = document.getElementById("categorySelect");
 const difficultySelect = document.getElementById("difficultySelect");
+const savedQuestionSelect = document.getElementById("savedQuestionSelect");
 const saveQuestionBtn = document.getElementById("saveQuestionBtn");
 
 /* Button section */
@@ -118,6 +119,7 @@ generateQuestionBtn.addEventListener("click", async () => {
     setProfessionIfBlank();
     const profession = inputProfession.value;
     console.log("Profession: ", profession);
+    savedQuestionSelect.selectedIndex = 0;
 
     // Hide elements if case they are present
     hideElements();
@@ -269,6 +271,7 @@ function reset() {
     mediaRecorder = null;
     currentStream = null;
     isRecording = false;
+    savedQuestionSelect.selectedIndex = 0;
 
     // reset the question selected in the modal
     document.querySelectorAll('#commonQuestionsModal .list-group-item').forEach(i => i.classList.remove('active'));
@@ -653,6 +656,7 @@ function setElementsDisabled(disabled) {
     commonQuestionsBtn.disabled = disabled;
     categorySelect.disabled = disabled;
     difficultySelect.disabled = disabled;
+    savedQuestionSelect.disabled = disabled;
     saveQuestionBtn.disabled = disabled;
 }
 
@@ -673,5 +677,6 @@ document.querySelectorAll('#commonQuestionsModal .list-group-item').forEach(item
 
         const modal = bootstrap.Modal.getInstance(document.getElementById('commonQuestionsModal'));
         modal.hide();
+        savedQuestionSelect.selectedIndex = 0;
     });
 });

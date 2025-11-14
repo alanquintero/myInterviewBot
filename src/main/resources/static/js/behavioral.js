@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const infoModalLabel = document.getElementById('infoQuestionModalLabel');
     const infoDescription = document.getElementById('infoQuestionDescription');
     const infoExample = document.getElementById('infoQuestionExample');
+    const inputQuestion = document.getElementById("inputQuestion");
 
     let categories = [];
     let difficultyLevels = [];
@@ -54,33 +55,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Failed to fetch behavior info:', e);
     }
 
-    console.log("Loading saved questions...");
-    let questions = [];
-    try {
-        const res = await fetch('/question/v1/all');
-        const data = await res.json();
-
-        questions = data || [];
-
-        // --- Saved Questions dropdown ---
-        // Add default "None" option
-        const defaultQuestionOpt = document.createElement('option');
-        defaultQuestionOpt.value = "";
-        defaultQuestionOpt.textContent = "— None —";
-        savedQuestionSelect.appendChild(defaultQuestionOpt);
-
-        questions.forEach(question => {
-            const opt = document.createElement('option');
-            opt.value = question;
-            opt.textContent = question;
-            savedQuestionSelect.appendChild(opt);
-        });
-        console.log("Saved Question dropdown loaded");
-    } catch (e) {
-        console.error('Failed to fetch saved questions:', e);
-    }
-
-
     // --- Category info button logic ---
     categorySelect.addEventListener('change', () => {
         categoryInfoBtn.disabled = !categorySelect.value;
@@ -110,6 +84,42 @@ document.addEventListener('DOMContentLoaded', async () => {
         infoExample.textContent = selected.example || "No example available.";
         infoModal.show();
     });
+
+    console.log("Loading saved questions...");
+    let questions = [];
+    try {
+        const res = await fetch('/question/v1/all');
+        const data = await res.json();
+
+        questions = data || [];
+
+        // --- Saved Questions dropdown ---
+        // Add default "None" option
+        const defaultQuestionOpt = document.createElement('option');
+        defaultQuestionOpt.value = "";
+        defaultQuestionOpt.textContent = "— None —";
+        savedQuestionSelect.appendChild(defaultQuestionOpt);
+
+        questions.forEach(question => {
+            const opt = document.createElement('option');
+            opt.value = question;
+            opt.textContent = question;
+            savedQuestionSelect.appendChild(opt);
+        });
+        console.log("Saved Question dropdown loaded");
+    } catch (e) {
+        console.error('Failed to fetch saved questions:', e);
+    }
+
+    savedQuestionSelect.addEventListener('change', () => {
+        const selectedOption = savedQuestionSelect.options[savedQuestionSelect.selectedIndex];
+        let selectedQuestion = selectedOption ? selectedOption.text : '';
+        if (selectedQuestion === "— None —") {
+            selectedQuestion = '';
+        }
+        inputQuestion.value = selectedQuestion;
+    });
+
 });
 
 export async function setupSettings() {
