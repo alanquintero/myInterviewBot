@@ -69,6 +69,7 @@ export async function setupChangeSettingsSection() {
     const defaultProfession = document.getElementById('defaultProfession');
     const showCategorySwitch = document.getElementById('showCategorySwitch');
     const showDifficultySwitch = document.getElementById('showDifficultySwitch');
+    const showSavedQuestionsSwitch = document.getElementById('showSavedQuestionsSwitch');
 
     const messageContainer = document.getElementById('changeSettingsMessage');
     const alertBox = messageContainer.querySelector('.alert');
@@ -119,6 +120,7 @@ export async function setupChangeSettingsSection() {
         // Switches
         showCategorySwitch.checked = settings.appSettings.showQuestionCategory;
         showDifficultySwitch.checked = settings.appSettings.showQuestionDifficulty;
+        showSavedQuestionsSwitch.checked = settings.appSettings.showSavedQuestions;
 
         section.style.display = 'block';
 
@@ -133,6 +135,7 @@ export async function setupChangeSettingsSection() {
                     defaultProfession: defaultProfession.value ?? 'Software Engineer',
                     showQuestionCategory: showCategorySwitch.checked,
                     showQuestionDifficulty: showDifficultySwitch.checked,
+                    showSavedQuestions: showSavedQuestionsSwitch.checked,
                 }
             };
 
@@ -165,6 +168,7 @@ export async function setupChangeSettingsSection() {
             defaultProfession.value = settings.appSettings.defaultProfession ?? 'Software Engineer';
             showCategorySwitch.checked = settings.appSettings.showQuestionCategory;
             showDifficultySwitch.checked = settings.appSettings.showQuestionDifficulty;
+            showSavedQuestionsSwitch.checked = settings.appSettings.showSavedQuestions;
 
             showMessage('Changes canceled.', 'secondary');
         });

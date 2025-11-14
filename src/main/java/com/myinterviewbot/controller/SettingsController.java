@@ -39,7 +39,9 @@ public class SettingsController {
     @GetMapping("/all")
     public Settings getAllSettings() {
         LOGGER.info("Get All Settings");
-        return settingsService.getSettings();
+        final Settings settings = settingsService.getSettings();
+        LOGGER.info("Settings: {}", settings);
+        return settings;
     }
 
     @PostMapping("/update")
@@ -64,6 +66,7 @@ public class SettingsController {
             }
             settings.getAppSettings().setShowQuestionCategory(updatedSettings.getAppSettings().isShowQuestionCategory());
             settings.getAppSettings().setShowQuestionDifficulty(updatedSettings.getAppSettings().isShowQuestionDifficulty());
+            settings.getAppSettings().setShowSavedQuestions(updatedSettings.getAppSettings().isShowSavedQuestions());
 
             settingsService.saveSettings(settings);
             return ResponseEntity.ok("Settings updated successfully.");

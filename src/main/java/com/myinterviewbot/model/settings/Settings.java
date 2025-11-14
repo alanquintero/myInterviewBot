@@ -35,4 +35,12 @@ public class Settings {
     public void setSystemSettings(final SystemSettings systemSettings) {
         this.systemSettings = systemSettings;
     }
+
+    @Override
+    public String toString() {
+        return "Settings{" +
+                "appSettings=" + appSettings +
+                ", systemSettings=" + systemSettings +
+                '}';
+    }
 }

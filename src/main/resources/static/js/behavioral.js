@@ -90,6 +90,8 @@ export async function setupSettings() {
     const inputProfessionLabel = document.getElementById('inputProfessionLabel');
     const categorySection = document.querySelector('#categorySelect')?.closest('.mb-4');
     const difficultySection = document.querySelector('#difficultySelect')?.closest('.mb-4');
+    const savedQuestionSection = document.querySelector('#savedQuestionSelect')?.closest('.mb-4');
+    const saveQuestionBtn = document.getElementById('saveQuestionBtn');
 
     try {
         const response = await fetch('/settings/v1/all');
@@ -132,6 +134,16 @@ export async function setupSettings() {
         // Show/Hide Question Difficulty
         if (difficultySection) {
             difficultySection.style.display = appSettings.showQuestionDifficulty ? 'block' : 'none';
+        }
+
+        // Show/Hide Saved Questions
+        if (savedQuestionSection) {
+            savedQuestionSection.style.display = appSettings.showSavedQuestions ? 'block' : 'none';
+            if (appSettings.showSavedQuestions) {
+                saveQuestionBtn.classList.remove("d-none");
+            } else {
+                saveQuestionBtn.classList.add("d-none");
+            }
         }
 
         console.log('App settings loaded:', appSettings);

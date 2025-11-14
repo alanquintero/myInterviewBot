@@ -46,6 +46,18 @@
         </button>
         <hr>
 
+        <!-- Saved Questions -->
+        <div class="mb-4">
+            <label for="savedQuestionSelect" class="form-label fw-bold">Saved questions</label>
+            <div class="input-group mb-2">
+                <select id="savedQuestionSelect" class="form-select">
+                    <option value="" selected disabled>Select saved question</option>
+                    <!-- Loaded dynamically -->
+                </select>
+            </div>
+            <hr class="mt-0">
+        </div>
+
         <!-- Question -->
         <div class="mb-3 d-flex justify-content-between align-items-center">
             <label for="inputQuestion" class="form-label mb-0 fw-bold">Question</label>
@@ -62,6 +74,9 @@
         <div id="buttonsSection" class="input-group mb-3">
             <button type="button" class="btn btn-info mb-3 d-flex align-items-center justify-content-center"
                     data-bs-toggle="modal" data-bs-target="#infoModal">Info
+            </button>
+            <button id="saveQuestionBtn"
+                    class="btn btn-secondary mb-3 d-flex align-items-center justify-content-center d-none">Save Question
             </button>
             <button id="resetBtn"
                     class="btn btn-warning mb-3 d-flex align-items-center justify-content-center"

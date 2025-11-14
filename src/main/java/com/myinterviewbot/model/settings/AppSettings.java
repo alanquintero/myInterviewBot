@@ -4,6 +4,9 @@
  */
 package com.myinterviewbot.model.settings;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.myinterviewbot.utils.Constants;
+
 /**
  * DTO class to return current App Settings.
  *
@@ -11,14 +14,19 @@ package com.myinterviewbot.model.settings;
  */
 public class AppSettings {
 
-    private String defaultProfession = "Software Engineer";
+    private String defaultProfession = Constants.DEFAULT_PROFESSION;
 
-    private boolean showQuestionCategory = true;
+    @JsonProperty(defaultValue = "true")
+    private Boolean showQuestionCategory = true;
 
-    private boolean showQuestionDifficulty = true;
+    @JsonProperty(defaultValue = "true")
+    private Boolean showQuestionDifficulty = true;
+
+    @JsonProperty(defaultValue = "true")
+    private Boolean showSavedQuestions = true;
 
     public String getDefaultProfession() {
-        return defaultProfession;
+        return defaultProfession != null ? defaultProfession : Constants.DEFAULT_PROFESSION;
     }
 
     public void setDefaultProfession(final String defaultProfession) {
@@ -26,7 +34,7 @@ public class AppSettings {
     }
 
     public boolean isShowQuestionCategory() {
-        return showQuestionCategory;
+        return showQuestionCategory != null ? showQuestionCategory : true;
     }
 
     public void setShowQuestionCategory(final boolean showQuestionCategory) {
@@ -34,10 +42,28 @@ public class AppSettings {
     }
 
     public boolean isShowQuestionDifficulty() {
-        return showQuestionDifficulty;
+        return showQuestionDifficulty != null ? showQuestionDifficulty : true;
     }
 
     public void setShowQuestionDifficulty(final boolean showQuestionDifficulty) {
         this.showQuestionDifficulty = showQuestionDifficulty;
+    }
+
+    public boolean isShowSavedQuestions() {
+        return showSavedQuestions != null ? showSavedQuestions : true;
+    }
+
+    public void setShowSavedQuestions(final boolean showSavedQuestions) {
+        this.showSavedQuestions = showSavedQuestions;
+    }
+
+    @Override
+    public String toString() {
+        return "AppSettings{" +
+                "defaultProfession='" + defaultProfession + '\'' +
+                ", showQuestionCategory=" + showQuestionCategory +
+                ", showQuestionDifficulty=" + showQuestionDifficulty +
+                ", showSavedQuestions=" + showSavedQuestions +
+                '}';
     }
 }

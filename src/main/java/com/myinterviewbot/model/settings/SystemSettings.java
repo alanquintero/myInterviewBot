@@ -4,6 +4,8 @@
  */
 package com.myinterviewbot.model.settings;
 
+import com.myinterviewbot.utils.Constants;
+
 import java.util.List;
 
 /**
@@ -23,7 +25,7 @@ public class SystemSettings {
 
     private String operatingSystem;
 
-    private String recordingMode = "video";
+    private String recordingMode = Constants.DEFAULT_RECORDING_MODE;
 
     public SystemSettings() {
     }
@@ -69,10 +71,22 @@ public class SystemSettings {
     }
 
     public String getRecordingMode() {
-        return recordingMode;
+        return recordingMode != null ? recordingMode : Constants.DEFAULT_RECORDING_MODE;
     }
 
     public void setRecordingMode(final String recordingMode) {
         this.recordingMode = recordingMode;
+    }
+
+    @Override
+    public String toString() {
+        return "SystemSettings{" +
+                "aiProvider='" + aiProvider + '\'' +
+                ", selectedAiModel='" + selectedAiModel + '\'' +
+                ", aiModels=" + aiModels +
+                ", whisperProvider='" + whisperProvider + '\'' +
+                ", operatingSystem='" + operatingSystem + '\'' +
+                ", recordingMode='" + recordingMode + '\'' +
+                '}';
     }
 }
