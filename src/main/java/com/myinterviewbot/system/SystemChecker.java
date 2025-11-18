@@ -236,20 +236,13 @@ public class SystemChecker {
                 }
                 SettingsService.getInstance().saveAiModels(models);
 
-                // Skip header line if present
-                for (int i = 1; i < lines.length; i++) {
-                    String line = lines[i].trim();
-                    if (line.isEmpty()) continue;
-
-                    // The model name is the first column
-                    String[] columns = line.split("\\s+");
-                    if (columns.length > 0 && columns[0].equalsIgnoreCase(aiModel)) {
-                        LOGGER.info("✅ Ollama model detected: {}", aiModel);
-                        return true;
-                    }
+                if (models.isEmpty()) {
+                    aiModelMessage = "❌ Ollama models not found";
+                } else {
+                    String modelList = String.join(", ", models);
+                    LOGGER.info("✅ Ollama models detected: {}", modelList);
+                    return true;
                 }
-
-                aiModelMessage = "❌ Ollama model not found: " + aiModel;
                 LOGGER.warn(aiModelMessage);
                 return false;
 
