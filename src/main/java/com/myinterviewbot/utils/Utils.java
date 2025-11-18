@@ -4,6 +4,8 @@
  */
 package com.myinterviewbot.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,6 +13,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static oshi.util.ParseUtil.parseIntOrDefault;
 
 /**
  * Utility class providing helper methods for handling interview video files.
@@ -22,6 +30,8 @@ public class Utils {
     private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 
     public final static String INTERVIEWS_DIR = "uploads/interviews/";
+
+    private static boolean slowSystemDetected = false;
 
     /**
      * Saves an uploaded video file to a timestamped directory under "uploads/interviews/".
@@ -254,5 +264,13 @@ public class Utils {
     public static String getOperatingSystemName() {
         // The "os.name" system property contains the full name of the operating system.
         return System.getProperty("os.name");
+    }
+
+    public static boolean isSlowSystemDetected() {
+        return slowSystemDetected;
+    }
+
+    public static void setSlowSystemDetected(final boolean slowSystemDetected) {
+        Utils.slowSystemDetected = slowSystemDetected;
     }
 }

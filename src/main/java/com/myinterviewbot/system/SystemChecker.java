@@ -6,6 +6,7 @@ package com.myinterviewbot.system;
 
 import com.myinterviewbot.model.SystemRequirements;
 import com.myinterviewbot.service.SettingsService;
+import com.myinterviewbot.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -93,6 +94,9 @@ public class SystemChecker {
 
         final boolean allOk = cpuOk && ramOk && gpuOk && aiProviderOk && aiModelOk && whisperOk;
         systemRequirements.setAreAllSystemRequirementsMet(allOk);
+        if (!allOk) {
+            Utils.setSlowSystemDetected(true);
+        }
         LOGGER.info("AreAllSystemRequirementsMet: {}", allOk);
 
         final String systemRequirementsMessage = "<pre>"
@@ -248,7 +252,7 @@ public class SystemChecker {
 
             } catch (Exception e) {
                 aiModelMessage = "❌ Failed to check Ollama models";
-                LOGGER.warn(aiModelMessage + ": {}", e.getMessage());
+                LOGGER.warn("{} : {}", aiModelMessage, e.getMessage());
                 return false;
             }
         } else {

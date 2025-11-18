@@ -134,11 +134,17 @@ public class PromptService {
             return PromptResponseFactory.createEmptyResponse();
         }
 
-        String prompt = "You are a technical hiring manager. Evaluate the following interview answer, focusing on clarity, structure, relevance, and communication style. "
-                + "Provide actionable feedback in 3–4 concise sentences, output only the feedback, no extra commentary. "
-                + "Candidate profession: " + promptRequest.getProfession() + ". "
-                + "Question: " + promptRequest.getQuestion().getQuestion() + ". "
-                + "Candidate answer: " + promptRequest.getTranscript().getTranscript();
+        String prompt;
+        if (Utils.isSlowSystemDetected()) {
+            prompt = "Give short feedback (2 sentences) on the answer. Say what is clear and what must improve. " +
+                    "A: " + promptRequest.getTranscript().getTranscript();
+        } else {
+            prompt = "You are a technical hiring manager. Evaluate the following interview answer, focusing on clarity, structure, relevance, and communication style. "
+                    + "Provide actionable feedback in 3–4 concise sentences, output only the feedback, no extra commentary. "
+                    + "Candidate profession: " + promptRequest.getProfession() + ". "
+                    + "Question: " + promptRequest.getQuestion().getQuestion() + ". "
+                    + "Candidate answer: " + promptRequest.getTranscript().getTranscript();
+        }
 
         PromptResponse promptResponse = aiService.executePrompt(prompt);
         String feedback = promptResponse.getPromptResponse().toString();
@@ -189,22 +195,39 @@ public class PromptService {
             return PromptResponseFactory.createEmptyResponse();
         }
 
-        final String jsonParameters = "{clarityScore:  int, clarityFeedback: string, structureScore: int, structureFeedback: string, relevanceScore: int, relevanceFeedback: string, communicationScore: int, communicationFeedback: string, depthScore: int, depthFeedback: string}";
-
-        final String prompt = "You are a technical hiring manager. Evaluate the following " + promptRequest.getProfession() + " candidate's response to a behavioral interview question: " + promptRequest.getQuestion().getQuestion()
-                + " Parameters to evaluate (score each from 1 to 10, 10 = excellent): "
-                + " 1. Clarity: How understandable the answer is, considering content and depth. Minimal answers get low scores. "
-                + " 2. Structure: Logical flow of the answer; use of STAR or other coherent structure. Single sentences or unorganized responses score low. "
-                + " 3. Relevance: How well the answer addresses the question. Off-topic answers score 1–2. "
-                + " 4. Communication: How effectively the candidate conveys ideas, including grammar, vocabulary, and conciseness. Minimal answers with no examples are scored low even if grammar is correct. "
-                + " 5. Depth: Specificity, examples, measurable outcomes, and demonstration of skills. Minimal or vague answers score low. "
-                + "Instructions: "
-                + "- Provide numeric scores for each parameter. "
-                + "- Add a one-sentence comment per parameter if needed. "
-                + "- Be very strict: If the candidate provides a minimal answer, off-topic, irrelevant answer, does not directly address the question, does not contain examples or meaningful details, lacks detail and examples, or even if grammar and vocabulary are correct, give low scores (1-2). "
-                + "- Output only in JSON format, create a JSON using the next parameters: " + jsonParameters
-                + " - Include all JSON parameters, even if one of them is missing or not applicable. "
-                + " Candidate Response: " + promptRequest.getTranscript().getTranscript();
+        final String prompt;
+        if (Utils.isSlowSystemDetected()) {
+            prompt = "Return ONLY valid JSON with this exact structure:"
+                    + "{"
+                    + "\"clarityScore\": <number 1-10>,"
+                    + "\"clarityFeedback\": \"<short feedback text>\","
+                    + "\"structureScore\": <number 1-10>,"
+                    + "\"structureFeedback\": \"<short feedback text>\","
+                    + "\"relevanceScore\": <number 1-10>,"
+                    + "\"relevanceFeedback\": \"<short feedback text>\","
+                    + "\"communicationScore: <number 1-10>,"
+                    + "\"communicationFeedback\": \"<short feedback text>\","
+                    + "\"depthScore\": <number 1-10>,"
+                    + "\"depthFeedback\": \"<short feedback text>\""
+                    + "}"
+                    + " ; Answer: " + promptRequest.getTranscript().getTranscript();
+        } else {
+            final String jsonParameters = "{clarityScore:  int, clarityFeedback: string, structureScore: int, structureFeedback: string, relevanceScore: int, relevanceFeedback: string, communicationScore: int, communicationFeedback: string, depthScore: int, depthFeedback: string}";
+            prompt = "You are a technical hiring manager. Evaluate the following " + promptRequest.getProfession() + " candidate's response to a behavioral interview question: " + promptRequest.getQuestion().getQuestion()
+                    + " Parameters to evaluate (score each from 1 to 10, 10 = excellent): "
+                    + " 1. Clarity: How understandable the answer is, considering content and depth. Minimal answers get low scores. "
+                    + " 2. Structure: Logical flow of the answer; use of STAR or other coherent structure. Single sentences or unorganized responses score low. "
+                    + " 3. Relevance: How well the answer addresses the question. Off-topic answers score 1–2. "
+                    + " 4. Communication: How effectively the candidate conveys ideas, including grammar, vocabulary, and conciseness. Minimal answers with no examples are scored low even if grammar is correct. "
+                    + " 5. Depth: Specificity, examples, measurable outcomes, and demonstration of skills. Minimal or vague answers score low. "
+                    + "Instructions: "
+                    + "- Provide numeric scores for each parameter. "
+                    + "- Add a one-sentence comment per parameter if needed. "
+                    + "- Be very strict: If the candidate provides a minimal answer, off-topic, irrelevant answer, does not directly address the question, does not contain examples or meaningful details, lacks detail and examples, or even if grammar and vocabulary are correct, give low scores (1-2). "
+                    + "- Output only in JSON format, create a JSON using the next parameters: " + jsonParameters
+                    + " - Include all JSON parameters, even if one of them is missing or not applicable. "
+                    + " Candidate Response: " + promptRequest.getTranscript().getTranscript();
+        }
 
         PromptResponse promptResponse = aiService.executePrompt(prompt);
         String evaluationTxt = promptResponse.getPromptResponse().toString();
@@ -219,8 +242,7 @@ public class PromptService {
 
         LOGGER.info("Evaluation JSON: {}", evaluationJson);
         if (evaluationJson == null) {
-            LOGGER.warn("Evaluation JSON not found in evaluation output: {}", evaluationTxt);
-            promptResponse.setPromptResponse(null);
+            LOGGER.warn("Evaluation in not in JSON format; Evaluation output: {}", evaluationTxt);
             return promptResponse;
         }
 
